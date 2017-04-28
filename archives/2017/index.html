@@ -213,7 +213,7 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title" itemprop="headline">
                     
-                        <a class="link-unstyled" href="/2017/04/28/使用VS Code调试Python代码/">
+                        <a class="link-unstyled" href="/2017/04/28/VSCode_Debug_Python/">
                             使用VS Code调试Python代码
                         </a>
                     
@@ -252,24 +252,24 @@
 <li><strong>生成launch.json文件</strong></li>
 </ul>
 <p>点击框4，进入如下界面</p>
-<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596375187.png" alt="img"></p>
+<p><img src="VSCode_Debug_Python/596375187.png" alt="img"></p>
 <p>然后，点击红框中的齿轮标志，随后会生成并打开项目的launch.json文件，可以在其中任意配置运行参数。因为此处调试.py文件，因此需要增加一个python的配置。</p>
 <ul>
 <li><strong>生成python默认配置</strong></li>
 </ul>
 <p>在launch.json文件中，点击右下角<em>Add Configuration</em>按钮如下图</p>
-<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596725703.png" alt="img"></p>
+<p><img src="VSCode_Debug_Python/596725703.png" alt="img"></p>
 <p>会生成如下默认配置的选择框，选择其中的python项</p>
-<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596797000.png" alt="img"></p>
+<p><img src="VSCode_Debug_Python/596797000.png" alt="img"></p>
 <p>于是launch.json中添加了如下关于Python的默认运行参数配置</p>
-<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596898156.png" alt="img"></p>
+<p><img src="VSCode_Debug_Python/596898156.png" alt="img"></p>
 <ul>
 <li><strong>修改特定的.py运行参数</strong></li>
 </ul>
 <p>这里，因为我们的目标是让main.py文件在特定的路径下接受两个参数调试运行，默认的参数不符合，所以要进行修改，修改后代码如下</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">            "name": "idiom_main",</div><div class="line">            "type": "python",</div><div class="line">            "request": "launch",</div><div class="line">            "stopOnEntry": true,</div><div class="line">            "pythonPath": "$&#123;config:python.pythonPath&#125;",</div><div class="line">            "program": "$&#123;file&#125;",</div><div class="line">            "cwd": "$&#123;workspaceRoot&#125;/example/shared_counter/",</div><div class="line">            "args":[</div><div class="line">                "display",</div><div class="line">                "test_history"</div><div class="line">            ],</div><div class="line">            "env": null,</div><div class="line">            "envFile": "$&#123;workspaceRoot&#125;/.env",</div><div class="line">            "debugOptions": [</div><div class="line">                "WaitOnAbnormalExit",</div><div class="line">                "WaitOnNormalExit",</div><div class="line">                "RedirectOutput"</div><div class="line">            ]</div><div class="line">        &#125;,</div></pre></td></tr></table></figure>
 <p>于是launch.json变为下图</p>
-<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/597214328.png" alt="img"></p>
+<p><img src="VSCode_Debug_Python/597214328.png" alt="img"></p>
 <p>红框部分为修改部分，下面做简要解释</p>
 <p><code>&quot;args&quot;</code> 表示以这个配置运行文件时，传给文件的参数，这里我们传了两个参数display和test_history</p>
 <p><code>&quot;cwd&quot;</code> 表示在什么位置运行的这个文件</p>
@@ -279,9 +279,9 @@
 <p><strong>注意：</strong>如果想修改其他参数，比如环境变量<code>&quot;env&quot;</code>等等，可以鼠标移动到参数上面看浮动解释框内容。如果有需要main.py运行前需要做的事情，可以在<code>&quot;task&quot;</code>选项和对应的task.json文件中配置，调试python用的少，调试C++用的多，这里不再赘述。</p>
 </blockquote>
 <h3 id="2-开始debug"><a href="#2-开始debug" class="headerlink" title="2.  开始debug"></a>2.  <strong>开始debug</strong></h3><p>进入需要调试的main.py文件，点击下图的框1，然后点击框2选择idiom_main作为运行配置，最后点击框3开始debug</p>
-<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/598042953.png" alt="img"></p>
+<p><img src="VSCode_Debug_Python/598042953.png" alt="img"></p>
 <p>下图中框1代表到达的默认断点位置（再也不用担心闪退了），后续操作可以通过框2浮动窗口的命令和提示进行。</p>
-<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/598155609.png" alt="img"></p>
+<p><img src="VSCode_Debug_Python/598155609.png" alt="img"></p>
 <p>​:happy: <strong>Good Luck!!</strong> </p>
 <blockquote>
 <p> 转载请注明出处，欢迎大家指正交流，我会持续更新</p>
@@ -292,7 +292,7 @@
                     
                     
                         <p>
-                            <a href="/2017/04/28/使用VS Code调试Python代码/#post-footer" class="postShorten-excerpt_link link">
+                            <a href="/2017/04/28/VSCode_Debug_Python/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
@@ -384,7 +384,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://yoursite.com/2017/04/28/使用VS Code调试Python代码/">
+                        <a class="link-unstyled" href="http://yoursite.com/2017/04/28/VSCode_Debug_Python/">
                             <h3 class="media-heading">使用VS Code调试Python代码</h3>
                         </a>
                         <span class="media-meta">
