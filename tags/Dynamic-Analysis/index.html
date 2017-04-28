@@ -235,7 +235,8 @@
             </div>
             
                 <div class="postShorten-content" itemprop="articleBody">
-                    <ul>
+                    <!-- excerpt -->
+<ul>
 <li><p><strong>Maple是一种面向C/C++的以覆盖率驱动的主动动态测试工具。</strong></p>
 </li>
 <li><p><strong>Maple原理见论文：Maple: A Coverage-Driven Testing Tool for Multithreaded Programs</strong></p>
@@ -381,7 +382,6 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">E: Attach to pid 3047 failed. E:   The Operating System configuration prevents Pin from using the default (parent) injection mode.E:   To resolve this, either execute the following (as root):E:   $ echo 0 &gt; /proc/sys/kernel/yama/ptrace_scopeE:   Or use the &quot;-injection child&quot; option.E:   For more information, regarding child injection, see Injection section in the Pin User Manual.</div></pre></td></tr></table></figure>
 <p>详情如下图<br><img src="/2017/04/28/Maple-setup-tutorial/431553875.png" alt="img"><br>这是因为系统内核的kernel.yama.ptrace_scope变量设置为了1，详情见<br><a href="https://linux-audit.com/protect-ptrace-processes-kernel-yama-ptrace_scope/" target="_blank" rel="external">Protect against ptrace of processes: kernel.yama.ptrace_scope</a><br>只需要打开/proc/sys/kernel/yama/ptrace_scope文件，将1改成0即可。</p>
-
                     
                         
                     
@@ -484,25 +484,6 @@
                 
                 <div class="media">
                     
-                    <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/VSCode-Debug-Python/">
-                            <h3 class="media-heading">使用VS Code调试Python代码</h3>
-                        </a>
-                        <span class="media-meta">
-                            <span class="media-date text-small">
-                                
-                                    2017年4月28日
-                                
-                            </span>
-                        </span>
-                        <div class="media-content hide-xs font-merryweather"></div>
-                    </div>
-                    <div style="clear:both;"></div>
-                    <hr>
-                </div>
-                
-                <div class="media">
-                    
                     <div class="media-left">
                         <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                             <img class="media-image" src="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.png" width="90" height="90"/>
@@ -521,6 +502,25 @@
                             </span>
                         </span>
                         <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+                            <h3 class="media-heading">使用VS Code调试Python代码</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年4月29日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>问题:<br></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
