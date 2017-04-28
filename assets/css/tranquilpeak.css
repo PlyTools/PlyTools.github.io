@@ -3232,7 +3232,9 @@ figure.highlight,
         }
     }
     // PUT YOUR THEME HERE
-    @charset "utf-8";
+}
+
+@charset "utf-8";
 
 html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
 
@@ -3362,6 +3364,3 @@ td { vertical-align: top; }
 @media only screen and (min-width: 768px) {
     body{font-size:16px;}
 } 
-
-}
-
