@@ -213,15 +213,15 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title" itemprop="headline">
                     
-                        <a class="link-unstyled" href="/2017/04/27/hello-world/">
-                            Hello World
+                        <a class="link-unstyled" href="/2017/04/28/用VS Code调试Python代码/">
+                            (无标题)
                         </a>
                     
                 </h1>
                 <div class="postShorten-meta">
-    <time itemprop="datePublished" datetime="2017-04-27T20:09:40+08:00">
+    <time itemprop="datePublished" datetime="2017-04-28T08:49:28+08:00">
 	
-		    4月 27, 2017
+		    4月 28, 2017
     	
     </time>
     
@@ -230,22 +230,69 @@
             </div>
             
                 <div class="postShorten-content" itemprop="articleBody">
-                    <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+                    <p><strong>问题: </strong></p>
+<blockquote>
+<p><strong>拿到项目中的.py文件，怎么用VS Code进行调试？</strong></p>
+<p>VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。（笔者试用过Google的Atom，Sublime Text等其他轻量级编辑器，认为VS Code虽然体量稍大，但在易用性和功能方面依然具有优势）</p>
+<p>那么，这篇文章以在VS Code名称为maple-master的项目文件中，调试maple-master/script/idiom/main.py文件为例，介绍调试python文件的方法（默认已装好python环境）。</p>
+</blockquote>
+<p><strong>要求：</strong></p>
+<blockquote>
+<p>目标是，调试时让main.py文件在maple-master/example/shared_counter/路径下，以两个输入参数display 和test_history运行。</p>
+</blockquote>
+<h3 id="1-设置-py文件调试所需的运行环境？"><a href="#1-设置-py文件调试所需的运行环境？" class="headerlink" title="1.  设置.py文件调试所需的运行环境？"></a>1.  设置.py文件调试所需的运行环境？</h3><ul>
+<li><strong>导入项目</strong></li>
+</ul>
+<p>将整个工程文件夹maple-master加入到VS Code的project列表中。</p>
+<p>打开要调试的main.py文件，如下图：</p>
+<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596217250.png" alt="img"></p>
+<p>框1显示了所有打开的文件及其路径，框2显示了导入的整个project文件夹，框3显示了打开的.py文件所在具体位置，这里打开的是maple-master/script/maple/idiom中的main.py文件。</p>
+<p>如果调试project的单个.py文件，而且这个文件需要特定的<strong>运行路径</strong>、<strong>环境变量</strong>、<strong>参数</strong>才能运行，可使用如下方式：</p>
+<ul>
+<li><strong>生成launch.json文件</strong></li>
+</ul>
+<p>点击框4，进入如下界面</p>
+<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596375187.png" alt="img"></p>
+<p>然后，点击红框中的齿轮标志，随后会生成并打开项目的launch.json文件，可以在其中任意配置运行参数。因为此处调试.py文件，因此需要增加一个python的配置。</p>
+<ul>
+<li><strong>生成python默认配置</strong></li>
+</ul>
+<p>在launch.json文件中，点击右下角<em>Add Configuration</em>按钮如下图</p>
+<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596725703.png" alt="img"></p>
+<p>会生成如下默认配置的选择框，选择其中的python项</p>
+<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596797000.png" alt="img"></p>
+<p>于是launch.json中添加了如下关于Python的默认运行参数配置</p>
+<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596898156.png" alt="img"></p>
+<ul>
+<li><strong>修改特定的.py运行参数</strong></li>
+</ul>
+<p>这里，因为我们的目标是让main.py文件在特定的路径下接受两个参数调试运行，默认的参数不符合，所以要进行修改，修改后代码如下</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">            "name": "idiom_main",</div><div class="line">            "type": "python",</div><div class="line">            "request": "launch",</div><div class="line">            "stopOnEntry": true,</div><div class="line">            "pythonPath": "$&#123;config:python.pythonPath&#125;",</div><div class="line">            "program": "$&#123;file&#125;",</div><div class="line">            "cwd": "$&#123;workspaceRoot&#125;/example/shared_counter/",</div><div class="line">            "args":[</div><div class="line">                "display",</div><div class="line">                "test_history"</div><div class="line">            ],</div><div class="line">            "env": null,</div><div class="line">            "envFile": "$&#123;workspaceRoot&#125;/.env",</div><div class="line">            "debugOptions": [</div><div class="line">                "WaitOnAbnormalExit",</div><div class="line">                "WaitOnNormalExit",</div><div class="line">                "RedirectOutput"</div><div class="line">            ]</div><div class="line">        &#125;,</div></pre></td></tr></table></figure>
+<p>于是launch.json变为下图</p>
+<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/597214328.png" alt="img"></p>
+<p>红框部分为修改部分，下面做简要解释</p>
+<p><code>&quot;args&quot;</code> 表示以这个配置运行文件时，传给文件的参数，这里我们传了两个参数display和test_history</p>
+<p><code>&quot;cwd&quot;</code> 表示在什么位置运行的这个文件</p>
+<p><code>&quot;name&quot;</code> 参数表示为我们生成的这个配置的名称，原本因为添加的python默认运行参数，名称也是默认的python，但是因为这里设置的”args”和”cwd”只适用于main.py这个文件，所以改写名称为idiom_main作为和其他.py文件调试配置的区分。</p>
+<p>保存！</p>
+<blockquote>
+<p><strong>注意：</strong>如果想修改其他参数，比如环境变量<code>&quot;env&quot;</code>等等，可以鼠标移动到参数上面看浮动解释框内容。如果有需要main.py运行前需要做的事情，可以在<code>&quot;task&quot;</code>选项和对应的task.json文件中配置，调试python用的少，调试C++用的多，这里不再赘述。</p>
+</blockquote>
+<h3 id="2-开始debug"><a href="#2-开始debug" class="headerlink" title="2.  开始debug"></a>2.  <strong>开始debug</strong></h3><p>进入需要调试的main.py文件，点击下图的框1，然后点击框2选择idiom_main作为运行配置，最后点击框3开始debug</p>
+<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/598042953.png" alt="img"></p>
+<p>下图中框1代表到达的默认断点位置（再也不用担心闪退了），后续操作可以通过框2浮动窗口的命令和提示进行。</p>
+<p><img src="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/598155609.png" alt="img"></p>
+<p>​:happy: <strong>Good Luck!!</strong> </p>
+<blockquote>
+<p> 转载请注明出处，欢迎大家指正交流，我会持续更新</p>
+</blockquote>
 
                     
                         
                     
                     
                         <p>
-                            <a href="/2017/04/27/hello-world/#post-footer" class="postShorten-excerpt_link link">
+                            <a href="/2017/04/28/用VS Code调试Python代码/#post-footer" class="postShorten-excerpt_link link">
                                 评论和共享
                             </a>
                         </p>
@@ -337,13 +384,13 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://yoursite.com/2017/04/27/hello-world/">
-                            <h3 class="media-heading">Hello World</h3>
+                        <a class="link-unstyled" href="http://yoursite.com/2017/04/28/用VS Code调试Python代码/">
+                            <h3 class="media-heading"></h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
                                 
-                                    2017年4月27日
+                                    2017年4月28日
                                 
                             </span>
                         </span>

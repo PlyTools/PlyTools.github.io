@@ -6,20 +6,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="PlyTools">
-    <title>归档: 2017/4 - PlyTools</title>
+    <title> - PlyTools</title>
     <meta name="author" content="Qian Ren">
     
     
     
-    <meta name="description" content="Share Knowledge">
+    <meta name="description" content="问题:   拿到项目中的.py文件，怎么用VS Code进行调试？ VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。（笔者试用过Google的Atom，Sublime Text等其他轻量级编辑器，认为VS Code虽然体量稍大，但在易用性和功能方面依然具有优势） 那么，这篇文章以在VS Code名称为maple-master的项目文件中，调试maple-">
+<meta name="keywords">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="PlyTools">
-<meta property="og:url" content="http://yoursite.com/archives/2017/04/index.html">
+<meta property="og:url" content="http://yoursite.com/2017/04/28/用VS Code调试Python代码/index.html">
 <meta property="og:site_name" content="PlyTools">
-<meta property="og:description" content="Share Knowledge">
+<meta property="og:description" content="问题:   拿到项目中的.py文件，怎么用VS Code进行调试？ VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。（笔者试用过Google的Atom，Sublime Text等其他轻量级编辑器，认为VS Code虽然体量稍大，但在易用性和功能方面依然具有优势） 那么，这篇文章以在VS Code名称为maple-master的项目文件中，调试maple-">
+<meta property="og:image" content="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596217250.png">
+<meta property="og:image" content="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596375187.png">
+<meta property="og:image" content="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596725703.png">
+<meta property="og:image" content="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596797000.png">
+<meta property="og:image" content="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596898156.png">
+<meta property="og:image" content="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/597214328.png">
+<meta property="og:image" content="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/598042953.png">
+<meta property="og:image" content="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/598155609.png">
+<meta property="og:updated_time" content="2017-04-28T01:27:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PlyTools">
-<meta name="twitter:description" content="Share Knowledge">
+<meta name="twitter:description" content="问题:   拿到项目中的.py文件，怎么用VS Code进行调试？ VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。（笔者试用过Google的Atom，Sublime Text等其他轻量级编辑器，认为VS Code虽然体量稍大，但在易用性和功能方面依然具有优势） 那么，这篇文章以在VS Code名称为maple-master的项目文件中，调试maple-">
+<meta name="twitter:image" content="file:///var/folders/10/y0nrg3x96fx_zqc8hh__13wh0000gn/T/WizNote/49f74fa6-c924-47c4-a0ec-93102bfcdf1e/index_files/596217250.png">
     
     
         
@@ -51,7 +62,7 @@
         
     
 
-<header id="header" data-behavior="2">
+<header id="header" data-behavior="5">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
         <a class="header-title-link" href="/ ">PlyTools</a>
@@ -75,7 +86,7 @@
         
     
 
-<nav id="sidebar" data-behavior="2">
+<nav id="sidebar" data-behavior="5">
     <div class="sidebar-container">
         
             <div class="sidebar-profile">
@@ -199,26 +210,22 @@
 </nav>
 
             
-            <div id="main" data-behavior="2"
+            <div id="main" data-behavior="5"
                  class="
                         hasCoverMetaIn
                         ">
                 
-    <section class="postShorten-group main-content-wrap">
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
     
     
-    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
-        <div class="postShorten-wrap">
-            
-            <div class="postShorten-header">
-                <h1 class="postShorten-title" itemprop="headline">
-                    
-                        <a class="link-unstyled" href="/2017/04/28/用VS Code调试Python代码/">
-                            (无标题)
-                        </a>
-                    
-                </h1>
-                <div class="postShorten-meta">
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            (无标题)
+        </h1>
+    
+    
+        <div class="post-meta">
     <time itemprop="datePublished" datetime="2017-04-28T08:49:28+08:00">
 	
 		    4月 28, 2017
@@ -227,10 +234,12 @@
     
 </div>
 
-            </div>
-            
-                <div class="postShorten-content" itemprop="articleBody">
-                    <p><strong>问题: </strong></p>
+    
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p><strong>问题: </strong></p>
 <blockquote>
 <p><strong>拿到项目中的.py文件，怎么用VS Code进行调试？</strong></p>
 <p>VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。（笔者试用过Google的Atom，Sublime Text等其他轻量级编辑器，认为VS Code虽然体量稍大，但在易用性和功能方面依然具有优势）</p>
@@ -287,31 +296,82 @@
 <p> 转载请注明出处，欢迎大家指正交流，我会持续更新</p>
 </blockquote>
 
-                    
-                        
-                    
-                    
-                        <p>
-                            <a href="/2017/04/28/用VS Code调试Python代码/#post-footer" class="postShorten-excerpt_link link">
-                                评论和共享
-                            </a>
-                        </p>
-                    
-                </div>
             
         </div>
-        
-    </article>
-    
-    <div class="pagination-bar">
-    <ul class="pagination">
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
         
         
-        <li class="pagination-number">第 1 页 共 1 页</li>
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2017/04/28/用VS Code调试Python代码/">
+                    <i class="fa fa-facebook-official"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2017/04/28/用VS Code调试Python代码/">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2017/04/28/用VS Code调试Python代码/">
+                    <i class="fa fa-google-plus"></i>
+                </a>
+            </li>
+        
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
     </ul>
 </div>
 
-</section>
+
+        
+        
+            
+        
+    </div>
+</article>
 
 
 
@@ -322,6 +382,104 @@
 </footer>
 
             </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2017/04/28/用VS Code调试Python代码/">
+                    <i class="fa fa-facebook-official"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2017/04/28/用VS Code调试Python代码/">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2017/04/28/用VS Code调试Python代码/">
+                    <i class="fa fa-google-plus"></i>
+                </a>
+            </li>
+        
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+    <i id="btn-close-shareoptions" class="fa fa-close"></i>
+    <ul class="share-options">
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://yoursite.com/2017/04/28/用VS Code调试Python代码/">
+                    <i class="fa fa-facebook-official"></i><span>分享到 Facebook</span>
+                </a>
+            </li>
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://yoursite.com/2017/04/28/用VS Code调试Python代码/">
+                    <i class="fa fa-twitter"></i><span>分享到 Twitter</span>
+                </a>
+            </li>
+        
+            
+            
+            <li class="share-option">
+                <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://yoursite.com/2017/04/28/用VS Code调试Python代码/">
+                    <i class="fa fa-google-plus"></i><span>分享到 Google+</span>
+                </a>
+            </li>
+        
+    </ul>
+</div>
+
             
         </div>
         
@@ -421,6 +579,8 @@
 <script src="/assets/js/jquery.fancybox-thumbs.js"></script>
 <script src="/assets/js/tranquilpeak.js"></script>
 <!--SCRIPTS END-->
+
+    
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
