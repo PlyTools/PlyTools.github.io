@@ -36,6 +36,8 @@
         
     
     
+        <meta property="og:image" content="http://plytools.github.io/assets/images/starry-sky.jpg"/>
+    
     
     
     
@@ -52,8 +54,12 @@
 
 
     
+        
+            
+        
+    
 
-<header id="header" data-behavior="4">
+<header id="header" data-behavior="5">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
         <a class="header-title-link" href="/ ">PlyTools</a>
@@ -64,6 +70,8 @@
                 href="#about">
         
         
+            <img class="header-picture" src="/assets/images/starry-sky.jpg" alt="Author&#39;s picture"/>
+        
         </a>
     
 </header>
@@ -71,8 +79,23 @@
             <!-- Define author's picture -->
 
 
-<nav id="sidebar" data-behavior="4">
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
     <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/starry-sky.jpg" alt="Author&#39;s picture"/>
+                </a>
+                <h4 class="sidebar-profile-name">Qian Ren</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>author.bio</p>
+</h5>
+                
+            </div>
         
         
             <ul class="sidebar-buttons">
@@ -155,7 +178,7 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank">
+                        <a  class="sidebar-button-link " href="https://github.com/PlyTools" target="_blank">
                     
                         <i class="sidebar-button-icon fa fa-lg fa-github"></i>
                         <span class="sidebar-button-desc">GitHub</span>
@@ -184,7 +207,7 @@
 </nav>
 
             
-            <div id="main" data-behavior="4"
+            <div id="main" data-behavior="5"
                  class="
                         hasCoverMetaIn
                         ">
@@ -329,6 +352,12 @@
             </a>
         </li>
         
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
         <li class="post-action">
             
                 <a class="post-action-btn btn btn--default" href="#">
@@ -341,6 +370,10 @@
 
 
         
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
             
         
     </div>
@@ -356,7 +389,7 @@
 
             </div>
             
-                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
                     <div class="post-actions-wrap">
     <nav>
         <ul class="post-actions post-action-nav">
@@ -400,6 +433,12 @@
             </a>
         </li>
         
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
         <li class="post-action">
             
                 <a class="post-action-btn btn btn--default" href="#">
@@ -412,7 +451,7 @@
 
 
                 </div>
-                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+                <div id="share-options-bar" class="share-options-bar" data-behavior="5">
     <ul class="share-options">
         <li class="share-option">
             <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/28/VSCode-Debug-Python/">
@@ -438,11 +477,17 @@
         
 
 
+    
+        
+    
+
 <div id="about">
     <div id="about-card">
         <div id="about-btn-close">
             <i class="fa fa-remove"></i>
         </div>
+        
+            <img id="about-card-picture" src="/assets/images/starry-sky.jpg" alt="Author&#39;s picture"/>
         
             <h4 id="about-card-name">Qian Ren</h4>
         
@@ -457,6 +502,12 @@
 
             </div>
         
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Beijing, China
+            </div>
         
     </div>
 </div>
@@ -542,6 +593,23 @@
 <script src="/assets/js/script-rt08quwts7iav5x0cfd2ym0gb5qkd1lvrsmwrakxtkhefmaaes4ywkmnjnwf.min.js"></script>
 <!--SCRIPTS END-->
 
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://plytools.github.io/2017/04/28/VSCode-Debug-Python/';
+                 
+                    this.page.identifier = '2017/04/28/VSCode-Debug-Python/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'plytools-github-io';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
     
 
 
