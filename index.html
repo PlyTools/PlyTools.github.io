@@ -234,7 +234,7 @@
             </div>
             
                 <div class="postShorten-excerpt" itemprop="articleBody">
-                    <p>问题:<br>
+                    <p>VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。<strong>拿到项目的.py文件，怎么用VS Code进行调试</strong></p>
                     
                         <a href="/2017/04/29/VSCode-Debug-Python/" class="postShorten-excerpt_link link">
                             阅读全文
@@ -248,7 +248,7 @@
     </article>
     
     
-    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
+    <article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
         <div class="postShorten-wrap">
             
             <div class="postShorten-header">
@@ -276,163 +276,13 @@
 
             </div>
             
-                <div class="postShorten-content" itemprop="articleBody">
-                    <!-- excerpt -->
-<ul>
-<li><p><strong>Maple是一种面向C/C++的以覆盖率驱动的主动动态测试工具。</strong></p>
-</li>
-<li><p><strong>Maple原理见论文：Maple: A Coverage-Driven Testing Tool for Multithreaded Programs</strong></p>
-</li>
-<li><p><strong>Maple源码及配置方式参考：<a href="https://github.com/jieyu/maple" target="_blank" rel="external">https://github.com/jieyu/maple</a></strong></p>
-</li>
-<li><p><strong>以下讲述如何配置Maple使用环境：</strong></p>
-<hr>
-</li>
-</ul>
-<h1 id="1-配置Maple环境"><a href="#1-配置Maple环境" class="headerlink" title="1. 配置Maple环境"></a>1. 配置Maple环境</h1><h3 id="1-1-配置目标"><a href="#1-1-配置目标" class="headerlink" title="1.1 配置目标"></a>1.1 配置目标</h3><p>vmware12 pro + Ubuntu12.04 64位<br>（自带：GNU make 3.8.1 ; python 2.7 ; gcc 4.6.3）<br>Python2<br>Google Protobuf<br>PinPlay</p>
-<h3 id="1-2-安装OS"><a href="#1-2-安装OS" class="headerlink" title="1.2 安装OS"></a>1.2 安装OS</h3><p>下载<a href="http://www.ubuntu.org.cn/download/alternative-downloads" target="_blank" rel="external">Ubuntu 12.04.5 Desktop (64-bit)</a> 的镜像文件<br>安装并配置虚拟机（这里使用的是VMware® Workstation 12 Pro，配置过程略）</p>
-<ul>
-<li><em>注释</em>：<br>基于Ubuntu16.04配置过程中遇到多种问题，比如下面错误<br><img src="/2017/04/28/Maple-setup-tutorial/3d562862-e3a5-4c66-a62a-adeb0eb97aee.png" alt="img"><br>这是gcc版本引发的错误，多种方法解决未成功，为了方便，直接使用作者建议的Ubuntu12.04为操作系统平台。（没有尝试使用14.04）</li>
-</ul>
-<h3 id="1-3-配置Pinplay"><a href="#1-3-配置Pinplay" class="headerlink" title="1.3 配置Pinplay"></a>1.3 配置Pinplay</h3><ul>
-<li><strong>下载</strong><br>这里选择PINplay2.2版本<br>下载[OLD:with_DCFG_support:pinplay-drdebug-2.2-pldi2015-updated-pin-2.14-71313-gcc.4.4.7-linux.tar.gz (92.76 MB)] (<a href="https://software.intel.com/en-us/protected-download/366522/366520/step2" target="_blank" rel="external">https://software.intel.com/en-us/protected-download/366522/366520/step2</a>)</li>
-<li><strong>解压</strong><br>在Ubuntu用户文件夹下创建DA文件夹，则其完整路径为/home/ren/DA，这里ren是我的用户名。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~$ mkdir DA$ cd DA</div></pre></td></tr></table></figure>
-<p>将下载的文件放在DA文件夹中解压</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar zxvf OLD:with_DCFG_support:pinplay-drdebug-2.2-pldi2015-updated-pin-2.14-71313-gcc.4.4.7-linux.tar.gz</div></pre></td></tr></table></figure>
-<ul>
-<li><strong>安装支持库</strong><br>因为PinPlay是由PIN改进而来的工具，为了支持PIN的运行，需要32bit的库支持<br>安装32bit库</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install ia32-libs</div></pre></td></tr></table></figure>
-<p>然后，因为PIN还要使用g++编译，甚至交叉编译，所以使用如下方式安装</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install build-essential module-assistant  $ sudo apt-get install gcc-multilib g++-multilib</div></pre></td></tr></table></figure>
-<ul>
-<li><strong>安装PIN</strong><br>从命令行进入PinPlay文件夹</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cd ~/DA/pinplay-drdebug-2.2-pldi2015-pin-2.14-71313-gcc.4.4.7-linux</div></pre></td></tr></table></figure>
-<p>然后</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd source/tools/SimpleExamples$ make obj-intel64/opcodemix.so$ ../../../pin -t obj-intel64/opcodemix.so -- /bin/ls</div></pre></td></tr></table></figure>
-<p>成功后，结果为<br><img src="/2017/04/28/Maple-setup-tutorial/13873312.png" alt="img"><br>打开用户目录下的.dashrc文件设置<strong>PIN_ROOT</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~$ gedit .bashrc</div></pre></td></tr></table></figure>
-<p>在.dashrc文件结尾添加</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">export PIN_ROOT=&quot;/home/ren/DA/pinplay-drdebug-2.2-pldi2015-pin-2.14-71313-gcc.4.4.7-linux&quot;</div></pre></td></tr></table></figure>
-<p>然后重新装.dashrc文件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ source .bashrc</div></pre></td></tr></table></figure>
-<ul>
-<li><strong>安装PinPlay</strong></li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd $PIN_ROOT/extras/pinplay/examples$ make instclean$ make</div></pre></td></tr></table></figure>
-<p>同理配置PIN_HOME</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~$ gedit .bashrc</div></pre></td></tr></table></figure>
-<p>添加如下命令到结尾</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">export PIN_HOME=&quot;/home/ren/DA/pinplay-drdebug-2.2-pldi2015-pin-2.14-71313-gcc.4.4.7-linux&quot;</div></pre></td></tr></table></figure>
-<p>关闭保存，重新加载</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ source .bashrc</div></pre></td></tr></table></figure>
-<h3 id="1-4-配置Protobuf"><a href="#1-4-配置Protobuf" class="headerlink" title="1.4 配置Protobuf"></a>1.4 配置Protobuf</h3><ul>
-<li><strong>下载</strong><br>下载 <a href="https://github.com/google/protobuf/releases?after=v2.5.0" target="_blank" rel="external">protobuf2.4.1</a><br>同样在DA文件件下解压</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~/DA$ tar zxvf protobuf-2.4.1.tar.gz</div></pre></td></tr></table></figure>
-<p>然后在protobuf-2.4.1目录下运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd protobuf-2.4.1  $ ./configure  $ make  $ make check  $ sudo make install</div></pre></td></tr></table></figure>
-<p>无报错则OK，然后配置PROTOBUF_HOME</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~$ gedit .bashrc</div></pre></td></tr></table></figure>
-<p>添加如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">export PROTOBUF_HOME=&quot;/usr/local&quot;</div></pre></td></tr></table></figure>
-<p>关闭并保存，然后重新加载.bashrc</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ source .bashrc</div></pre></td></tr></table></figure>
-<blockquote>
-<p>protobuf安装成功后，位置为/usr/local/bin。因为maple已经考虑了bin，PROTOBUF_HOME的位置是/usr/local</p>
-</blockquote>
-<h1 id="2-配置Maple"><a href="#2-配置Maple" class="headerlink" title="2. 配置Maple"></a>2. 配置Maple</h1><ul>
-<li><strong>下载</strong><br>从GitHub上下载Maple：<a href="https://github.com/jieyu/maple" target="_blank" rel="external">https://github.com/jieyu/maple</a><br>同样在DA下解压：</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~/DA$ unzip maple-master.zip</div></pre></td></tr></table></figure>
-<p>然后配置$MAPLE_HOME</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~$ gedit .bashrc</div></pre></td></tr></table></figure>
-<p>添加如下命令到结尾</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">export MAPLE_HOME=&quot;/home/ren/DA/maple-master&quot;</div></pre></td></tr></table></figure>
-<p>关闭保存，重新加载</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ source .bashrc</div></pre></td></tr></table></figure>
-<ul>
-<li><strong>安装</strong></li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd $MAPLE_HOME$ make$ make compiletype=release</div></pre></td></tr></table></figure>
-<p>成功之后，maple的主页面下面会多出两个文件<br><img src="/2017/04/28/Maple-setup-tutorial/18051765.png" alt="img"></p>
-<ul>
-<li><strong>给予权限</strong><br>然后配置Maple让其能够修改调度的优先级。<br>使用ulimit命令可查看Linux平台的实时优先级</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ulimit -e -r</div></pre></td></tr></table></figure>
-<p><img src="/2017/04/28/Maple-setup-tutorial/465680171.png" alt="img"><br>要更改，需要root权限，修改/etc/security/limits.conf文件<br>可使用如下命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo gedit /etc/security/limits.conf</div></pre></td></tr></table></figure>
-<p>打开文件后，在末尾添加如下内容<br><img src="/2017/04/28/Maple-setup-tutorial/545957390.png" alt="img"><br>注意，这里的ren要换成你自己的用户名，然后保存。<br>配置成功！！</p>
-<h1 id="3-使用Maple"><a href="#3-使用Maple" class="headerlink" title="3. 使用Maple"></a>3. 使用Maple</h1><h3 id="3-1-测试"><a href="#3-1-测试" class="headerlink" title="3.1 测试"></a>3.1 测试</h3><p>以$MAPLE_HOME/example/shared_counter下面的main.cc为例<br>使用下面的命令，将main.cc编译成可执行文件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd $MAPLE_HOME/example/shared_counter$ g++ -fno-omit-frame-pointer -g -pthread -o main main.cc</div></pre></td></tr></table></figure>
-<blockquote>
-<p>注意：下面所有命令都是在$MAPLE_HOME/example/shared_counter路径下运行的<br>然后用下面命令运行，使用maple测试可执行文件main，最后一个参数2是main文件运行所需参数</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/maple --- ./main 2</div></pre></td></tr></table></figure>
-<p>结果如下图<img src="/2017/04/28/Maple-setup-tutorial/26212515.png" alt="img"><br>可以看到，文件夹中多出来很多文件，这些文件将会被maple的其他部件使用。不要对他们进行删除或修改操作</p>
-<h3 id="3-2-查看iRoots"><a href="#3-2-查看iRoots" class="headerlink" title="3.2 查看iRoots"></a>3.2 查看iRoots</h3><p>查看第一步中成功触发的iRoots</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom display test_history</div></pre></td></tr></table></figure>
-<p>结果如下<br><img src="/2017/04/28/Maple-setup-tutorial/196096796.png" alt="img"><br>第一列表示目标iRoots的标号为24，最后一列1489391714是触发这个iRoot所需的随机仲裁的随机种子。所以要重新触发这个iRoot引起的bug，只需要提供iRoot的标号和随机数种子给maple的active scheduler即可。</p>
-<h3 id="3-3-重现bug"><a href="#3-3-重现bug" class="headerlink" title="3.3 重现bug"></a>3.3 重现bug</h3><p>重现特定的iRoot/bug，使用下述命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom active --target_iroot=24 --random_seed=1489391714 --- ./main 2$ main: main.cc:36: int main(int, char**): Assertion `global_count==NUM_THREADS&apos; failed.[MAPLE] === active iteration 1 done === (0.617391) (/home/jieyu/example)[MAPLE] active fatal error detected</div></pre></td></tr></table></figure>
-<p>如下图所示，确实触发了这个编号为24的iRoot<br><img src="/2017/04/28/Maple-setup-tutorial/197043187.png" alt="img"></p>
-<p>###3.4 PinPlay记录和重现bug<br>使用下述命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom active --pinplay --pinplay_options=&quot;-log:basename,failing.pinball/log&quot; \  --target_iroot=24 --random_seed=1489391714 --- ./main 2</div></pre></td></tr></table></figure>
-<p>结果如下<br><img src="/2017/04/28/Maple-setup-tutorial/197108531.png" alt="img"><br>并且会在当前测试文件所在文件夹下生成一个记录运行过程的日志文件夹<br><img src="/2017/04/28/Maple-setup-tutorial/197171640.png" alt="img"><br>使用下面的命令可以从日志重现该次运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $PIN_HOME/pin -t $PIN_HOME/extras/pinplay/bin/intel64/pinplay-driver.so \  -replay -replay:addr_trans -replay:basename failing.pinball/log -- /bin/true</div></pre></td></tr></table></figure>
-<p>如下图所示<br><img src="/2017/04/28/Maple-setup-tutorial/198324187.png" alt="img"><br>按照日志的记录，对触发这个iRoot的运行进行了重现</p>
-<h3 id="3-5-使用GDB调试"><a href="#3-5-使用GDB调试" class="headerlink" title="3.5 使用GDB调试"></a>3.5 使用GDB调试</h3><p>运行下面的命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$  $PIN_HOME/pin -appdebug -t  $PIN_HOME/extras/pinplay/bin/intel64/pinplay-driver.so \  -replay -replay:addr_trans -replay:basename failing.pinball/log -- /bin/trueApplication stopped until continued from debugger.Start GDB, then issue this command at the (gdb) prompt:    target remote :37020</div></pre></td></tr></table></figure>
-<p>然后，重新打开一个shell，在其中以gdb加载可执行文件main</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ gdb main</div></pre></td></tr></table></figure>
-<p>然后，建立远程调试的链接</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(gdb) target remote :37020</div></pre></td></tr></table></figure>
-<p>运行main前，设置main运行所需的参数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(gdb) set args 2</div></pre></td></tr></table></figure>
-<p>使用下面命令确认，运行参数是不是设置成功了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(gdb) show args</div></pre></td></tr></table></figure>
-<p>结果如下<br><img src="/2017/04/28/Maple-setup-tutorial/c01a8231-51a6-4c47-9bba-0b60dd189c84.png" alt="img"><br>然后可以使用gdbtui的source调试窗口，并且给main函数添加一个断点</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(gdb) layout src(gdb) b main</div></pre></td></tr></table></figure>
-<blockquote>
-<p><em>注意：</em>语法中因为breakpoint命令与其他命令的头字母不重复，所以可以直接以b简写；如果使用run命令，一般情况下可以用r简写代表，但是在远程调试中，不支持run命令（因为已经启动），所以不行。其他的命令与breakpoint类似，比如continue可简写为c。</p>
-</blockquote>
-<p>比如继续运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(gdb) c</div></pre></td></tr></table></figure>
-<p>结果如下图，上面的窗口即为gdbtui窗口，显示了源码。高亮行代表了运行到的代码行。<br><img src="/2017/04/28/Maple-setup-tutorial/325004031.png" alt="img"><br>可以通过n等命令（n在这里是next的简写），逐步运行程序</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(gdb) n</div></pre></td></tr></table></figure>
-<p><img src="/2017/04/28/Maple-setup-tutorial/325565578.png" alt="img"><br>由于是从log复现触发编号为24的iRoot的运行，所以运行过程是固定的，持续使用continue或step，next等命令运行即可触发，如下图<br><img src="/2017/04/28/Maple-setup-tutorial/325708859.png" alt="img"></p>
-<blockquote>
-<p><em>注意：</em>有关gui的详细教程可参见：<br><a href="https://m.baidu.com/from=2001a/bd_page_type=1/ssid=0/uid=0/pu=usm%401%2Csz%40224_220%2Cta%40iphone___1_/baiduid=EEC244527D7122624687801B0BFEFD0B/w=0_10_/t=iphone/l=3/tc?ref=www_iphone&amp;lid=12198851396977364715&amp;order=9&amp;fm=alop&amp;tj=www_normal_9_0_10_title&amp;vit=osres&amp;m=8&amp;srd=1&amp;cltj=cloud_title&amp;asres=1&amp;title=GDB%E7%9A%84%E4%BD%BF%E7%94%A8%2C%E9%87%8D%E7%82%B9%E8%AE%B2%E8%A7%A3%E5%9B%BE%E5%83%8F%E5%8C%96gdb-tui%E6%96%B9%E5%BC%8F-LaoKa-...&amp;dict=20&amp;w_qd=IlPT2AEptyoA_yiyGEHh3G9k&amp;sec=19623&amp;di=0361f4bffbdf66e5&amp;bdenc=1&amp;tch=124.152.285.1067.2.506&amp;nsrc=IlPT2AEptyoA_yixCFOxXnANedT62v3IGhOOLi6U2jH5n5Gsf0qqUNNuXX8wL8LTUS3acjbMsRcYwk_i_7Em8BNOrxm&amp;eqid=a94b06b6989d10001000000358cbfb84&amp;wd=&amp;clk_info=%7B%22srcid%22%3A%221599%22%2C%22tplname%22%3A%22www_normal%22%2C%22t%22%3A1489763221859%2C%22xpath%22%3A%22div-a-h3%22%7D" target="_blank" rel="external">GDB的使用,重点讲解图像化 gdb -tui 方式</a><br><a href="https://sourceware.org/gdb/current/onlinedocs/gdb/TUI.html" target="_blank" rel="external">25 GDB Text User Interface</a><br><a href="https://www.cs.swarthmore.edu/~newhall/unixhelp/howto_gdb.html#start" target="_blank" rel="external">Debugging C and C++ programs with gdb (and ddd)</a><br><a href="http://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/gdb.html" target="_blank" rel="external">gdb 调试利器</a><br><a href="http://www.cnblogs.com/wangkangluo1/archive/2012/05/28/2521432.html" target="_blank" rel="external">gdb常用命令</a></p>
-</blockquote>
-<h1 id="4-Maple进阶"><a href="#4-Maple进阶" class="headerlink" title="4 Maple进阶"></a>4 Maple进阶</h1><h3 id="4-1-查看Maple所有命令"><a href="#4-1-查看Maple所有命令" class="headerlink" title="4.1 查看Maple所有命令"></a>4.1 查看Maple所有命令</h3><p>直接调用$MAPLE/maple调用的Mmaple的默认方法 (profiling + active testing)，可以使用下面语法查看Maple的所有命令。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom --help</div></pre></td></tr></table></figure>
-<p>结果有<br><img src="/2017/04/28/Maple-setup-tutorial/331089890.png" alt="img"><br>对于每一个命令也可使使用下面的命令查看其用途和用法，比如查看active命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom active --help</div></pre></td></tr></table></figure>
-<h3 id="4-2-Script模式"><a href="#4-2-Script模式" class="headerlink" title="4.2 Script模式"></a>4.2 Script模式</h3><p>有时，程序不适合直接从命令行运行（例如服务器程序）。 此外，很可能程序有副作用。 由于Maple会一次又一次地重新运行程序，我们需要一种方法来在每次执行之前和之后指定setup()和tear_down()函数。 因此，我们在Maple中引入一个脚本模式来测试这样的程序。<br>仍然使用上面的例子。 要使用脚本模式，程序员需要创建一个简单的Python脚本，并将其放入目录$MAPLE_HOME/ script/maple/benchmark。 这里作者已经创建了一些脚本，以shared_counter.py为例，脚本的内容如下所示：<br><img src="/2017/04/28/Maple-setup-tutorial/332018906.png" alt="img"><br>可以修改为如下形式</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">from maple.core import testingclass Test(testing.CmdlineTest):    def __init__(self, input_idx):        testing.CmdlineTest.__init__(self, input_idx)        self.add_input(([self.bin(), &apos;2&apos;], [None, None, None]))    def setup(self):        pass # do nothing    def tear_down(self):        pass # do nothing    def bin(self):        return &apos;~/example/main&apos;def get_test(input_idx=&apos;default&apos;):    return Test(input_idx)</div></pre></td></tr></table></figure>
-<p>程序员可以覆盖setup（）和tear_down（）函数，如果他们想在程序的每次执行之前和之后做一些初始化和清理作业。<br>之后，运行以下命令以验证脚本是否可用。 基准的名称应该与脚本文件的名称匹配。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/maple_script --help</div></pre></td></tr></table></figure>
-<p>只要结果中有shared_counter<br><img src="/2017/04/28/Maple-setup-tutorial/332734046.png" alt="img"><br>现在可以重新测试之前的程序，在测试之前，如果之前测试过，要删除掉之前测试产生的所有文件。然后使用下面的命令重新测试</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/maple_script --- shared_counter</div></pre></td></tr></table></figure>
-<h1 id="5-错误解决"><a href="#5-错误解决" class="headerlink" title="5. 错误解决"></a>5. 错误解决</h1><ul>
-<li>gdb建立远程连接时Ignoring packet error, continuing<br><img src="/2017/04/28/Maple-setup-tutorial/594ccdd1-e28d-4172-8ed0-44976c4f8505.png" alt="img"><br>如果出现上图所说问题，这可能是因为main在运行时没有设置运行参数，请仔细阅读第3.5节</li>
-<li>Segment fault<br>详见：<a href="[http://www.cnblogs.com/hello–the-world/archive/2012/05/31/2528326.html](http://www.cnblogs.com/hello--the-world/archive/2012/05/31/2528326.html">C/C++中的段错误（Segmentation fault）</a>)</li>
-<li>Attach to pid 3047 failed<br>错误信息为</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">E: Attach to pid 3047 failed. E:   The Operating System configuration prevents Pin from using the default (parent) injection mode.E:   To resolve this, either execute the following (as root):E:   $ echo 0 &gt; /proc/sys/kernel/yama/ptrace_scopeE:   Or use the &quot;-injection child&quot; option.E:   For more information, regarding child injection, see Injection section in the Pin User Manual.</div></pre></td></tr></table></figure>
-<p>详情如下图<br><img src="/2017/04/28/Maple-setup-tutorial/431553875.png" alt="img"><br>这是因为系统内核的kernel.yama.ptrace_scope变量设置为了1，详情见<br><a href="https://linux-audit.com/protect-ptrace-processes-kernel-yama-ptrace_scope/" target="_blank" rel="external">Protect against ptrace of processes: kernel.yama.ptrace_scope</a><br>只需要打开/proc/sys/kernel/yama/ptrace_scope文件，将1改成0即可。</p>
+                <div class="postShorten-excerpt" itemprop="articleBody">
+                    <p>Maple是一个面向C/C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。</p>
                     
+                        <a href="/2017/04/28/Maple-setup-tutorial/" class="postShorten-excerpt_link link">
+                            阅读全文
+                        </a>
                         
-                    
-                    
-                        <p>
-                            <a href="/2017/04/28/Maple-setup-tutorial/#post-footer" class="postShorten-excerpt_link link">
-                                注释和共享
-                            </a>
-                        </p>
                     
                 </div>
             
@@ -543,7 +393,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"></div>
+                        <div class="media-content hide-xs font-merryweather"><p>Maple是一个面向C/C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。</p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
@@ -562,7 +412,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p>问题:<br></div>
+                        <div class="media-content hide-xs font-merryweather"><p>VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。<strong>拿到项目的.py文件，怎么用VS Code进行调试</strong></p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
