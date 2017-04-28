@@ -17,48 +17,48 @@
 <meta name="keywords" content="Dynamic Analysis,C/C++,Maple">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="软件动态分析：Maple配置和使用详细教程">
-<meta property="og:url" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/index.html">
+<meta property="og:url" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/index.html">
 <meta property="og:site_name" content="PlyTools">
 <meta property="og:description" content="Maple是一种面向C/C++的以覆盖率驱动的主动动态测试工具。  Maple原理见论文：Maple: A Coverage-Driven Testing Tool for Multithreaded Programs  Maple源码及配置方式参考：https://github.com/jieyu/maple  以下讲述如何配置Maple使用环境：    1. 配置Maple环境1.1 配置目">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/3d562862-e3a5-4c66-a62a-adeb0eb97aee.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/13873312.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/18051765.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/465680171.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/545957390.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/26212515.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/196096796.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/197043187.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/197108531.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/197171640.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/198324187.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/c01a8231-51a6-4c47-9bba-0b60dd189c84.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/325004031.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/325565578.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/325708859.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/331089890.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/332018906.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/332734046.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/594ccdd1-e28d-4172-8ed0-44976c4f8505.png">
-<meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/431553875.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/3d562862-e3a5-4c66-a62a-adeb0eb97aee.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/13873312.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/18051765.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/465680171.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/545957390.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/26212515.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/196096796.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/197043187.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/197108531.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/197171640.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/198324187.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/c01a8231-51a6-4c47-9bba-0b60dd189c84.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/325004031.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/325565578.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/325708859.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/331089890.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/332018906.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/332734046.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/594ccdd1-e28d-4172-8ed0-44976c4f8505.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/431553875.png">
 <meta property="og:updated_time" content="2017-04-28T12:30:03.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="软件动态分析：Maple配置和使用详细教程">
 <meta name="twitter:description" content="Maple是一种面向C/C++的以覆盖率驱动的主动动态测试工具。  Maple原理见论文：Maple: A Coverage-Driven Testing Tool for Multithreaded Programs  Maple源码及配置方式参考：https://github.com/jieyu/maple  以下讲述如何配置Maple使用环境：    1. 配置Maple环境1.1 配置目">
-<meta name="twitter:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/3d562862-e3a5-4c66-a62a-adeb0eb97aee.png">
+<meta name="twitter:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/3d562862-e3a5-4c66-a62a-adeb0eb97aee.png">
     
     
         
     
     
-        <meta property="og:image" content="http://plytools.com/assets/images/starry-sky.jpg"/>
+        <meta property="og:image" content="http://plytools.github.io/assets/images/starry-sky.jpg"/>
     
     
-        <meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/maple.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/maple.jpg" />
+        <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.jpg" />
     
     
-        <meta property="og:image" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/cover.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.com/2017/04/28/Maple-setup-tutorial/cover.jpg" />
+        <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/cover.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/cover.jpg" />
     
     
     <!--STYLES-->
@@ -466,7 +466,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.com/2017/04/28/Maple-setup-tutorial/">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                     <i class="fa fa-facebook-official"></i>
                 </a>
             </li>
@@ -474,7 +474,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.com/2017/04/28/Maple-setup-tutorial/">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                     <i class="fa fa-twitter"></i>
                 </a>
             </li>
@@ -482,7 +482,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.com/2017/04/28/Maple-setup-tutorial/">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                     <i class="fa fa-google-plus"></i>
                 </a>
             </li>
@@ -558,7 +558,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.com/2017/04/28/Maple-setup-tutorial/">
+                <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                     <i class="fa fa-facebook-official"></i>
                 </a>
             </li>
@@ -566,7 +566,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.com/2017/04/28/Maple-setup-tutorial/">
+                <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                     <i class="fa fa-twitter"></i>
                 </a>
             </li>
@@ -574,7 +574,7 @@
             
             
             <li class="post-action hide-xs">
-                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.com/2017/04/28/Maple-setup-tutorial/">
+                <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                     <i class="fa fa-google-plus"></i>
                 </a>
             </li>
@@ -605,7 +605,7 @@
             
             
             <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.com/2017/04/28/Maple-setup-tutorial/">
+                <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                     <i class="fa fa-facebook-official"></i><span>分享到 Facebook</span>
                 </a>
             </li>
@@ -613,7 +613,7 @@
             
             
             <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.com/2017/04/28/Maple-setup-tutorial/">
+                <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                     <i class="fa fa-twitter"></i><span>分享到 Twitter</span>
                 </a>
             </li>
@@ -621,7 +621,7 @@
             
             
             <li class="share-option">
-                <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://plytools.com/2017/04/28/Maple-setup-tutorial/">
+                <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                     <i class="fa fa-google-plus"></i><span>分享到 Google+</span>
                 </a>
             </li>
@@ -691,7 +691,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.com/2017/04/28/VSCode-Debug-Python/">
+                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/VSCode-Debug-Python/">
                             <h3 class="media-heading">使用VS Code调试Python代码</h3>
                         </a>
                         <span class="media-meta">
@@ -710,13 +710,13 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.com/2017/04/28/Maple-setup-tutorial/">
-                            <img class="media-image" src="http://plytools.com/2017/04/28/Maple-setup-tutorial/maple.jpg" width="90" height="90"/>
+                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
+                            <img class="media-image" src="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.jpg" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.com/2017/04/28/Maple-setup-tutorial/">
+                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
                             <h3 class="media-heading">软件动态分析：Maple配置和使用详细教程</h3>
                         </a>
                         <span class="media-meta">
@@ -757,7 +757,7 @@
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'http://plytools.com/2017/04/28/Maple-setup-tutorial/';
+                 this.page.url = 'http://plytools.github.io/2017/04/28/Maple-setup-tutorial/';
                  
                     this.page.identifier = '2017/04/28/Maple-setup-tutorial/';
                  
