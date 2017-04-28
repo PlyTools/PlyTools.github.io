@@ -2,28 +2,35 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://plytools.github.io/2017/04/28/VSCode-Debug-Python/</loc>
+    <loc>http://plytools.com/2017/04/28/Maple-setup-tutorial/</loc>
+    
+    <lastmod>2017-04-28T08:03:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://plytools.com/2017/04/28/VSCode-Debug-Python/</loc>
     
     <lastmod>2017-04-28T06:33:21.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://plytools.github.io/all-archives/index.html</loc>
+    <loc>http://plytools.com/all-archives/index.html</loc>
     
     <lastmod>2017-04-27T13:55:36.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://plytools.github.io/all-tags/index.html</loc>
+    <loc>http://plytools.com/all-tags/index.html</loc>
     
     <lastmod>2017-04-27T13:55:05.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://plytools.github.io/all-categories/index.html</loc>
+    <loc>http://plytools.com/all-categories/index.html</loc>
     
     <lastmod>2017-04-27T13:54:36.000Z</lastmod>
     
