@@ -15,13 +15,13 @@
         <link rel="icon" href="http://plytools.github.io/assets/images/rq.jpg">
     
     
-    <meta name="description" content="技术的世界是纯粹而新奇的，我也想记录一些探索和思考与大家分享。于是萌生了写博客的想法，可是颜值控该以什么样的姿势开博客呢？">
+    <meta name="description" content="技术的世界是纯粹而新奇的，想记录一些探索和思考与大家分享，于是萌生了写博客的想法。可是，颜值控该以什么样的姿势开博客呢？">
 <meta name="keywords" content="Blog">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="使用Hexo搭建Github博客:(一)20min搭完主体框架">
 <meta property="og:url" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/index.html">
 <meta property="og:site_name" content="PlyTools">
-<meta property="og:description" content="技术的世界是纯粹而新奇的，我也想记录一些探索和思考与大家分享。于是萌生了写博客的想法，可是颜值控该以什么样的姿势开博客呢？">
+<meta property="og:description" content="技术的世界是纯粹而新奇的，想记录一些探索和思考与大家分享，于是萌生了写博客的想法。可是，颜值控该以什么样的姿势开博客呢？">
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/111.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/222.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/333.png">
@@ -36,10 +36,10 @@
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1212.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1313.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1414.png">
-<meta property="og:updated_time" content="2017-04-29T07:41:08.000Z">
+<meta property="og:updated_time" content="2017-04-29T07:50:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用Hexo搭建Github博客:(一)20min搭完主体框架">
-<meta name="twitter:description" content="技术的世界是纯粹而新奇的，我也想记录一些探索和思考与大家分享。于是萌生了写博客的想法，可是颜值控该以什么样的姿势开博客呢？">
+<meta name="twitter:description" content="技术的世界是纯粹而新奇的，想记录一些探索和思考与大家分享，于是萌生了写博客的想法。可是，颜值控该以什么样的姿势开博客呢？">
 <meta name="twitter:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/111.png">
     
     
@@ -384,7 +384,7 @@
 <p>这两个的区别在于用HTTPS链接每次需要验证邮箱和密码，而SSH只需要验证本地是否有匹配的id_rsa.pub公钥。因为我们在1.1.3中生成并配好了SSH，所以使用SSH的地址不需要邮箱密码验证，更方便。</p>
 </blockquote>
 <ul>
-<li>创建博客文章</li>
+<li><strong>创建博客文章</strong></li>
 </ul>
 <p>假设我要创建一片名字叫<code>“我的第一篇博客”</code>的文章，那么在终端输入：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// 新建一篇文章</div><div class="line">hexo new &quot;我的第一篇博客&quot;</div></pre></td></tr></table></figure>
@@ -396,7 +396,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">太棒了，我写下了第一篇博客！</div></pre></td></tr></table></figure>
 <p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1212.png" alt="img"></p>
 <ul>
-<li>本地发布</li>
+<li><strong>本地发布</strong></li>
 </ul>
 <p>保存后，我们进行本地发布：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
@@ -411,7 +411,7 @@
 <p>注：我们也可以手动添加Markdown文件在<code>Blogname/source/_deploy</code>文件夹下，其效果同样可以媲美<code>hexo new &lt;article&gt;</code>：</p>
 </blockquote>
 <ul>
-<li>公开发布</li>
+<li><strong>公开发布</strong></li>
 </ul>
 <p>但是毕竟我们目前发布的只有本机看得到，怎么让其他人看到我们写的博客呢？这时候我们来看看博客的部署。</p>
 <p>我们只要在终端执行这样的命令即可：</p>
@@ -422,8 +422,7 @@
 <p>​    方法2：如果方法1没效果，可能是错误添加了plugin，需要把Blogname/_config.yml文件中你新添加的plugin内容删掉。</p>
 </blockquote>
 <hr>
-<p>本教程为博客搭建入门教程，还会有后续教程，敬请期待！</p>
-<p>大家也可以根据自己的需求做进一步改进，如更换主题、删除文章等，详情参考<a href="https://hexo.io/docs/" target="_blank" rel="external">官方文档</a>。</p>
+<p>本教程为博客搭建入门教程，还会有后续教程，敬请期待！<br>大家也可以根据自己的需求做进一步改进，如更换主题、删除文章等，详情参考<a href="https://hexo.io/docs/" target="_blank" rel="external">官方文档</a>。</p>
             
         </div>
     </div>
@@ -727,7 +726,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p>技术的世界是纯粹而新奇的，我也想记录一些探索和思考与大家分享。于是萌生了写博客的想法，可是<strong>颜值控该以什么样的姿势开博客呢？</strong></p></div>
+                        <div class="media-content hide-xs font-merryweather"><p>技术的世界是纯粹而新奇的，想记录一些探索和思考与大家分享，于是萌生了写博客的想法。可是，<strong>颜值控该以什么样的姿势开博客呢？</strong></p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>

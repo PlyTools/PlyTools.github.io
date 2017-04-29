@@ -42,7 +42,7 @@
 <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/332734046.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/594ccdd1-e28d-4172-8ed0-44976c4f8505.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/431553875.png">
-<meta property="og:updated_time" content="2017-04-28T18:36:06.000Z">
+<meta property="og:updated_time" content="2017-04-29T08:03:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="软件动态分析：Maple配置和使用详细教程">
 <meta name="twitter:description" content="Maple是一个面向C/C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。">
@@ -313,19 +313,19 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~$ mkdir DA$ cd DA</div></pre></td></tr></table></figure>
 <p>将下载的文件放在DA文件夹中解压</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar zxvf OLD:with_DCFG_support:pinplay-drdebug-2.2-pldi2015-updated-pin-2.14-71313-gcc.4.4.7-linux.tar.gz</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ tar zxvf OLD:with_DCFG_support:pinplay-drdebug-2.2-pldi2015-updated-pin-2.14-71313-gcc.4.4.7-linux.tar.gz</div></pre></td></tr></table></figure>
 <ul>
 <li><strong>安装支持库</strong><br>因为PinPlay是由PIN改进而来的工具，为了支持PIN的运行，需要32bit的库支持<br>安装32bit库</li>
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install ia32-libs</div></pre></td></tr></table></figure>
 <p>然后，因为PIN还要使用g++编译，甚至交叉编译，所以使用如下方式安装</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install build-essential module-assistant  $ sudo apt-get install gcc-multilib g++-multilib</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-get install build-essential module-assistant  </div><div class="line">$ sudo apt-get install gcc-multilib g++-multilib</div></pre></td></tr></table></figure>
 <ul>
 <li><strong>安装PIN</strong><br>从命令行进入PinPlay文件夹</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cd ~/DA/pinplay-drdebug-2.2-pldi2015-pin-2.14-71313-gcc.4.4.7-linux</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~/DA/pinplay-drdebug-2.2-pldi2015-pin-2.14-71313-gcc.4.4.7-linux</div></pre></td></tr></table></figure>
 <p>然后</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd source/tools/SimpleExamples$ make obj-intel64/opcodemix.so$ ../../../pin -t obj-intel64/opcodemix.so -- /bin/ls</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ cd source/tools/SimpleExamples$ make obj-intel64/opcodemix.so</div><div class="line">$ ../../../pin -t obj-intel64/opcodemix.so -- /bin/ls</div></pre></td></tr></table></figure>
 <p>成功后，结果为<br><img src="/2017/04/28/Maple-setup-tutorial/13873312.png" alt="img"><br>打开用户目录下的.dashrc文件设置<strong>PIN_ROOT</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~$ gedit .bashrc</div></pre></td></tr></table></figure>
 <p>在.dashrc文件结尾添加</p>
@@ -335,9 +335,9 @@
 <ul>
 <li><strong>安装PinPlay</strong></li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd $PIN_ROOT/extras/pinplay/examples$ make instclean$ make</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ cd $PIN_ROOT/extras/pinplay/examples</div><div class="line">$ make instclean</div><div class="line">$ make</div></pre></td></tr></table></figure>
 <p>同理配置PIN_HOME</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~$ gedit .bashrc</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ cd ~</div><div class="line">$ gedit .bashrc</div></pre></td></tr></table></figure>
 <p>添加如下命令到结尾</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">export PIN_HOME=&quot;/home/ren/DA/pinplay-drdebug-2.2-pldi2015-pin-2.14-71313-gcc.4.4.7-linux&quot;</div></pre></td></tr></table></figure>
 <p>关闭保存，重新加载</p>
@@ -347,9 +347,9 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~/DA$ tar zxvf protobuf-2.4.1.tar.gz</div></pre></td></tr></table></figure>
 <p>然后在protobuf-2.4.1目录下运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd protobuf-2.4.1  $ ./configure  $ make  $ make check  $ sudo make install</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ cd protobuf-2.4.1  </div><div class="line">$ ./configure  </div><div class="line">$ make  </div><div class="line">$ make check  </div><div class="line">$ sudo make install</div></pre></td></tr></table></figure>
 <p>无报错则OK，然后配置PROTOBUF_HOME</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~$ gedit .bashrc</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ cd ~</div><div class="line">$ gedit .bashrc</div></pre></td></tr></table></figure>
 <p>添加如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">export PROTOBUF_HOME=&quot;/usr/local&quot;</div></pre></td></tr></table></figure>
 <p>关闭并保存，然后重新加载.bashrc</p>
@@ -362,7 +362,7 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~/DA$ unzip maple-master.zip</div></pre></td></tr></table></figure>
 <p>然后配置$MAPLE_HOME</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~$ gedit .bashrc</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ cd ~</div><div class="line">$ gedit .bashrc</div></pre></td></tr></table></figure>
 <p>添加如下命令到结尾</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">export MAPLE_HOME=&quot;/home/ren/DA/maple-master&quot;</div></pre></td></tr></table></figure>
 <p>关闭保存，重新加载</p>
@@ -370,17 +370,17 @@
 <ul>
 <li><strong>安装</strong></li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd $MAPLE_HOME$ make$ make compiletype=release</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ cd $MAPLE_HOME</div><div class="line">$ make</div><div class="line">$ make compiletype=release</div></pre></td></tr></table></figure>
 <p>成功之后，maple的主页面下面会多出两个文件<br><img src="/2017/04/28/Maple-setup-tutorial/18051765.png" alt="img"></p>
 <ul>
 <li><strong>给予权限</strong><br>然后配置Maple让其能够修改调度的优先级。<br>使用ulimit命令可查看Linux平台的实时优先级</li>
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ ulimit -e -r</div></pre></td></tr></table></figure>
 <p><img src="/2017/04/28/Maple-setup-tutorial/465680171.png" alt="img"><br>要更改，需要root权限，修改/etc/security/limits.conf文件<br>可使用如下命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo gedit /etc/security/limits.conf</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo gedit /etc/security/limits.conf</div></pre></td></tr></table></figure>
 <p>打开文件后，在末尾添加如下内容<br><img src="/2017/04/28/Maple-setup-tutorial/545957390.png" alt="img"><br>注意，这里的ren要换成你自己的用户名，然后保存。<br>配置成功！！</p>
 <h1 id="3-使用Maple"><a href="#3-使用Maple" class="headerlink" title="3. 使用Maple"></a>3. 使用Maple</h1><h3 id="3-1-测试"><a href="#3-1-测试" class="headerlink" title="3.1 测试"></a>3.1 测试</h3><p>以$MAPLE_HOME/example/shared_counter下面的main.cc为例<br>使用下面的命令，将main.cc编译成可执行文件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd $MAPLE_HOME/example/shared_counter$ g++ -fno-omit-frame-pointer -g -pthread -o main main.cc</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ cd $MAPLE_HOME/example/shared_counter</div><div class="line">$ g++ -fno-omit-frame-pointer -g -pthread -o main main.cc</div></pre></td></tr></table></figure>
 <blockquote>
 <p>注意：下面所有命令都是在$MAPLE_HOME/example/shared_counter路径下运行的<br>然后用下面命令运行，使用maple测试可执行文件main，最后一个参数2是main文件运行所需参数</p>
 </blockquote>
@@ -390,15 +390,15 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom display test_history</div></pre></td></tr></table></figure>
 <p>结果如下<br><img src="/2017/04/28/Maple-setup-tutorial/196096796.png" alt="img"><br>第一列表示目标iRoots的标号为24，最后一列1489391714是触发这个iRoot所需的随机仲裁的随机种子。所以要重新触发这个iRoot引起的bug，只需要提供iRoot的标号和随机数种子给maple的active scheduler即可。</p>
 <h3 id="3-3-重现bug"><a href="#3-3-重现bug" class="headerlink" title="3.3 重现bug"></a>3.3 重现bug</h3><p>重现特定的iRoot/bug，使用下述命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom active --target_iroot=24 --random_seed=1489391714 --- ./main 2$ main: main.cc:36: int main(int, char**): Assertion `global_count==NUM_THREADS&apos; failed.[MAPLE] === active iteration 1 done === (0.617391) (/home/jieyu/example)[MAPLE] active fatal error detected</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom active --target_iroot=24 --random_seed=1489391714 --- ./main 2</div></pre></td></tr></table></figure>
 <p>如下图所示，确实触发了这个编号为24的iRoot<br><img src="/2017/04/28/Maple-setup-tutorial/197043187.png" alt="img"></p>
 <p>###3.4 PinPlay记录和重现bug<br>使用下述命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom active --pinplay --pinplay_options=&quot;-log:basename,failing.pinball/log&quot; \  --target_iroot=24 --random_seed=1489391714 --- ./main 2</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom active --pinplay --pinplay_options=&quot;-log:basename,failing.pinball/log&quot; --target_iroot=24 --random_seed=1489391714 --- ./main 2</div></pre></td></tr></table></figure>
 <p>结果如下<br><img src="/2017/04/28/Maple-setup-tutorial/197108531.png" alt="img"><br>并且会在当前测试文件所在文件夹下生成一个记录运行过程的日志文件夹<br><img src="/2017/04/28/Maple-setup-tutorial/197171640.png" alt="img"><br>使用下面的命令可以从日志重现该次运行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $PIN_HOME/pin -t $PIN_HOME/extras/pinplay/bin/intel64/pinplay-driver.so \  -replay -replay:addr_trans -replay:basename failing.pinball/log -- /bin/true</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $PIN_HOME/pin -t $PIN_HOME/extras/pinplay/bin/intel64/pinplay-driver.so -replay -replay:addr_trans -replay:basename failing.pinball/log -- /bin/true</div></pre></td></tr></table></figure>
 <p>如下图所示<br><img src="/2017/04/28/Maple-setup-tutorial/198324187.png" alt="img"><br>按照日志的记录，对触发这个iRoot的运行进行了重现</p>
 <h3 id="3-5-使用GDB调试"><a href="#3-5-使用GDB调试" class="headerlink" title="3.5 使用GDB调试"></a>3.5 使用GDB调试</h3><p>运行下面的命令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$  $PIN_HOME/pin -appdebug -t  $PIN_HOME/extras/pinplay/bin/intel64/pinplay-driver.so \  -replay -replay:addr_trans -replay:basename failing.pinball/log -- /bin/trueApplication stopped until continued from debugger.Start GDB, then issue this command at the (gdb) prompt:    target remote :37020</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$  $PIN_HOME/pin -appdebug -t  $PIN_HOME/extras/pinplay/bin/intel64/pinplay-driver.so -replay -replay:addr_trans -replay:basename failing.pinball/log -- bin/trueApplication</div></pre></td></tr></table></figure>
 <p>然后，重新打开一个shell，在其中以gdb加载可执行文件main</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ gdb main</div></pre></td></tr></table></figure>
 <p>然后，建立远程调试的链接</p>
@@ -408,7 +408,7 @@
 <p>使用下面命令确认，运行参数是不是设置成功了</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(gdb) show args</div></pre></td></tr></table></figure>
 <p>结果如下<br><img src="/2017/04/28/Maple-setup-tutorial/c01a8231-51a6-4c47-9bba-0b60dd189c84.png" alt="img"><br>然后可以使用gdbtui的source调试窗口，并且给main函数添加一个断点</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(gdb) layout src(gdb) b main</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(gdb) layout src</div><div class="line">(gdb) b main</div></pre></td></tr></table></figure>
 <blockquote>
 <p><em>注意：</em>语法中因为breakpoint命令与其他命令的头字母不重复，所以可以直接以b简写；如果使用run命令，一般情况下可以用r简写代表，但是在远程调试中，不支持run命令（因为已经启动），所以不行。其他的命令与breakpoint类似，比如continue可简写为c。</p>
 </blockquote>
@@ -425,17 +425,23 @@
 <p>结果有<br><img src="/2017/04/28/Maple-setup-tutorial/331089890.png" alt="img"><br>对于每一个命令也可使使用下面的命令查看其用途和用法，比如查看active命令</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/script/idiom active --help</div></pre></td></tr></table></figure>
 <h3 id="4-2-Script模式"><a href="#4-2-Script模式" class="headerlink" title="4.2 Script模式"></a>4.2 Script模式</h3><p>有时，程序不适合直接从命令行运行（例如服务器程序）。 此外，很可能程序有副作用。 由于Maple会一次又一次地重新运行程序，我们需要一种方法来在每次执行之前和之后指定setup()和tear_down()函数。 因此，我们在Maple中引入一个脚本模式来测试这样的程序。<br>仍然使用上面的例子。 要使用脚本模式，程序员需要创建一个简单的Python脚本，并将其放入目录$MAPLE_HOME/ script/maple/benchmark。 这里作者已经创建了一些脚本，以shared_counter.py为例，脚本的内容如下所示：<br><img src="/2017/04/28/Maple-setup-tutorial/332018906.png" alt="img"><br>可以修改为如下形式</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">from maple.core import testingclass Test(testing.CmdlineTest):    def __init__(self, input_idx):        testing.CmdlineTest.__init__(self, input_idx)        self.add_input(([self.bin(), &apos;2&apos;], [None, None, None]))    def setup(self):        pass # do nothing    def tear_down(self):        pass # do nothing    def bin(self):        return &apos;~/example/main&apos;def get_test(input_idx=&apos;default&apos;):    return Test(input_idx)</div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> maple.core <span class="keyword">import</span> testingclass </div><div class="line">	Test(testing.CmdlineTest):    </div><div class="line">		<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, input_idx)</span>:</span>        </div><div class="line">			testing.CmdlineTest.__init__(self, input_idx)        </div><div class="line">			self.add_input(([self.bin(), <span class="string">'2'</span>], [<span class="keyword">None</span>, <span class="keyword">None</span>, <span class="keyword">None</span>]))    </div><div class="line">		<span class="function"><span class="keyword">def</span> <span class="title">setup</span><span class="params">(self)</span>:</span>        </div><div class="line">			<span class="keyword">pass</span> <span class="comment"># do nothing    </span></div><div class="line">		<span class="function"><span class="keyword">def</span> <span class="title">tear_down</span><span class="params">(self)</span>:</span>        </div><div class="line">			<span class="keyword">pass</span> <span class="comment"># do nothing    </span></div><div class="line">		<span class="function"><span class="keyword">def</span> <span class="title">bin</span><span class="params">(self)</span>:</span>        </div><div class="line">			<span class="keyword">return</span> <span class="string">'~/example/main'</span></div><div class="line">		<span class="function"><span class="keyword">def</span> <span class="title">get_test</span><span class="params">(input_idx=<span class="string">'default'</span>)</span>:</span>    </div><div class="line">			<span class="keyword">return</span> Test(input_idx)</div></pre></td></tr></table></figure>
 <p>程序员可以覆盖setup（）和tear_down（）函数，如果他们想在程序的每次执行之前和之后做一些初始化和清理作业。<br>之后，运行以下命令以验证脚本是否可用。 基准的名称应该与脚本文件的名称匹配。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/maple_script --help</div></pre></td></tr></table></figure>
 <p>只要结果中有shared_counter<br><img src="/2017/04/28/Maple-setup-tutorial/332734046.png" alt="img"><br>现在可以重新测试之前的程序，在测试之前，如果之前测试过，要删除掉之前测试产生的所有文件。然后使用下面的命令重新测试</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ $MAPLE_HOME/maple_script --- shared_counter</div></pre></td></tr></table></figure>
 <h1 id="5-错误解决"><a href="#5-错误解决" class="headerlink" title="5. 错误解决"></a>5. 错误解决</h1><ul>
-<li>gdb建立远程连接时Ignoring packet error, continuing<br><img src="/2017/04/28/Maple-setup-tutorial/594ccdd1-e28d-4172-8ed0-44976c4f8505.png" alt="img"><br>如果出现上图所说问题，这可能是因为main在运行时没有设置运行参数，请仔细阅读第3.5节</li>
-<li>Segment fault<br>详见：<a href="[http://www.cnblogs.com/hello–the-world/archive/2012/05/31/2528326.html](http://www.cnblogs.com/hello--the-world/archive/2012/05/31/2528326.html">C/C++中的段错误（Segmentation fault）</a>)</li>
+<li>gdb建立远程连接时Ignoring packet error, continuing </li>
+</ul>
+<p><img src="/2017/04/28/Maple-setup-tutorial/594ccdd1-e28d-4172-8ed0-44976c4f8505.png" alt="img"><br>如果出现上图所说问题，这可能是因为main在运行时没有设置运行参数，请仔细阅读第3.5节</p>
+<ul>
+<li>Segment fault </li>
+</ul>
+<p>详见：<a href="[http://www.cnblogs.com/hello–the-world/archive/2012/05/31/2528326.html](http://www.cnblogs.com/hello--the-world/archive/2012/05/31/2528326.html">C/C++中的段错误（Segmentation fault）</a>)</p>
+<ul>
 <li>Attach to pid 3047 failed<br>错误信息为</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">E: Attach to pid 3047 failed. E:   The Operating System configuration prevents Pin from using the default (parent) injection mode.E:   To resolve this, either execute the following (as root):E:   $ echo 0 &gt; /proc/sys/kernel/yama/ptrace_scopeE:   Or use the &quot;-injection child&quot; option.E:   For more information, regarding child injection, see Injection section in the Pin User Manual.</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">E: Attach to pid 3047 failed. E:   The Operating System configuration prevents Pin from using the default (parent) injection mode.E:   To resolve this, either execute the following (as root):E:   $ echo 0 &gt; /proc/sys/kernel/yama/ptrace_scopeE:   Or use the "-injection child" option.E:   For more information, regarding child injection, see Injection section in the Pin User Manual.</div></pre></td></tr></table></figure>
 <p>详情如下图<br><img src="/2017/04/28/Maple-setup-tutorial/431553875.png" alt="img"><br>这是因为系统内核的kernel.yama.ptrace_scope变量设置为了1，详情见<br><a href="https://linux-audit.com/protect-ptrace-processes-kernel-yama-ptrace_scope/" target="_blank" rel="external">Protect against ptrace of processes: kernel.yama.ptrace_scope</a><br>只需要打开/proc/sys/kernel/yama/ptrace_scope文件，将1改成0即可。</p>
             
         </div>
@@ -740,7 +746,7 @@
                                 
                             </span>
                         </span>
-                        <div class="media-content hide-xs font-merryweather"><p>技术的世界是纯粹而新奇的，我也想记录一些探索和思考与大家分享。于是萌生了写博客的想法，可是<strong>颜值控该以什么样的姿势开博客呢？</strong></p></div>
+                        <div class="media-content hide-xs font-merryweather"><p>技术的世界是纯粹而新奇的，想记录一些探索和思考与大家分享，于是萌生了写博客的想法。可是，<strong>颜值控该以什么样的姿势开博客呢？</strong></p></div>
                     </div>
                     <div style="clear:both;"></div>
                     <hr>
