@@ -1,0 +1,783 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="PlyTools">
+    <title>使用Hexo搭建Github博客:(一)20min搭完主体框架 - PlyTools</title>
+    <meta name="author" content="Qian Ren">
+    
+        <meta name="keywords" content="Blog,Hexo,GitHub,github.io,Mac OS">
+    
+    
+        <link rel="icon" href="http://plytools.github.io/assets/images/rq.jpg">
+    
+    
+    <meta name="description" content="技术的世界是纯粹而新奇的，我也想记录一些探索和思考与大家分享。于是萌生了写博客的想法，可是颜值控该以什么样的姿势开博客呢？">
+<meta name="keywords" content="Blog">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="使用Hexo搭建Github博客:(一)20min搭完主体框架">
+<meta property="og:url" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/index.html">
+<meta property="og:site_name" content="PlyTools">
+<meta property="og:description" content="技术的世界是纯粹而新奇的，我也想记录一些探索和思考与大家分享。于是萌生了写博客的想法，可是颜值控该以什么样的姿势开博客呢？">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/111.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/222.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/333.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/444.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/555.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/666.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/777.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/888.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/999.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1010.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1111.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1212.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1313.png">
+<meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1414.png">
+<meta property="og:updated_time" content="2017-04-29T07:38:23.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Hexo搭建Github博客:(一)20min搭完主体框架">
+<meta name="twitter:description" content="技术的世界是纯粹而新奇的，我也想记录一些探索和思考与大家分享。于是萌生了写博客的想法，可是颜值控该以什么样的姿势开博客呢？">
+<meta name="twitter:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/111.png">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="http://plytools.github.io/assets/images/starry-sky.jpg"/>
+    
+    
+        <meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/hexo-logo.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/hexo-logo.png" />
+    
+    
+        <meta property="og:image" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/hexo.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/hexo.png" />
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-yrst5vo1nxaxbp2g3v9na2wg1lixlpr3ghbjdvskeixmu79deycecx3rh4bt.min.css">
+    <!--STYLES END-->
+    
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">PlyTools</a>
+    </div>
+    
+        
+            <a  class="header-right-picture "
+                href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
+                </a>
+                <h4 class="sidebar-profile-name">Qian Ren</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>author.bio</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                        <span class="sidebar-button-desc">搜索</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/PlyTools" target="_blank">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/qian-ren-831486b3/" target="_blank">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:qianren1024@gmail.com" target="_blank">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                        <span class="sidebar-button-desc">邮箱</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+        <div class="post-header-cover
+                    text-center
+                    "
+             style="background-image:url('/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/hexo.png');"
+             data-behavior="4">
+            
+        </div>
+
+            <div id="main" data-behavior="4"
+                 class="hasCover
+                        hasCoverMetaOut
+                        hasCoverCaption">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+        <span class="post-header-cover-caption caption">精于心，简于形</span>
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title" itemprop="headline">
+            使用Hexo搭建Github博客:(一)20min搭完主体框架
+        </h1>
+    
+    <div class="post-meta">
+    <time itemprop="datePublished" datetime="2017-04-29T12:05:20+08:00">
+	
+		    4月 29, 2017
+    	
+    </time>
+    
+</div>
+
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <!-- excerpt -->
+<blockquote>
+<p>因为本文是对学习过程的记录和总结，大量借鉴了<a href="http://www.jianshu.com/p/e99ed60390a8" target="_blank" rel="external">20分钟教你使用hexo搭建github博客</a>，且对遇到的坑做了修改和补充，介绍比较详细，所以适合新手阅读。</p>
+<p>由于使用的是苹果机，所以本教程以Mac OS为参考，其实mac与windows搭建github博客相差无几，如果有用windows的小伙伴感到不适，可以参考<a href="http://www.jianshu.com/p/701b1095da11" target="_blank" rel="external">手把手教你建github技术博客</a>教程。</p>
+</blockquote>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><h3 id="为什么开始博客？"><a href="#为什么开始博客？" class="headerlink" title="为什么开始博客？"></a>为什么开始博客？</h3><p>作为一个刚接触IT行业的新人，面对各种计算机的疑难杂症，一步三搜索，每天Baidu，Google是必不可少的。</p>
+<p>IT行业日新月异，幸运的是，有很多先辈通过博客、视频、MOOC等形式分享自己的经验，不幸的是，海量资料却有极其强的时效性。经常需要进行筛选、组合来完成自己当下的目标。（这个很机器学习）</p>
+<p>所以，作为后辈，</p>
+<ul>
+<li><strong>学而时习，学而时思</strong>：有必要把学到的知识记录整理，促进记忆理解，</li>
+<li><strong>受人恩惠</strong>：有责任把自己踩过的坑、整合的最新知识记录下来，供朋友们参考。</li>
+</ul>
+<p>所以打算用这个文章系列和大家分享使用hexo搭建github博客的过程。</p>
+<h3 id="为什么是Hexo和Github？"><a href="#为什么是Hexo和Github？" class="headerlink" title="为什么是Hexo和Github？"></a>为什么是Hexo和Github？</h3><p>起初仅有一个写博客的想法，于是围绕这个想法做了简单的调研，除了查找中文IT资料经常见到的新浪、网易、天涯、CSDN、简书、博客园等博客平台以及各种个人网站，也陆续了解了wordpress，hexo等等创建个人网站或博客的工具。</p>
+<p>作为一名颜值控，我对博客的要求不高，只有5个：<strong>颜值高、排版好、简洁风、无广告、方便写</strong>，于是，迅速pass掉了新浪、CSDN等造成严重视觉污染的方案，现有中文博客平台也就简书还凑活。</p>
+<p>然而，这还不够，了解了几个hexo和wordpress的漂亮模板，最后将目标集中在了hexo和wordpress。这两个都可以自建平台，</p>
+<p>考虑到自己</p>
+<ul>
+<li><p>具有一定的编程功底（了解Github，熟悉命令行）</p>
+</li>
+<li><p>没有服务器，暂时不打算申请域名</p>
+</li>
+<li><p>对百度能不能搜到我的博客不着急（有方法，但麻烦）</p>
+</li>
+<li><p>Hexo又趋向简洁风</p>
+</li>
+</ul>
+<p>所以最终选择了Hexo+GitHub搭建个人博客的方式，下面我们正式开始探索这个新奇的小世界。</p>
+<h1 id="1-20min搭完主体框架"><a href="#1-20min搭完主体框架" class="headerlink" title="1. 20min搭完主体框架"></a>1. 20min搭完主体框架</h1><h3 id="1-1-设置GitHub部分"><a href="#1-1-设置GitHub部分" class="headerlink" title="1.1 设置GitHub部分"></a>1.1 设置GitHub部分</h3><h5 id="1-1-1-注册Github账号"><a href="#1-1-1-注册Github账号" class="headerlink" title="1.1.1 注册Github账号"></a>1.1.1 注册Github账号</h5><p>要使用GitHub，首先需要一个GitHub账号，如果没有，可点击<a href="https://github.com/" target="_blank" rel="external">这里</a>，进入官网进行注册。</p>
+<p>注册过程简单类似，不再赘述。</p>
+<h5 id="1-1-2-创建仓库"><a href="#1-1-2-创建仓库" class="headerlink" title="1.1.2 创建仓库"></a>1.1.2 创建仓库</h5><p>登录账号后，在Github页面的右上方选择New repository进行仓库的创建。</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/111.png" alt="img"></p>
+<p><strong>假设你要创建一个名字是<code>&quot;Blogname&quot;</code>的博客</strong>，那么在仓库名字输入框中输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Blogname.github.io</div></pre></td></tr></table></figure>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/222.png" alt="img"></p>
+<p>然后点击<code>Create repository</code>即可，这里的输入的<strong><code>“Blogname.github.io”</code>就是你将来的博客登录网址</strong>，直接输入地址栏就能登录</p>
+<blockquote>
+<p>注：图片上的PlyTools是我的GitHub昵称，不影响，不必在意。这里的仓库名称大小写只影响视觉显示（Github仓库名称等显示），但是地址栏登录等不做区分，你登录时用“blogNAME.github.io”也能顺利找到博客，所以不用在意。</p>
+</blockquote>
+<h5 id="1-1-3-生成添加秘钥"><a href="#1-1-3-生成添加秘钥" class="headerlink" title="1.1.3 生成添加秘钥"></a>1.1.3 生成添加秘钥</h5><p>打开Mac OS的终端，在终端（Terminal）输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh-keygen -t rsa -C &quot;Github的注册邮箱地址&quot;</div></pre></td></tr></table></figure>
+<p>一路<code>Enter</code>过来就好，待秘钥生成完毕，会得到两个文件<strong>id_rsa</strong>和<strong>id_rsa.pub</strong>，用带格式的记事本打开<strong>id_rsa.pub</strong>，Ctrl + a复制里面的所有内容，然后进入<a href="https://github.com/settings/ssh" target="_blank" rel="external">https://github.com/settings/ssh</a>：</p>
+<p>将复制的内容粘贴到Key的输入框，随便写好Title里面的内容，点击<code>Add SSH key</code>按钮即可。</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/333.png" alt="img"></p>
+<blockquote>
+<p>注：秘钥生成文件的位置</p>
+<p>​    Windows: C:/Users/用户名/.ssh/</p>
+<p>​    Mac: ~/.ssh/</p>
+<p>​        即生成的id_rsa和id_rsa.pub是在~/.ssh文件夹里面，这里的.ssh是隐藏文件夹，需要先设置隐藏文件可见才可以看到。</p>
+</blockquote>
+<h3 id="1-2-安装node-js"><a href="#1-2-安装node-js" class="headerlink" title="1.2 安装node.js"></a>1.2 安装node.js</h3><p>点击进入<a href="https://nodejs.org/en/" target="_blank" rel="external">node.js官网</a></p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/444.png" alt="img"></p>
+<p>目前node.js有两个推荐版本，分为<a href="https://nodejs.org/dist/v6.10.2/node-v6.10.2.pkg" target="_blank" rel="external">通用版</a>和<a href="https://nodejs.org/dist/v7.9.0/node-v7.9.0.pkg" target="_blank" rel="external">最新版</a>，点击可直接进行下载。下载好后，按照既定的套路安装即可。</p>
+<h3 id="1-3-安装git"><a href="#1-3-安装git" class="headerlink" title="1.3 安装git"></a>1.3 安装git</h3><p>Mac自带git指令，可在Terminal中使用如下命令进行检验：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git --version</div></pre></td></tr></table></figure>
+<p>如果显示了git的版本说明已经安装，可跳过本步骤。</p>
+<p>如果确实没有安装git，我们的git使用一般有两种方式，一种是<strong>图形化界面（GUI）</strong>，另一种是通过<strong>命令行</strong>，我们这里要使用的是后者，点击<a href="http://git-scm.com/downloads" target="_blank" rel="external">这里</a>进入git的下载网站下载git的安装包。</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/555.png" alt="img"></p>
+<h3 id="1-4-安装配置hexo"><a href="#1-4-安装配置hexo" class="headerlink" title="1.4 安装配置hexo"></a>1.4 安装配置hexo</h3><p>强调一下，这一步是搭建博客的核心，是重中之重。有能力的同学可以选择进入<a href="https://hexo.io/" target="_blank" rel="external">Hexo官网</a>自行查看<a href="https://hexo.io/docs/" target="_blank" rel="external">Hexo官方文档</a>，愿意听我叨叨的同学可以继续往下看。</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/666.png" alt="img"></p>
+<p>接下来我们的操作都将在Terminal终端进行：</p>
+<h5 id="1-4-1-定位博客本地放置的路径"><a href="#1-4-1-定位博客本地放置的路径" class="headerlink" title="1.4.1 定位博客本地放置的路径"></a>1.4.1 定位博客本地放置的路径</h5><p>这里我打算把博客的源码文件都放在Mac OS桌面的Blogs文件夹下面，也就是~/Desktop/Blogs/路径下面，如果没有Blogs文件夹，可用<code>mkdir</code>命令自行创建。定位博客所在目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ cd ~/Desktop/Blogs/</div></pre></td></tr></table></figure>
+<p><strong>强调</strong>：强烈建议<strong>不要</strong> 选择需要管理员权限才能创建文件（夹）的文件夹。</p>
+<h5 id="1-4-2-下载安装hexo"><a href="#1-4-2-下载安装hexo" class="headerlink" title="1.4.2 下载安装hexo"></a>1.4.2 下载安装hexo</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install -g hexo-cli</div></pre></td></tr></table></figure>
+<p>安装好hexo以后，在终端输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo</div></pre></td></tr></table></figure>
+<p>若出现下图，说明hexo安装成功：</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/777.png" alt="img"></p>
+<blockquote>
+<p><strong>错误：npm error: RPC failed</strong></p>
+<p>npm install时，出现npm error: RPC failed错误。将npm镜像修改为淘宝镜像，详细修改方式详见：<a href="http://blog.csdn.net/zhy421202048/article/details/53490247" target="_blank" rel="external">http://blog.csdn.net/zhy421202048/article/details/53490247</a></p>
+</blockquote>
+<h5 id="1-4-3-初始化博客"><a href="#1-4-3-初始化博客" class="headerlink" title="1.4.3 初始化博客"></a>1.4.3 初始化博客</h5><p>建立一个博客文件夹，并初始化博客，文件夹的名称可以随便起，这里为了方便，我们还是取之前的<code>&quot;Blogname&quot;</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">// 建立博客文件夹</div><div class="line">$ hexo init Blogname</div><div class="line">// 进入博客文件夹</div><div class="line">$ cd Blogname</div><div class="line">// node.js的命令，根据博客既定的dependencies配置安装所有的依赖包</div><div class="line">$ npm install</div></pre></td></tr></table></figure>
+<p>初始化博客以后，我们可以看到博客文件夹里的文件是这样的：</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/888.png" alt="img"></p>
+<h5 id="1-4-4-配置博客"><a href="#1-4-4-配置博客" class="headerlink" title="1.4.4 配置博客"></a>1.4.4 配置博客</h5><p>基于上一步，我们对博客修改相应的配置，我们用到<strong>_config.yml</strong>文件，下面是该文件的默认参数信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line"># Hexo Configuration</div><div class="line">## Docs: https://hexo.io/docs/configuration.html</div><div class="line">## Source: https://github.com/hexojs/hexo/</div><div class="line"></div><div class="line"># Site</div><div class="line">title: Hexo</div><div class="line">subtitle:</div><div class="line">description:</div><div class="line">author: John Doe</div><div class="line">language:</div><div class="line">timezone:</div><div class="line"></div><div class="line"># URL</div><div class="line">## If your site is put in a subdirectory, set url as &apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;</div><div class="line">url: http://yoursite.com</div><div class="line">root: /</div><div class="line">permalink: :year/:month/:day/:title/</div><div class="line">permalink_defaults:</div><div class="line"></div><div class="line"># Directory</div><div class="line">source_dir: source</div><div class="line">public_dir: public</div><div class="line">tag_dir: tags</div><div class="line">archive_dir: archives</div><div class="line">category_dir: categories</div><div class="line">code_dir: downloads/code</div><div class="line">i18n_dir: :lang</div><div class="line">skip_render:</div><div class="line"></div><div class="line"># Writing</div><div class="line">new_post_name: :title.md # File name of new posts</div><div class="line">default_layout: post</div><div class="line">titlecase: false # Transform title into titlecase</div><div class="line">external_link: true # Open external links in new tab</div><div class="line">filename_case: 0</div><div class="line">render_drafts: false</div><div class="line">post_asset_folder: false</div><div class="line">relative_link: false</div><div class="line">future: true</div><div class="line">highlight:</div><div class="line">  enable: true</div><div class="line">  line_number: true</div><div class="line">  auto_detect: false</div><div class="line">  tab_replace:</div><div class="line"></div><div class="line"># Category &amp; Tag</div><div class="line">default_category: uncategorized</div><div class="line">category_map:</div><div class="line">tag_map:</div><div class="line"></div><div class="line"># Date / Time format</div><div class="line">## Hexo uses Moment.js to parse and display date</div><div class="line">## You can customize the date format as defined in</div><div class="line">## http://momentjs.com/docs/#/displaying/format/</div><div class="line">date_format: YYYY-MM-DD</div><div class="line">time_format: HH:mm:ss</div><div class="line"></div><div class="line"># Pagination</div><div class="line">## Set per_page to 0 to disable pagination</div><div class="line">per_page: 10</div><div class="line">pagination_dir: page</div><div class="line"></div><div class="line"># Extensions</div><div class="line">## Plugins: https://hexo.io/plugins/</div><div class="line">## Themes: https://hexo.io/themes/</div><div class="line">theme: landscape</div><div class="line"></div><div class="line"># Deployment</div><div class="line">## Docs: https://hexo.io/docs/deployment.html</div><div class="line">deploy:</div><div class="line">  type:</div></pre></td></tr></table></figure>
+<p>看到这里，大家千万别被一长串英文给吓到了，我们实际上要修改的配置只有几项，拿我自己的配置，我们继续往下看：</p>
+<ul>
+<li><strong>修改网站相关信息</strong></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">title: Blogname</div><div class="line">subtitle: the stack of it nerds</div><div class="line">description: start from zero</div><div class="line">author: PlyTools</div><div class="line">language: zh-CN</div><div class="line">timezone: Asia/Shanghai</div></pre></td></tr></table></figure>
+<p>language和timezone都是有输入规范的，这里的<code>zh-CN</code>就是指简体中文，<code>Asia/Shanghai</code>其实就是北京时间，详细可参考<a href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes" target="_blank" rel="external">语言规范</a>和<a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank" rel="external">时区规范</a>。</p>
+<p><strong>注意</strong>：每一项的填写，其<code>:</code>后面都要保留一个空格，下同。</p>
+<ul>
+<li><strong>配置统一资源定位符（个人域名）</strong></li>
+</ul>
+<p>这里因为我没有域名，考虑到后面注册Google站长信息的方便，还是用<code>“blogname.github.io”</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">url: http://Blogname.github.io</div></pre></td></tr></table></figure>
+<p>对于root（根目录）、permalink（永久链接）、permalink_defaults（默认永久链接）等其他信息保持默认。</p>
+<ul>
+<li><strong>配置部署</strong></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">deploy:</div><div class="line">  type: git</div><div class="line">  repo: git@github.com:PlyTools/Blogname.github.io.git</div><div class="line">  branch: master</div></pre></td></tr></table></figure>
+<p>其中repo项是之前Github上创建好的仓库的地址，可以通过如下图所示的方式得到：</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/999.png" alt="img"></p>
+<p>branch是项目的分支，我们默认用主分支master。</p>
+<blockquote>
+<p>途中可以看出github的仓库有两个地址，HTTPS的和SSH的，以这里的Blogname仓库为例，他的两个地址分别是：</p>
+<p>​    HTTPS：<code>https://github.com/PlyTools/Blogname.github.io.git</code></p>
+<p>​    SSH：<code>git@github.com:PlyTools/Blogname.github.io.git</code></p>
+<p>这两个的区别在于用HTTPS链接每次需要验证邮箱和密码，而SSH只需要验证本地是否有匹配的id_rsa.pub公钥。因为我们在1.1.3中生成并配好了SSH，所以使用SSH的地址不需要邮箱密码验证，更方便。</p>
+</blockquote>
+<ul>
+<li>创建博客文章</li>
+</ul>
+<p>假设我要创建一片名字叫<code>“我的第一篇博客”</code>的文章，那么在终端输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// 新建一篇文章</div><div class="line">hexo new &quot;我的第一篇博客&quot;</div></pre></td></tr></table></figure>
+<p>我们可以在本地博客文件夹<code>Blogname/source/_post</code>文件夹下看到我们新建的markdown文件。</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1010.png" alt="img"></p>
+<p>用Markdown编辑器打开文件，我们可以看到这样的内容：</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1111.png" alt="img"></p>
+<p>我们写下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">太棒了，我写下了第一篇博客！</div></pre></td></tr></table></figure>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1212.png" alt="img"></p>
+<ul>
+<li>本地发布</li>
+</ul>
+<p>保存后，我们进行本地发布：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+<p>命令结果如下图：</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1313.png" alt="img"></p>
+<p>打开浏览器，输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://localhost:4000/</div></pre></td></tr></table></figure>
+<p>我们可以在浏览器端看到我们搭建好的博客和发布的文章：</p>
+<p><img src="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/1414.png" alt="img"></p>
+<p>如果想要停止预览，可在命令行使用^+C结束预览。</p>
+<blockquote>
+<p>注：我们也可以手动添加Markdown文件在<code>Blogname/source/_deploy</code>文件夹下，其效果同样可以媲美<code>hexo new &lt;article&gt;</code>：</p>
+</blockquote>
+<ul>
+<li>公开发布</li>
+</ul>
+<p>但是毕竟我们目前发布的只有本机看得到，怎么让其他人看到我们写的博客呢？这时候我们来看看博客的部署。</p>
+<p>我们只要在终端执行这样的命令即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
+<p><code>hexo generate</code>的作用是根据hexo源码，在Blogname文件夹中生成public文件夹，这个就是实际的网页代码，而<code>hexo deploy</code>的作用是将public文件夹与GitHub仓库同步，从而部署到github上。他们可分别使用简写指令<code>hexo g</code>和<code>hexo d</code>。<br>这时候我们的博客已经部署到网上了，我们可以在浏览器地址输入栏输入我们的网址即可，如我们的博客是：<a href="https://Blogname.github.io/" target="_blank" rel="external">Blogname.github.io</a>。</p>
+<blockquote>
+<p><strong>错误：Deployer not found: git</strong><br>​    方法1：可能是没安装hexo-deployer-git，可在终端执行命令：<code>npm install hexo-deployer-git --save</code>，然后继续执行hexo deploy指令进行部署。</p>
+<p>​    方法2：如果方法1没效果，可能是错误添加了plugin，需要把Blogname/_config.yml文件中你新添加的plugin内容删掉。</p>
+</blockquote>
+<hr>
+<p>本教程为博客搭建入门教程，还会有后续教程，敬请期待！</p>
+<p>大家也可以根据自己的需求做进一步改进，如更换主题、删除文章等，详情参考<a href="https://hexo.io/docs/" target="_blank" rel="external">官方文档</a>。</p>
+            
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/Blog/">Blog</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/29/VSCode-Debug-Python/"  data-tooltip="使用VS Code调试Python代码">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+            
+                <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2017 Qian Ren. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/29/VSCode-Debug-Python/"  data-tooltip="使用VS Code调试Python代码">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                <i class="fa fa-google-plus"></i><span>分享到 Google+</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                <i class="fa fa-facebook-official"></i><span>分享到 Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                <i class="fa fa-twitter"></i><span>分享到 Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
+        
+            <h4 id="about-card-name">Qian Ren</h4>
+        
+            <div id="about-card-bio"><p>author.bio</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Beijing, China
+            </div>
+        
+    </div>
+</div>
+
+        <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-close"></i></span>
+            <a href="https://algolia.com" target="_blank" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    autofocus="autofocus"/>
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">没有找到文章</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
+                            <img class="media-image" src="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/city-750-2.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
+                            <h3 class="media-heading">软件动态分析：Maple配置和使用详细教程</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年4月28日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>Maple是一个面向C/C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+                            <img class="media-image" src="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+                            <h3 class="media-heading">使用VS Code调试Python代码</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年4月29日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。<strong>拿到项目的.py文件，怎么用VS Code进行调试</strong></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                            <img class="media-image" src="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/hexo-logo.png" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                            <h3 class="media-heading">使用Hexo搭建Github博客:(一)20min搭完主体框架</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年4月29日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>技术的世界是纯粹而新奇的，我也想记录一些探索和思考与大家分享。于是萌生了写博客的想法，可是<strong>颜值控该以什么样的姿势开博客呢？</strong></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="没有找到文章"
+                data-message-one="找到 1 篇文章"
+                data-message-other="找到 {n} 篇文章">
+                找到 3 篇文章
+            </p>
+        </div>
+    </div>
+</div>
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-rt08quwts7iav5x0cfd2ym0gb5qkd1lvrsmwrakxtkhefmaaes4ywkmnjnwf.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/';
+                 
+                    this.page.identifier = '2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'plytools-github-io';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script>
+        var algoliaClient = algoliasearch('IIGDAO65S7', 'a5e943fbe88ee973daee86eab6666e06');
+        var algoliaIndex = algoliaClient.initIndex('plytools-github-io');
+    </script>
+
+    </body>
+</html>
