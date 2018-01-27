@@ -5,16 +5,23 @@
     
   <url>
     <loc>http://plytools.github.io/2018/01/27/C:C++%E6%8F%92%E6%A1%A9%E5%B7%A5%E5%85%B7%EF%BC%9AIntel%20Pin%20%E7%AE%80%E4%BB%8B/</loc>
-    <lastmod>2018-01-27T09:47:54.484Z</lastmod>
+    <lastmod>2018-01-27T09:52:25.246Z</lastmod>
     <data>
         <display>
-        <title>C/C++插桩工具：Intel Pin 简介</title>
-        <pubTime>2018-01-26T16:00:00.000Z</pubTime>
+        <title>C插桩：Intel Pin简介</title>
+        <pubTime>2018-01-27T07:57:00.000Z</pubTime>
         
+        <tag>Dynamic Analysis</tag>
+         
+        <tag>C/C++</tag>
+         
         <tag>Instrument</tag>
          
          
            
+             
+              <breadCrumb title="Instrument" url="http://plytools.github.io/categories/Instrument/"/>
+          
         </display>
     </data>
     </url>

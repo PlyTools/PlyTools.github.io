@@ -6,19 +6,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="PlyTools">
-    <title>C/C++插桩工具：Intel Pin 简介 - PlyTools</title>
+    <title>C插桩：Intel Pin简介 - PlyTools</title>
     <meta name="author" content="Qian Ren">
     
-        <meta name="keywords" content="Instrument,Pin">
+        <meta name="keywords" content="Instrument">
     
     
         <link rel="icon" href="http://plytools.github.io/assets/images/rq.jpg">
     
     
     <meta name="description" content="#1. Intel Pin简介 Pin是Intel公司开发的动态二进制插桩框架，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。 简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以att">
-<meta name="keywords" content="Instrument">
+<meta name="keywords" content="Dynamic Analysis,C/C++,Instrument">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="C/C++插桩工具：Intel Pin 简介">
+<meta property="og:title" content="C插桩：Intel Pin简介">
 <meta property="og:url" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/index.html">
 <meta property="og:site_name" content="PlyTools">
 <meta property="og:description" content="#1. Intel Pin简介 Pin是Intel公司开发的动态二进制插桩框架，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。 简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以att">
@@ -30,9 +30,9 @@
 <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/701dcaab-c667-4541-8e25-ea5576fb5f0a.png">
 <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/25b25914-a753-4530-b175-44e32bdec4cf.png">
 <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/05dfca2a-e4a5-41b7-9b54-2cb03016e041.png">
-<meta property="og:updated_time" content="2018-01-27T09:47:54.484Z">
+<meta property="og:updated_time" content="2018-01-27T09:52:25.246Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="C/C++插桩工具：Intel Pin 简介">
+<meta name="twitter:title" content="C插桩：Intel Pin简介">
 <meta name="twitter:description" content="#1. Intel Pin简介 Pin是Intel公司开发的动态二进制插桩框架，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。 简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以att">
 <meta name="twitter:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/0.09956225853750444.png">
     
@@ -43,6 +43,12 @@
         <meta property="og:image" content="http://plytools.github.io/assets/images/starry-sky.jpg"/>
     
     
+        <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/city-750-2.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/city-750-2.jpg" />
+    
+    
+        <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/city.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/city.jpg" />
     
     
     <!--STYLES-->
@@ -229,26 +235,42 @@
 </nav>
 
             
+        <div class="post-header-cover
+                    text-center
+                    "
+             style="background-image:url('/2018/01/27/C:C++插桩工具：Intel Pin 简介/city.jpg');"
+             data-behavior="4">
+            
+        </div>
+
             <div id="main" data-behavior="4"
-                 class="
-                        hasCoverMetaIn
-                        ">
+                 class="hasCover
+                        hasCoverMetaOut
+                        hasCoverCaption">
                 
 <article class="post" itemscope itemType="http://schema.org/BlogPosting">
     
+        <span class="post-header-cover-caption caption">Share Knowledge</span>
     
-        <div class="post-header main-content-wrap text-left">
+    
+        <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title" itemprop="headline">
-            C/C++插桩工具：Intel Pin 简介
+            C插桩：Intel Pin简介
         </h1>
     
     <div class="post-meta">
-    <time itemprop="datePublished" datetime="2018-01-27T00:00:00+08:00">
+    <time itemprop="datePublished" datetime="2018-01-27T15:57:00+08:00">
 	
 		    1月 27, 2018
     	
     </time>
+    
+        <span>发布在 </span>
+        
+    <a class="category-link" href="/categories/Instrument/">Instrument</a>
+
+
     
 </div>
 
@@ -329,7 +351,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/Instrument/">Instrument</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/C-C/">C/C++</a> <a class="tag tag--primary tag--small t-link" href="/tags/Dynamic-Analysis/">Dynamic Analysis</a> <a class="tag tag--primary tag--small t-link" href="/tags/Instrument/">Instrument</a>
 
             </div>
         
@@ -338,7 +360,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/05/15/MPI并行：Pthread入门教程/"  data-tooltip="MPI并行：Pthread入门教程">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/27/Intel Pin简介_files/wiz_code_highlight_8/"  data-tooltip="(无标题)">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -346,7 +368,7 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/27/Intel Pin简介_files/wiz_code_highlight_8/" data-tooltip="(无标题)">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -419,7 +441,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/05/15/MPI并行：Pthread入门教程/"  data-tooltip="MPI并行：Pthread入门教程">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/27/Intel Pin简介_files/wiz_code_highlight_8/"  data-tooltip="(无标题)">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -427,7 +449,7 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2018/01/27/Intel Pin简介_files/wiz_code_highlight_8/" data-tooltip="(无标题)">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -658,8 +680,8 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/">
-                            <h3 class="media-heading">C/C++插桩工具：Intel Pin 简介</h3>
+                        <a class="link-unstyled" href="http://plytools.github.io/2018/01/27/Intel Pin简介_files/wiz_code_highlight_8/">
+                            <h3 class="media-heading"></h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
@@ -676,9 +698,15 @@
                 
                 <div class="media">
                     
+                    <div class="media-left">
+                        <a class="link-unstyled" href="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/">
+                            <img class="media-image" src="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/city-750-2.jpg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2018/01/27/Intel Pin简介_files/wiz_code_highlight_8/">
-                            <h3 class="media-heading"></h3>
+                        <a class="link-unstyled" href="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/">
+                            <h3 class="media-heading">C插桩：Intel Pin简介</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
