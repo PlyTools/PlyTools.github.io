@@ -263,9 +263,9 @@
 <blockquote>
 <p>其他类似工具：DynamoRIO</p>
 </blockquote>
-<p>#2. Intel Pin深入<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/0.09956225853750444.png" alt="这里写图片描述"><br>从较高层面来说，Pin包含了一个VM，一个code cache和一个instrumentation API.<br>其中VM包含了一个just-intime compiler (JIT)，一个emulator和一个dispatcher. 在Pin获取了目标程序的控制后，VM通过协调它的组件来执行目标程序。JIT编译并instrument应用程序的指令，dispatcher把这些编译后的指令加载到code cache中。进入/离开code cache时，需要保存/恢复应用程序的寄存器状态。emulator会解释那些无法被直接执行的指令，这是为system call准备的，因为system call需要VM的特殊处理。 </p>
+<p>#2. Intel Pin深入<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/C++插桩工具：Intel Pin简介/0.09956225853750444.png" alt="这里写图片描述"><br>从较高层面来说，Pin包含了一个VM，一个code cache和一个instrumentation API.<br>其中VM包含了一个just-intime compiler (JIT)，一个emulator和一个dispatcher. 在Pin获取了目标程序的控制后，VM通过协调它的组件来执行目标程序。JIT编译并instrument应用程序的指令，dispatcher把这些编译后的指令加载到code cache中。进入/离开code cache时，需要保存/恢复应用程序的寄存器状态。emulator会解释那些无法被直接执行的指令，这是为system call准备的，因为system call需要VM的特殊处理。 </p>
 <p><strong>Pin工作在操作系统之上，因此它只能捕获用户级别的指令。</strong><br>当一个被instrument之后的程序运行时，有3个程序在运行：应用程序本身、Pin、 Pintool.<br>Pin是对应用程序进行instrument的引擎。Pintool包含了instrumentation的指令，它作为pin的一个library存在。 </p>
-<p>应用程序本身、Pin和Pintool共享同一个地址空间，但是他们不共享libraries，所以他们其实是glibc的3个拷贝。通过让三者的库独立私有，避免了Pin、Pintool和应用程序本身的交互冲突。比如：如果应用程序开始执行开始执行一个库函数，然后触发了JIT执行的指令，控制就会转向JIT。如果JIT也执行了相同的库函数，就会再次进入这个库函数，导致错误。因为不同组件拥有不同的库拷贝，所以Pin/pintool和应用程序本身不共享任何数据，也就不会有这种问题。（这一点和DynamoRIO不同，DynamoRIO为了解决这个问题，不和应用程序本身冲突，只能选择直接调用system call，导致DynamoRIO的instrument指令无法正常使用一些第三方库）。<br>JIT模式<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/18793db1-5416-4349-803f-e4223ef24621.png" alt="18793db1-5416-4349-803f-e4223ef24621.png"></p>
+<p>应用程序本身、Pin和Pintool共享同一个地址空间，但是他们不共享libraries，所以他们其实是glibc的3个拷贝。通过让三者的库独立私有，避免了Pin、Pintool和应用程序本身的交互冲突。比如：如果应用程序开始执行开始执行一个库函数，然后触发了JIT执行的指令，控制就会转向JIT。如果JIT也执行了相同的库函数，就会再次进入这个库函数，导致错误。因为不同组件拥有不同的库拷贝，所以Pin/pintool和应用程序本身不共享任何数据，也就不会有这种问题。（这一点和DynamoRIO不同，DynamoRIO为了解决这个问题，不和应用程序本身冲突，只能选择直接调用system call，导致DynamoRIO的instrument指令无法正常使用一些第三方库）。<br>JIT模式<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/C++插桩工具：Intel Pin简介/18793db1-5416-4349-803f-e4223ef24621.png" alt="18793db1-5416-4349-803f-e4223ef24621.png"></p>
 <p>###2.1 Pin<br>认识Pin的最好方法是<strong>认为它是一个JIT编译器</strong>。这个编译器的输入不是字节码而是普通的可执行文件。</p>
 <p>Pin截获这个可执行文件的第一条指令，产生新的代码序列。接着将控制流程转移到这个产生的序列。产生的序列基本上跟原来的序列是一样的，但是Pin保证在一个分支结束后重新获得控制权。重新获得控制权之后，Pin为分支的目标产生代码并且执行。Pin通过将所有产生的代码放在内存中，以便于重新使用这些代码并且可以直接从一个分支跳到另一个分支，这提高了效率。</p>
 <p>在JIT模式，执行的代码都是Pin生成的代码。原始代码仅仅是用来参考。当<strong>生成代码时，Pin给用户提供了插入自己代码的机会（插桩）</strong>。Pin的桩代码都会被实际执行的，不论他们位于哪里。大体上，对于条件分支存在一些异常，比如，<strong>如果一个指令从不执行，它将不会被插入桩函数。</strong></p>
@@ -279,7 +279,7 @@
 <p>当编写tools时，<strong>最重要的是调整分析代码而不是桩代码</strong>。因为桩代码执行一次，而分析代码执行许多次。</p>
 <p>###2.4 Instrumentation Granularity<br><strong>四种插桩粒度</strong></p>
 <ul>
-<li><strong>踪迹插桩（trace instrumentation）</strong><br>Pin的插桩是实时的。插桩发生在一段代码序列执行之前。我们把这种模式叫做<strong>踪迹插桩（trace instrumentation）</strong>。<br>踪迹插桩让Pintool在可执行代码每一次执行时都能进行监视和插桩。trace通常开始于选中的分支目标并结束于一个无条件分支，包括调用(call)和返回(return)。Pin能够保证trace只在最上层有一个入口，但是可以有很多出口。如果在一个trace中发生分支，Pin从分支目标开始构造一个新的trace。Pin根据基本块(BBL)分割trace。<strong>一个基本块是一个有唯一入口和出口的指令序列</strong>。<strong>基本块中的分支会开始一个新的trace也即一个新的基本块</strong>。<strong>通常为每个基本块而不是每条指令插入一个分析调用</strong>。减少分析调用的次数可以提高插桩的效率。trace插桩利用了TRACE_AddInstrumentFunction API call。<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/71cab5cc-80e9-4a36-8507-1aa8d4670c82.png" alt="71cab5cc-80e9-4a36-8507-1aa8d4670c82.png"></li>
+<li><strong>踪迹插桩（trace instrumentation）</strong><br>Pin的插桩是实时的。插桩发生在一段代码序列执行之前。我们把这种模式叫做<strong>踪迹插桩（trace instrumentation）</strong>。<br>踪迹插桩让Pintool在可执行代码每一次执行时都能进行监视和插桩。trace通常开始于选中的分支目标并结束于一个无条件分支，包括调用(call)和返回(return)。Pin能够保证trace只在最上层有一个入口，但是可以有很多出口。如果在一个trace中发生分支，Pin从分支目标开始构造一个新的trace。Pin根据基本块(BBL)分割trace。<strong>一个基本块是一个有唯一入口和出口的指令序列</strong>。<strong>基本块中的分支会开始一个新的trace也即一个新的基本块</strong>。<strong>通常为每个基本块而不是每条指令插入一个分析调用</strong>。减少分析调用的次数可以提高插桩的效率。trace插桩利用了TRACE_AddInstrumentFunction API call。<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/C++插桩工具：Intel Pin简介/71cab5cc-80e9-4a36-8507-1aa8d4670c82.png" alt="71cab5cc-80e9-4a36-8507-1aa8d4670c82.png"></li>
 </ul>
 <p>注意，虽然Pin从程序执行中动态发现执行流，Pin的BBL与编译原理中的BBL定义不同。如，考虑生成下面的switch statement：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">switch(i)</div><div class="line">&#123;</div><div class="line">    case 4: total++;</div><div class="line">    case 3: total++;</div><div class="line">    case 2: total++;</div><div class="line">    case 1: total++;</div><div class="line">    case 0:</div><div class="line">    default: break;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>它会生成如下指令（在IA-32架构上）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">.L7:</div><div class="line">    addl    $1, -4(%ebp)</div><div class="line">.L6:</div><div class="line">    addl    $1, -4(%ebp)</div><div class="line">.L5:</div><div class="line">    addl    $1, -4(%ebp)</div><div class="line">.L4:</div><div class="line">    addl    $1, -4(%ebp)</div></pre></td></tr></table></figure></p>
@@ -297,11 +297,11 @@
 <p>在Linux上，libefl.so或者libdwarf.so可以用来获取符号信息。<br><strong>为了通过名字访问函数必须先调用PIN_InitSymbols。</strong></p>
 <p>Floating Point Support in Analysis Routines<br>Pin在执行各种分析函数时保持者程序的浮点指针状态。</p>
 <p>IARG_REG_VALUE不能作为浮点指针寄存器参数传给分析函数。</p>
-<p>###2.6 单步Debug和复现<br>结合GDB，之前已经使用过。<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/82fa1fdd-0aa6-4ace-b662-88ef610c0a4f.png" alt="82fa1fdd-0aa6-4ace-b662-88ef610c0a4f.png"><br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/c2898e92-14d0-4813-b486-5e1d25372745.png" alt="c2898e92-14d0-4813-b486-5e1d25372745.png"></p>
+<p>###2.6 单步Debug和复现<br>结合GDB，之前已经使用过。<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/C++插桩工具：Intel Pin简介/82fa1fdd-0aa6-4ace-b662-88ef610c0a4f.png" alt="82fa1fdd-0aa6-4ace-b662-88ef610c0a4f.png"><br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/C++插桩工具：Intel Pin简介/c2898e92-14d0-4813-b486-5e1d25372745.png" alt="c2898e92-14d0-4813-b486-5e1d25372745.png"></p>
 <p>#3. API</p>
 <ul>
 <li><a href="https://software.intel.com/sites/landingpage/pintool/docs/81205/Pin/html/group__INS__BASIC__API__IA32.html" target="_blank" rel="external">针对IA-32 ISA.的API</a><br>#4. 示例</li>
-<li><p><a href="https://software.intel.com/sites/landingpage/pintool/docs/81205/Pin/html/index.html#SimpleCount" target="_blank" rel="external">Simple Instruction Count (Instruction Instrumentation)</a><br>记录指令的总数，这个版本没有传递参数。<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/701dcaab-c667-4541-8e25-ea5576fb5f0a.png" alt="701dcaab-c667-4541-8e25-ea5576fb5f0a.png"></p>
+<li><p><a href="https://software.intel.com/sites/landingpage/pintool/docs/81205/Pin/html/index.html#SimpleCount" target="_blank" rel="external">Simple Instruction Count (Instruction Instrumentation)</a><br>记录指令的总数，这个版本没有传递参数。<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/C++插桩工具：Intel Pin简介/701dcaab-c667-4541-8e25-ea5576fb5f0a.png" alt="701dcaab-c667-4541-8e25-ea5576fb5f0a.png"></p>
 </li>
 <li><p><a href="https://software.intel.com/sites/landingpage/pintool/docs/81205/Pin/html/index.html#IAddressTrace" target="_blank" rel="external">Instruction Address Trace (Instruction Instrumentation)</a><br>这个传递了参数，能打印出所有指令的地址。原话是we show how to pass arguments. When calling an analysis procedure, Pin allows you to pass the instruction pointer, current value of registers, effective address of memory operations, constants, etc. For a complete list, see IARG_TYPE.</p>
 </li>
@@ -311,7 +311,7 @@
 <li><a href="">Procedure Instruction Count (Routine Instrumentation)</a><br>将计算程序调用过程调用的次数以及每个过程中执行的指令总数。</li>
 <li>[Finding the Value of Function Arguments]<br>显示函数的输入参数的值以及返回值</li>
 <li>[Finding Functions By Name on Windows]<br>几个符号可以解析为相同的功能地址。 检查所有符号名称很重要。以下示例在符号表中找到函数名称，并使用符号地址找到适当的RTN。</li>
-<li><p>[Instrumenting Threaded Applications]<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/25b25914-a753-4530-b175-44e32bdec4cf.png" alt="25b25914-a753-4530-b175-44e32bdec4cf.png"><br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/05dfca2a-e4a5-41b7-9b54-2cb03016e041.png" alt="05dfca2a-e4a5-41b7-9b54-2cb03016e041.png"></p>
+<li><p>[Instrumenting Threaded Applications]<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/C++插桩工具：Intel Pin简介/25b25914-a753-4530-b175-44e32bdec4cf.png" alt="25b25914-a753-4530-b175-44e32bdec4cf.png"><br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/C++插桩工具：Intel Pin简介/05dfca2a-e4a5-41b7-9b54-2cb03016e041.png" alt="05dfca2a-e4a5-41b7-9b54-2cb03016e041.png"></p>
 </li>
 <li><p>[Using TLS]<br>引脚提供高效的线程本地存储（TLS）API。 这些API允许一个工具来创建线程特定的数据。 下面的例子演示了如何使用这些API。</p>
 </li>
@@ -348,7 +348,7 @@
             <div class="postShorten-header">
                 <h1 class="postShorten-title" itemprop="headline">
                     
-                        <a class="link-unstyled" href="/2018/01/27/Intel Pin简介_files/wiz_code_highlight_8/">
+                        <a class="link-unstyled" href="/2018/01/27/C:C++插桩工具：Intel Pin简介/wiz_code_highlight_8/">
                             (无标题)
                         </a>
                     
@@ -615,7 +615,7 @@
                     
                     
                         <p>
-                            <a href="/2018/01/27/Intel Pin简介_files/wiz_code_highlight_8/#post-footer" class="postShorten-excerpt_link link">
+                            <a href="/2018/01/27/C:C++插桩工具：Intel Pin简介/wiz_code_highlight_8/#post-footer" class="postShorten-excerpt_link link">
                                 注释和共享
                             </a>
                         </p>
@@ -807,7 +807,7 @@
                 <div class="media">
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2018/01/27/Intel Pin简介_files/wiz_code_highlight_8/">
+                        <a class="link-unstyled" href="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin简介/wiz_code_highlight_8/">
                             <h3 class="media-heading"></h3>
                         </a>
                         <span class="media-meta">
