@@ -252,8 +252,7 @@
             </div>
             
                 <div class="postShorten-content" itemprop="articleBody">
-                    <p>#1. Intel Pin简介</p>
-<p>Pin是Intel公司开发的<strong>动态二进制插桩框架</strong>，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。</p>
+                    <h1 id="1-Intel-Pin简介"><a href="#1-Intel-Pin简介" class="headerlink" title="1. Intel Pin简介"></a>1. Intel Pin简介</h1><p>Pin是Intel公司开发的<strong>动态二进制插桩框架</strong>，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。</p>
 <p>简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以attach到正在运行的进程来插桩。</p>
 <p>Pin提供了一个丰富的API，可以抽取底层的指令集特性，并允许将上下文信息（如寄存器内容）作为参数传递给注入的代码。 Pin自动保存并恢复被注入代码覆盖的寄存器，使应用程序继续工作。 有限的访问符号和调试信息也可用。</p>
 <p>显然，这样我们对程序完全掌握了以后是可以做很多事的。比如对程序的内存使用检测，对程序的性能评估。</p>

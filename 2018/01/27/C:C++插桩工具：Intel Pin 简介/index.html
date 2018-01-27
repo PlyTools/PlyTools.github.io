@@ -15,13 +15,13 @@
         <link rel="icon" href="http://plytools.github.io/assets/images/rq.jpg">
     
     
-    <meta name="description" content="#1. Intel Pin简介 Pin是Intel公司开发的动态二进制插桩框架，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。 简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以att">
+    <meta name="description" content="1. Intel Pin简介Pin是Intel公司开发的动态二进制插桩框架，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。 简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以attac">
 <meta name="keywords" content="Dynamic Analysis,C/C++,Instrument">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="C/C++插桩工具：Intel Pin简介">
 <meta property="og:url" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/index.html">
 <meta property="og:site_name" content="PlyTools">
-<meta property="og:description" content="#1. Intel Pin简介 Pin是Intel公司开发的动态二进制插桩框架，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。 简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以att">
+<meta property="og:description" content="1. Intel Pin简介Pin是Intel公司开发的动态二进制插桩框架，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。 简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以attac">
 <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/C++插桩工具：Intel%20Pin简介/0.09956225853750444.png">
 <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/C++插桩工具：Intel%20Pin简介/18793db1-5416-4349-803f-e4223ef24621.png">
 <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/C++插桩工具：Intel%20Pin简介/71cab5cc-80e9-4a36-8507-1aa8d4670c82.png">
@@ -30,10 +30,10 @@
 <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/C++插桩工具：Intel%20Pin简介/701dcaab-c667-4541-8e25-ea5576fb5f0a.png">
 <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/C++插桩工具：Intel%20Pin简介/25b25914-a753-4530-b175-44e32bdec4cf.png">
 <meta property="og:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/C++插桩工具：Intel%20Pin简介/05dfca2a-e4a5-41b7-9b54-2cb03016e041.png">
-<meta property="og:updated_time" content="2018-01-27T10:03:35.949Z">
+<meta property="og:updated_time" content="2018-01-27T10:06:11.528Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C/C++插桩工具：Intel Pin简介">
-<meta name="twitter:description" content="#1. Intel Pin简介 Pin是Intel公司开发的动态二进制插桩框架，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。 简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以att">
+<meta name="twitter:description" content="1. Intel Pin简介Pin是Intel公司开发的动态二进制插桩框架，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。 简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以attac">
 <meta name="twitter:image" content="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel%20Pin%20简介/C++插桩工具：Intel%20Pin简介/0.09956225853750444.png">
     
     
@@ -278,8 +278,7 @@
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <p>#1. Intel Pin简介</p>
-<p>Pin是Intel公司开发的<strong>动态二进制插桩框架</strong>，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。</p>
+            <h1 id="1-Intel-Pin简介"><a href="#1-Intel-Pin简介" class="headerlink" title="1. Intel Pin简介"></a>1. Intel Pin简介</h1><p>Pin是Intel公司开发的<strong>动态二进制插桩框架</strong>，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。</p>
 <p>简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以attach到正在运行的进程来插桩。</p>
 <p>Pin提供了一个丰富的API，可以抽取底层的指令集特性，并允许将上下文信息（如寄存器内容）作为参数传递给注入的代码。 Pin自动保存并恢复被注入代码覆盖的寄存器，使应用程序继续工作。 有限的访问符号和调试信息也可用。</p>
 <p>显然，这样我们对程序完全掌握了以后是可以做很多事的。比如对程序的内存使用检测，对程序的性能评估。</p>
