@@ -508,6 +508,111 @@
     </article>
     
     
+    <article class="postShorten postShorten--thumbnailimg-bottom" itemscope itemType="http://schema.org/BlogPosting">
+        <div class="postShorten-wrap">
+            
+            <div class="postShorten-header">
+                <h1 class="postShorten-title" itemprop="headline">
+                    
+                        <a class="link-unstyled" href="/2018/01/27/C:C++插桩工具：Intel Pin 简介/">
+                            C/C++插桩工具：Intel Pin 简介
+                        </a>
+                    
+                </h1>
+                <div class="postShorten-meta">
+    <time itemprop="datePublished" datetime="2018-01-27T00:00:00+08:00">
+	
+		    1月 27, 2018
+    	
+    </time>
+    
+</div>
+
+            </div>
+            
+                <div class="postShorten-content" itemprop="articleBody">
+                    <p>#1. Intel Pin简介</p>
+<p>Pin是Intel公司开发的<strong>动态二进制插桩框架</strong>，可以用于创建基于动态程序分析工具，支持IA-32和x86-64指令集架构，支持windows和linux, OS X 和 Windows。</p>
+<p>简单说就是Pin可以监控程序的每一步执行，在二进制程序程序运行过程中插入各种函数，比如说我们要统计一个程序执行了多少条指令，每条指令的地址等信息。可以对可执行文件进行，也可以attach到正在运行的进程来插桩。</p>
+<p>Pin提供了一个丰富的API，可以抽取底层的指令集特性，并允许将上下文信息（如寄存器内容）作为参数传递给注入的代码。 Pin自动保存并恢复被注入代码覆盖的寄存器，使应用程序继续工作。 有限的访问符号和调试信息也可用。</p>
+<p>显然，这样我们对程序完全掌握了以后是可以做很多事的。比如对程序的内存使用检测，对程序的性能评估。</p>
+<p>Pin提供的API可以让我们<strong>观察一个进程的状态，比如：内存、寄存器和控制流</strong>。Pin还提供了一些<strong>更改程序行为的机制，比如：允许重写程序的寄存器和内存</strong>。Pin包括大量示例插桩工具的源代码，如<strong>基本块分析器，缓存模拟器，指令跟踪生成器等。使用示例作为模板很容易导出新工具（basic block profilers, cache simulators, instruction trace generators）</strong></p>
+<p>官网手册可参见：<a href="https://software.intel.com/sites/landingpage/pintool/docs/67254/Pin/html/" target="_blank" rel="external">Pin 2.14 User Guide</a></p>
+<blockquote>
+<p>其他类似工具：DynamoRIO</p>
+</blockquote>
+<p>#2. Intel Pin深入<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/0.09956225853750444.png" alt="这里写图片描述"><br>从较高层面来说，Pin包含了一个VM，一个code cache和一个instrumentation API.<br>其中VM包含了一个just-intime compiler (JIT)，一个emulator和一个dispatcher. 在Pin获取了目标程序的控制后，VM通过协调它的组件来执行目标程序。JIT编译并instrument应用程序的指令，dispatcher把这些编译后的指令加载到code cache中。进入/离开code cache时，需要保存/恢复应用程序的寄存器状态。emulator会解释那些无法被直接执行的指令，这是为system call准备的，因为system call需要VM的特殊处理。 </p>
+<p><strong>Pin工作在操作系统之上，因此它只能捕获用户级别的指令。</strong><br>当一个被instrument之后的程序运行时，有3个程序在运行：应用程序本身、Pin、 Pintool.<br>Pin是对应用程序进行instrument的引擎。Pintool包含了instrumentation的指令，它作为pin的一个library存在。 </p>
+<p>应用程序本身、Pin和Pintool共享同一个地址空间，但是他们不共享libraries，所以他们其实是glibc的3个拷贝。通过让三者的库独立私有，避免了Pin、Pintool和应用程序本身的交互冲突。比如：如果应用程序开始执行开始执行一个库函数，然后触发了JIT执行的指令，控制就会转向JIT。如果JIT也执行了相同的库函数，就会再次进入这个库函数，导致错误。因为不同组件拥有不同的库拷贝，所以Pin/pintool和应用程序本身不共享任何数据，也就不会有这种问题。（这一点和DynamoRIO不同，DynamoRIO为了解决这个问题，不和应用程序本身冲突，只能选择直接调用system call，导致DynamoRIO的instrument指令无法正常使用一些第三方库）。<br>JIT模式<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/18793db1-5416-4349-803f-e4223ef24621.png" alt="18793db1-5416-4349-803f-e4223ef24621.png"></p>
+<p>###2.1 Pin<br>认识Pin的最好方法是<strong>认为它是一个JIT编译器</strong>。这个编译器的输入不是字节码而是普通的可执行文件。</p>
+<p>Pin截获这个可执行文件的第一条指令，产生新的代码序列。接着将控制流程转移到这个产生的序列。产生的序列基本上跟原来的序列是一样的，但是Pin保证在一个分支结束后重新获得控制权。重新获得控制权之后，Pin为分支的目标产生代码并且执行。Pin通过将所有产生的代码放在内存中，以便于重新使用这些代码并且可以直接从一个分支跳到另一个分支，这提高了效率。</p>
+<p>在JIT模式，执行的代码都是Pin生成的代码。原始代码仅仅是用来参考。当<strong>生成代码时，Pin给用户提供了插入自己代码的机会（插桩）</strong>。Pin的桩代码都会被实际执行的，不论他们位于哪里。大体上，对于条件分支存在一些异常，比如，<strong>如果一个指令从不执行，它将不会被插入桩函数。</strong></p>
+<p>###2.2 Pintools<br>概念上说，<strong>插桩包括两个组件：</strong></p>
+<pre><code>+ **桩：**决定在哪里插入什么代码的机制
++ **分析：**插入点执行的代码
+</code></pre><p>两个组件都在一个单独的可执行体中，即<strong>Pintool</strong>。<strong>Pintools可以认为是在Pin中的的插件，它能够修改生成代码的流程。</strong></p>
+<p>Pintool注册一些桩回调函数在Pin中，每当Pin生成新的代码时就调用回调函数。这些回调函数代表了桩组件。它可以检查将要生成的代码，得到它的静态属性，并且决定是否需要以及在哪里插入分析函数。</p>
+<p>分析函数收集关于程序的数据。Pin保证整数和浮点指针寄存器的状态在必要时会被保存和回复，允许传递参数给（分析）函数。Pintool也可以注册一些事件通知回调，比如线程创建和fork，这些回调大体上用于数据收集或者初始化与清理。</p>
+<p>###2.3 Observations<br>由于Pintool类似插件一样工作，所以它必须处于Pin与被插桩的可执行文件的地址空间。这样，Pintool就能够访问可执行文件的所有数据。它也跟可执行文件共享文件描述符与进程其他信息。<br>Pin和Pintool从第一条指令控制程序。对于与共享库一起编译的可执行文件，这意味着<strong>动态加载器和共享库将会对Pintool可见</strong>。</p>
+<p>当编写tools时，<strong>最重要的是调整分析代码而不是桩代码</strong>。因为桩代码执行一次，而分析代码执行许多次。</p>
+<p>###2.4 Instrumentation Granularity<br><strong>四种插桩粒度</strong></p>
+<ul>
+<li><strong>踪迹插桩（trace instrumentation）</strong><br>Pin的插桩是实时的。插桩发生在一段代码序列执行之前。我们把这种模式叫做<strong>踪迹插桩（trace instrumentation）</strong>。<br>踪迹插桩让Pintool在可执行代码每一次执行时都能进行监视和插桩。trace通常开始于选中的分支目标并结束于一个无条件分支，包括调用(call)和返回(return)。Pin能够保证trace只在最上层有一个入口，但是可以有很多出口。如果在一个trace中发生分支，Pin从分支目标开始构造一个新的trace。Pin根据基本块(BBL)分割trace。<strong>一个基本块是一个有唯一入口和出口的指令序列</strong>。<strong>基本块中的分支会开始一个新的trace也即一个新的基本块</strong>。<strong>通常为每个基本块而不是每条指令插入一个分析调用</strong>。减少分析调用的次数可以提高插桩的效率。trace插桩利用了TRACE_AddInstrumentFunction API call。<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/71cab5cc-80e9-4a36-8507-1aa8d4670c82.png" alt="71cab5cc-80e9-4a36-8507-1aa8d4670c82.png"></li>
+</ul>
+<p>注意，虽然Pin从程序执行中动态发现执行流，Pin的BBL与编译原理中的BBL定义不同。如，考虑生成下面的switch statement：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">switch(i)</div><div class="line">&#123;</div><div class="line">    case 4: total++;</div><div class="line">    case 3: total++;</div><div class="line">    case 2: total++;</div><div class="line">    case 1: total++;</div><div class="line">    case 0:</div><div class="line">    default: break;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>它会生成如下指令（在IA-32架构上）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">.L7:</div><div class="line">    addl    $1, -4(%ebp)</div><div class="line">.L6:</div><div class="line">    addl    $1, -4(%ebp)</div><div class="line">.L5:</div><div class="line">    addl    $1, -4(%ebp)</div><div class="line">.L4:</div><div class="line">    addl    $1, -4(%ebp)</div></pre></td></tr></table></figure></p>
+<p>在经典的基本块中，每一个addl指令（加）会成为一个单指令基本块。但是Pin会这几个不同的switch cases产生包含4条指令的BBL(当遇到.L7 case），3个基本块（当遇到.L6 case），如此类推。这就是说<strong>Pin的BBL个数会跟书上的定义的BBL不一样</strong>。例如，这里当代码分支到.L7时，有1个BBL，但是有四个经典的基本块被执行。</p>
+<p>Pin也会拆散其他指令为BBL，比如cpuid, popf和rep前缀的指令。因为rep前缀治理那个被当做隐式的循环，如果一个rep前缀指令不止循环一次，在第一次之后将会产生一个单指令的BBL，所以这种情形会产生比你预期多的基本块。</p>
+<ul>
+<li>指令插桩（instruction instrumentation）<br>为了方便编写Pintool，<strong>Pin还提供了指令插桩模式（instruction instrumentation），让工具可以监视和插桩每一条指令</strong>。本质上来说这两种模式是一样的，编写Pintool时不需要在为trace的每条指令反复处理。就像在trace插桩模式下一样，特定的基本块和指令可能会被生成很多次。指令插装用到了 INS_AddInstrumentFunction API call。<br>有时，进行不同粒度的插桩比trace更有用。Pin对这种模式提供了两种模式：镜像和函数插桩。这些模式是通过缓存插桩要求，因此需要额外的空间，这些模式也称作提前插桩。</li>
+<li><strong>镜像插装（Image instrumentation）</strong><br><strong>镜像插装（Image instrumentation）</strong>让Pintool在IMG第一次导入的时候对整个image进行监视和插装。Pintool的处理范围可以是镜像中的每个块(section，SEC)，块中的每个函数(routine, RTN)，函数中的每个指令（instruction, INS）。插装可以在一个函数或者一条指令开始执行之前或者结束执行之后执行。镜像插装用到了 IMG_AddInstrumentFunction API call。镜像插装依靠符号信息判断函数的边界，因此需要在PIN_Init之前调用PIN_InitSymbols。<blockquote>
+<p>Maple也用到了这个，比如在libc.so.6加载时，将其作为一个image给了编号，这样instruction也会显示对应的是哪个image里面的。</p>
+</blockquote>
+</li>
+<li><strong>函数插装（routine instrumentation）</strong><br><strong>函数插装（routine instrumentation）</strong>让Pintool在线程第一次调用之前监视和插装整个函数。Pintool的处理范围可以是函数里的每条指令。这里没有足够的信息把指令归并成基本块。插装可以在一个函数或者一条指令开始执行之前或者结束执行之后执行。函数插桩时Pintool的作者能够更方便的在镜像插桩过程中遍历各个sections。<br>函数插装用到了RTN_AddInstrumentFunction API call。插装在函数结束后不一定能可靠地工作，因为当最后出现调用时无法判断何时返回。<br>注意在镜像插桩和函数插桩中，不可能知道一个(分析）函数会被执行（因为这些插桩实发生在镜像被载入时）。在Trace和Instruction中只有被执行的代码才会被遍历。<br>###2.5 Symbols<br><strong>Pin利用符号对象（SYM）提供了对函数名字的访问</strong>。符号对象仅仅提供了在程序中的关于函数的符号。其他类型的符号（如数据符号）需要通过tool独立获取。</li>
+</ul>
+<p>在Windows上，可以通过dbghelp.dll实现这个功能。注意在桩函数中使用dbghelp.dll并不安全，可能会导致死锁。一个可能的解决方案是通过一个不同的未被插桩的进程得到符号。</p>
+<p>在Linux上，libefl.so或者libdwarf.so可以用来获取符号信息。<br><strong>为了通过名字访问函数必须先调用PIN_InitSymbols。</strong></p>
+<p>Floating Point Support in Analysis Routines<br>Pin在执行各种分析函数时保持者程序的浮点指针状态。</p>
+<p>IARG_REG_VALUE不能作为浮点指针寄存器参数传给分析函数。</p>
+<p>###2.6 单步Debug和复现<br>结合GDB，之前已经使用过。<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/82fa1fdd-0aa6-4ace-b662-88ef610c0a4f.png" alt="82fa1fdd-0aa6-4ace-b662-88ef610c0a4f.png"><br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/c2898e92-14d0-4813-b486-5e1d25372745.png" alt="c2898e92-14d0-4813-b486-5e1d25372745.png"></p>
+<p>#3. API</p>
+<ul>
+<li><a href="https://software.intel.com/sites/landingpage/pintool/docs/81205/Pin/html/group__INS__BASIC__API__IA32.html" target="_blank" rel="external">针对IA-32 ISA.的API</a><br>#4. 示例</li>
+<li><p><a href="https://software.intel.com/sites/landingpage/pintool/docs/81205/Pin/html/index.html#SimpleCount" target="_blank" rel="external">Simple Instruction Count (Instruction Instrumentation)</a><br>记录指令的总数，这个版本没有传递参数。<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/701dcaab-c667-4541-8e25-ea5576fb5f0a.png" alt="701dcaab-c667-4541-8e25-ea5576fb5f0a.png"></p>
+</li>
+<li><p><a href="https://software.intel.com/sites/landingpage/pintool/docs/81205/Pin/html/index.html#IAddressTrace" target="_blank" rel="external">Instruction Address Trace (Instruction Instrumentation)</a><br>这个传递了参数，能打印出所有指令的地址。原话是we show how to pass arguments. When calling an analysis procedure, Pin allows you to pass the instruction pointer, current value of registers, effective address of memory operations, constants, etc. For a complete list, see IARG_TYPE.</p>
+</li>
+<li><a href="https://software.intel.com/sites/landingpage/pintool/docs/81205/Pin/html/index.html#MAddressTrace" target="_blank" rel="external">Memory Reference Trace (Instruction Instrumentation)</a><br>能显示程序引用的所有内存地址的trace，演示如何有选择性的插桩，而非前面的对每一个插桩。</li>
+<li><a href="https://software.intel.com/sites/landingpage/pintool/docs/81205/Pin/html/index.html#ImageLoad" target="_blank" rel="external">Detecting the Loading and Unloading of Images (Image Instrumentation)</a><br>记录image的加载和卸载</li>
+<li><a href="https://software.intel.com/sites/landingpage/pintool/docs/81205/Pin/html/index.html#inscount1" target="_blank" rel="external">More Efficient Instruction Counting (Trace Instrumentation)</a><br>通过记录插桩时BBL的指令数来更有效的计算所有指令的数量，每计算完一个BBL跟新一次总数而不是每个指令更新一次</li>
+<li><a href="">Procedure Instruction Count (Routine Instrumentation)</a><br>将计算程序调用过程调用的次数以及每个过程中执行的指令总数。</li>
+<li>[Finding the Value of Function Arguments]<br>显示函数的输入参数的值以及返回值</li>
+<li>[Finding Functions By Name on Windows]<br>几个符号可以解析为相同的功能地址。 检查所有符号名称很重要。以下示例在符号表中找到函数名称，并使用符号地址找到适当的RTN。</li>
+<li><p>[Instrumenting Threaded Applications]<br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/25b25914-a753-4530-b175-44e32bdec4cf.png" alt="25b25914-a753-4530-b175-44e32bdec4cf.png"><br><img src="/2018/01/27/C:C++插桩工具：Intel Pin 简介/05dfca2a-e4a5-41b7-9b54-2cb03016e041.png" alt="05dfca2a-e4a5-41b7-9b54-2cb03016e041.png"></p>
+</li>
+<li><p>[Using TLS]<br>引脚提供高效的线程本地存储（TLS）API。 这些API允许一个工具来创建线程特定的数据。 下面的例子演示了如何使用这些API。</p>
+</li>
+<li>[Finding the Static Properties of an Image]<br>也可以使用Pin来检查二进制文件而不对它们进行测试。 当您需要知道Image的静态属性时，这很有用。 下面的示例工具计算图像中的指令数量，但不插入任何指令</li>
+</ul>
+
+                    
+                        
+                    
+                    
+                        <p>
+                            <a href="/2018/01/27/C:C++插桩工具：Intel Pin 简介/#post-footer" class="postShorten-excerpt_link link">
+                                注释和共享
+                            </a>
+                        </p>
+                    
+                </div>
+            
+        </div>
+        
+    </article>
+    
+    
     <article class="postShorten postShorten--thumbnailimg-right" itemscope itemType="http://schema.org/BlogPosting">
         <div class="postShorten-wrap">
             
@@ -875,6 +980,25 @@
                 <div class="media">
                     
                     <div class="media-body">
+                        <a class="link-unstyled" href="http://plytools.github.io/2018/01/27/C:C++插桩工具：Intel Pin 简介/">
+                            <h3 class="media-heading">C/C++插桩工具：Intel Pin 简介</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2018年1月27日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
                         <a class="link-unstyled" href="http://plytools.github.io/2018/01/27/Intel Pin简介_files/wiz_code_highlight_8/">
                             <h3 class="media-heading"></h3>
                         </a>
@@ -898,7 +1022,7 @@
                 data-message-zero="没有找到文章"
                 data-message-one="找到 1 篇文章"
                 data-message-other="找到 {n} 篇文章">
-                找到 5 篇文章
+                找到 6 篇文章
             </p>
         </div>
     </div>
