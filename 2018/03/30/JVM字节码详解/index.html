@@ -6,35 +6,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="PlyTools">
-    <title>使用VS Code调试Python代码 - PlyTools</title>
+    <title>JVM字节码详解 - PlyTools</title>
     <meta name="author" content="Qian Ren">
     
-        <meta name="keywords" content="VS Code,Python,Debug">
+        <meta name="keywords" content="bytecode,Java">
     
     
         <link rel="icon" href="http://plytools.github.io/assets/images/rq.jpg">
     
     
-    <meta name="description" content="VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。拿到项目的.py文件，怎么用VS Code进行调试">
-<meta name="keywords" content="VS Code,Python,Debug">
+    <meta name="description" content="众所周知，Java 程序是在 JVM 上运行的，不过 JVM 运行的其实不是 Java 语言本身，而是 Java 程序编译成的字节码文件。可能一开始 JVM 是为 Java 语言服务的，不过随着编译技术和 JVM 自身的不断发展和成熟，JVM 已经不仅仅只运行 Java 程序。任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。">
+<meta name="keywords" content="Java,JVM">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="使用VS Code调试Python代码">
-<meta property="og:url" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/index.html">
+<meta property="og:title" content="JVM字节码详解">
+<meta property="og:url" content="http://plytools.github.io/2018/03/30/JVM字节码详解/index.html">
 <meta property="og:site_name" content="PlyTools">
-<meta property="og:description" content="VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。拿到项目的.py文件，怎么用VS Code进行调试">
-<meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/596217250.png">
-<meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/596375187.png">
-<meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/596725703.png">
-<meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/596797000.png">
-<meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/596898156.png">
-<meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/597214328.png">
-<meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/598042953.png">
-<meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/598155609.png">
-<meta property="og:updated_time" content="2017-04-28T18:02:17.000Z">
+<meta property="og:description" content="众所周知，Java 程序是在 JVM 上运行的，不过 JVM 运行的其实不是 Java 语言本身，而是 Java 程序编译成的字节码文件。可能一开始 JVM 是为 Java 语言服务的，不过随着编译技术和 JVM 自身的不断发展和成熟，JVM 已经不仅仅只运行 Java 程序。任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/4fc902d6-5747-47e1-bc36-dacad2c1debf.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/b4a94312-256a-4863-840a-0682e9f494a2.png">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/6ebad447-dc2e-4f4b-853c-91ae93757725.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/f0ad56de-2474-468a-9fe5-3f6d957560bb.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/1e13efa0-2d1b-431a-bc4a-dd5a631a03f5.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/ba8bce58-336b-406c-837a-f98a6293b10e.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/0fec4d21-fdcc-4759-8079-435ddf9e1b65.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/9b2b980e2959c4f996cafddb03fa5d4d.png">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/9509e5da-880e-4f56-b568-4ed0c4fdbeea.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/60b9ff398449db2dcfef9197e2187ae6.png">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/ddc7ff32-1c7f-4666-ac05-c7321c700705.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/9e924e85-3bf6-441b-8a8f-e6d46fd4824d.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/c80dde05-d714-43e8-a825-e890309023ab.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/df052c38-ffc9-4f8f-9789-047821305410.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/f7736a6f-254b-4a4f-894c-f552d0b215e7.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/25f16515-7123-4c64-aea0-8f18e822a0b5.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/e5692e36861bd1d2fa1735c5ab801af7.png">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/7f4d1bd5-6d49-462a-8415-9d2ec5c93544.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/13e72175-5f91-4af4-93db-16bbf90a3d8d.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/b0f95169782409e7576bc9704b93b693.png">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/9c1d7e0e-c7ba-43ba-b37d-3b6b381b27f1.jpg">
+<meta property="og:updated_time" content="2018-03-30T12:07:07.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用VS Code调试Python代码">
-<meta name="twitter:description" content="VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。拿到项目的.py文件，怎么用VS Code进行调试">
-<meta name="twitter:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/596217250.png">
+<meta name="twitter:title" content="JVM字节码详解">
+<meta name="twitter:description" content="众所周知，Java 程序是在 JVM 上运行的，不过 JVM 运行的其实不是 Java 语言本身，而是 Java 程序编译成的字节码文件。可能一开始 JVM 是为 Java 语言服务的，不过随着编译技术和 JVM 自身的不断发展和成熟，JVM 已经不仅仅只运行 Java 程序。任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。">
+<meta name="twitter:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/4fc902d6-5747-47e1-bc36-dacad2c1debf.jpg">
     
     
         
@@ -43,12 +56,12 @@
         <meta property="og:image" content="http://plytools.github.io/assets/images/starry-sky.jpg"/>
     
     
-        <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png" />
+        <meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/jvm.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/03/30/JVM字节码详解/jvm.jpg" />
     
     
-        <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/learning.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/learning.jpg" />
+        <meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/java.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/03/30/JVM字节码详解/java.jpg" />
     
     
     <!--STYLES-->
@@ -238,7 +251,7 @@
         <div class="post-header-cover
                     text-center
                     "
-             style="background-image:url('/2017/04/29/VSCode-Debug-Python/learning.jpg');"
+             style="background-image:url('/2018/03/30/JVM字节码详解/java.jpg');"
              data-behavior="4">
             
         </div>
@@ -256,19 +269,19 @@
         <div class="post-header main-content-wrap text-center">
     
         <h1 class="post-title" itemprop="headline">
-            使用VS Code调试Python代码
+            JVM字节码详解
         </h1>
     
     <div class="post-meta">
-    <time itemprop="datePublished" datetime="2017-04-29T01:18:17+08:00">
+    <time itemprop="datePublished" datetime="2018-03-30T19:49:17+08:00">
 	
-		    4月 29, 2017
+		    3月 30, 2018
     	
     </time>
     
         <span>发布在 </span>
         
-    <a class="category-link" href="/categories/Debug/">Debug</a>
+    <a class="category-link" href="/categories/Java/">Java</a>
 
 
     
@@ -279,62 +292,84 @@
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
             <!-- excerpt -->
-<p><strong>问题: </strong></p>
 <blockquote>
-<p><strong>拿到项目中的.py文件，怎么用VS Code进行调试？</strong></p>
-<p>VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。（笔者试用过Google的Atom，Sublime Text等其他轻量级编辑器，认为VS Code虽然体量稍大，但在易用性和功能方面依然具有优势）</p>
-<p>那么，这篇文章以在VS Code名称为maple-master的项目文件中，调试maple-master/script/idiom/main.py文件为例，介绍调试python文件的方法（默认已装好python环境）。</p>
+<p>本文大量借鉴了<a href="http://www.cnblogs.com/paddix/p/5282004.html" target="_blank" rel="external">从字节码层面看“HelloWorld”</a></p>
 </blockquote>
-<p><strong>要求：</strong></p>
-<blockquote>
-<p>目标是，调试时让main.py文件在maple-master/example/shared_counter/路径下，以两个输入参数display 和test_history运行。</p>
-</blockquote>
-<h3 id="1-设置-py文件调试所需的运行环境？"><a href="#1-设置-py文件调试所需的运行环境？" class="headerlink" title="1.  设置.py文件调试所需的运行环境？"></a>1.  设置.py文件调试所需的运行环境？</h3><ul>
-<li><strong>导入项目</strong></li>
+<h1 id="1-JVM字节码简介"><a href="#1-JVM字节码简介" class="headerlink" title="1. JVM字节码简介"></a>1. JVM字节码简介</h1><p>官方资料见这里：<a href="https://docs.oracle.com/javase/specs/index.html" target="_blank" rel="external">Java Language and Virtual Machine Specifications</a><br>下面以helloworld为例简单介绍1.7版本（51）的字节码规范</p>
+<h1 id="2-以helloworld为例介绍1-7版字节码规范"><a href="#2-以helloworld为例介绍1-7版字节码规范" class="headerlink" title="2. 以helloworld为例介绍1.7版字节码规范"></a>2. 以helloworld为例介绍1.7版字节码规范</h1><h3 id="2-1-源码"><a href="#2-1-源码" class="headerlink" title="2.1 源码"></a>2.1 源码</h3><ul>
+<li><p>HelloWorld源代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">package com.paddx.test.asm;</div><div class="line"></div><div class="line">public class HelloWorld &#123;</div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        System.out.println(&quot;Hello,World!&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>Maven编译配置<br>以1.7编译器，编译为1.7版字节码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;plugin&gt;</div><div class="line">          &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;</div><div class="line">          &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;</div><div class="line">          &lt;configuration&gt;</div><div class="line">              &lt;source&gt;1.7&lt;/source&gt;</div><div class="line">              &lt;target&gt;1.7&lt;/target&gt;</div><div class="line">          &lt;/configuration&gt;</div><div class="line">&lt;/plugin&gt;</div></pre></td></tr></table></figure>
+</li>
 </ul>
-<p>将整个工程文件夹maple-master加入到VS Code的project列表中。</p>
-<p>打开要调试的main.py文件，如下图：</p>
-<p><img src="/2017/04/29/VSCode-Debug-Python/596217250.png" alt="img"></p>
-<p>框1显示了所有打开的文件及其路径，框2显示了导入的整个project文件夹，框3显示了打开的.py文件所在具体位置，这里打开的是maple-master/script/maple/idiom中的main.py文件。</p>
-<p>如果调试project的单个.py文件，而且这个文件需要特定的<strong>运行路径</strong>、<strong>环境变量</strong>、<strong>参数</strong>才能运行，可使用如下方式：</p>
+<h3 id="2-2-详细规范"><a href="#2-2-详细规范" class="headerlink" title="2.2 详细规范"></a>2.2 详细规范</h3><h5 id="2-2-1-编译结果"><a href="#2-2-1-编译结果" class="headerlink" title="2.2.1 编译结果"></a>2.2.1 编译结果</h5><p>编译后结果过如下：UltraEdit的16进制模式打开，红色框内为helloworld.class内容。红框左边是行号，右边是解析出的字符串<br><img src="/2018/03/30/JVM字节码详解/4fc902d6-5747-47e1-bc36-dacad2c1debf.jpg" alt="4fc902d6-5747-47e1-bc36-dacad2c1debf.jpg"><br>字节码中所有内容对应着固定的格式，以如下顺序以及内容依次排列<br><img src="/2018/03/30/JVM字节码详解/b4a94312-256a-4863-840a-0682e9f494a2.png" alt="b4a94312-256a-4863-840a-0682e9f494a2.png"></p>
+<h5 id="2-2-2-详细内容"><a href="#2-2-2-详细内容" class="headerlink" title="2.2.2 详细内容"></a>2.2.2 详细内容</h5><ul>
+<li><p>magic（u4）：CA FE BA BE<br>代表这个文件是字节码文件<br><img src="/2018/03/30/JVM字节码详解/6ebad447-dc2e-4f4b-853c-91ae93757725.jpg" alt="6ebad447-dc2e-4f4b-853c-91ae93757725.jpg"></p>
+</li>
+<li><p>minor_version（u2）：00 00<br>小版本号<br>因为是1.7，所以是0<br><img src="/2018/03/30/JVM字节码详解/f0ad56de-2474-468a-9fe5-3f6d957560bb.jpg" alt="f0ad56de-2474-468a-9fe5-3f6d957560bb.jpg"></p>
+</li>
+<li><p>major_version（u2）：00 33<br>大版本号<br>0x0033转换为十进制是51，指1.7<br><img src="/2018/03/30/JVM字节码详解/1e13efa0-2d1b-431a-bc4a-dd5a631a03f5.jpg" alt="1e13efa0-2d1b-431a-bc4a-dd5a631a03f5.jpg"></p>
+</li>
+<li><p>constant_pool_count（u2）：00 22<br>常量池数量<br>转换为十进制后为34<br>从1开始，所以指有33个常量<br><img src="/2018/03/30/JVM字节码详解/ba8bce58-336b-406c-837a-f98a6293b10e.jpg" alt="ba8bce58-336b-406c-837a-f98a6293b10e.jpg"></p>
+</li>
+<li><p>constant_pool[cosntant_pool_count – 1]<br>常量池，如右图红色区域<br>常量池中数据是cp_info<br>cp_info由一个一个的表组成<br><img src="/2018/03/30/JVM字节码详解/0fec4d21-fdcc-4759-8079-435ddf9e1b65.jpg" alt="0fec4d21-fdcc-4759-8079-435ddf9e1b65.jpg"></p>
 <ul>
-<li><strong>生成launch.json文件</strong></li>
-</ul>
-<p>点击框4，进入如下界面</p>
-<p><img src="/2017/04/29/VSCode-Debug-Python/596375187.png" alt="img"></p>
-<p>然后，点击红框中的齿轮标志，随后会生成并打开项目的launch.json文件，可以在其中任意配置运行参数。因为此处调试.py文件，因此需要增加一个python的配置。</p>
+<li><p>方法引用表<br>如上图粗红框部分就是一个表，具体内容为</p>
 <ul>
-<li><strong>生成python默认配置</strong></li>
+<li>tag（u1）：0A<br>表类型，0x0A转换为十进制是10<br>表示CONSTANT_Methodref所以是个表类型是方法引用</li>
+<li>index（u2）：00 06<br>指向声明方法的类描述符CONSTANT_Class_info的索引值</li>
+<li>index（u2）：00 14<br>CONSTANT_NameAndType_info的索引值</li>
 </ul>
-<p>在launch.json文件中，点击右下角<em>Add Configuration</em>按钮如下图</p>
-<p><img src="/2017/04/29/VSCode-Debug-Python/596725703.png" alt="img"></p>
-<p>会生成如下默认配置的选择框，选择其中的python项</p>
-<p><img src="/2017/04/29/VSCode-Debug-Python/596797000.png" alt="img"></p>
-<p>于是launch.json中添加了如下关于Python的默认运行参数配置</p>
-<p><img src="/2017/04/29/VSCode-Debug-Python/596898156.png" alt="img"></p>
+</li>
+<li><p>常量池中表的类型<br>常量池中表的类型有14种，如下所示，上面的例子就是其中的CONSTANT_Methodref_info<br><img src="/2018/03/30/JVM字节码详解/9b2b980e2959c4f996cafddb03fa5d4d.png" alt="9b2b980e2959c4f996cafddb03fa5d4d.png"></p>
+</li>
+</ul>
+</li>
+<li><p>access_flags（u2）：00 21<br>访问标识<br>0021=0020 + 0001<br>即public + invokespecial<br><img src="/2018/03/30/JVM字节码详解/9509e5da-880e-4f56-b568-4ed0c4fdbeea.jpg" alt="9509e5da-880e-4f56-b568-4ed0c4fdbeea.jpg"></p>
 <ul>
-<li><strong>修改特定的.py运行参数</strong></li>
+<li>access_flags（u2）访问标识符的规范<br><img src="/2018/03/30/JVM字节码详解/60b9ff398449db2dcfef9197e2187ae6.png" alt="60b9ff398449db2dcfef9197e2187ae6.png"></li>
 </ul>
-<p>这里，因为我们的目标是让main.py文件在特定的路径下接受两个参数调试运行，默认的参数不符合，所以要进行修改，修改后代码如下</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">            "name": "idiom_main",</div><div class="line">            "type": "python",</div><div class="line">            "request": "launch",</div><div class="line">            "stopOnEntry": true,</div><div class="line">            "pythonPath": "$&#123;config:python.pythonPath&#125;",</div><div class="line">            "program": "$&#123;file&#125;",</div><div class="line">            "cwd": "$&#123;workspaceRoot&#125;/example/shared_counter/",</div><div class="line">            "args":[</div><div class="line">                "display",</div><div class="line">                "test_history"</div><div class="line">            ],</div><div class="line">            "env": null,</div><div class="line">            "envFile": "$&#123;workspaceRoot&#125;/.env",</div><div class="line">            "debugOptions": [</div><div class="line">                "WaitOnAbnormalExit",</div><div class="line">                "WaitOnNormalExit",</div><div class="line">                "RedirectOutput"</div><div class="line">            ]</div><div class="line">        &#125;,</div></pre></td></tr></table></figure>
-<p>于是launch.json变为下图</p>
-<p><img src="/2017/04/29/VSCode-Debug-Python/597214328.png" alt="img"></p>
-<p>红框部分为修改部分，下面做简要解释</p>
-<p><code>&quot;args&quot;</code> 表示以这个配置运行文件时，传给文件的参数，这里我们传了两个参数display和test_history</p>
-<p><code>&quot;cwd&quot;</code> 表示在什么位置运行的这个文件</p>
-<p><code>&quot;name&quot;</code> 参数表示为我们生成的这个配置的名称，原本因为添加的python默认运行参数，名称也是默认的python，但是因为这里设置的”args”和”cwd”只适用于main.py这个文件，所以改写名称为idiom_main作为和其他.py文件调试配置的区分。</p>
-<p>保存！</p>
-<blockquote>
-<p><strong>注意：</strong>如果想修改其他参数，比如环境变量<code>&quot;env&quot;</code>等等，可以鼠标移动到参数上面看浮动解释框内容。如果有需要main.py运行前需要做的事情，可以在<code>&quot;task&quot;</code>选项和对应的task.json文件中配置，调试python用的少，调试C++用的多，这里不再赘述。</p>
-</blockquote>
-<h3 id="2-开始debug"><a href="#2-开始debug" class="headerlink" title="2.  开始debug"></a>2.  <strong>开始debug</strong></h3><p>进入需要调试的main.py文件，点击下图的框1，然后点击框2选择idiom_main作为运行配置，最后点击框3开始debug</p>
-<p><img src="/2017/04/29/VSCode-Debug-Python/598042953.png" alt="img"></p>
-<p>下图中框1代表到达的默认断点位置（再也不用担心闪退了），后续操作可以通过框2浮动窗口的命令和提示进行。</p>
-<p><img src="/2017/04/29/VSCode-Debug-Python/598155609.png" alt="img"></p>
-<p>​ ​:happy:​ <strong>Good Luck!!</strong> </p>
-<blockquote>
-<p> 转载请注明出处，欢迎大家指正交流，我会持续更新</p>
-</blockquote>
+</li>
+</ul>
+<ul>
+<li>this_class（u2）：00 05<br>当前类信息<br>是指向constant pool的索引值<br>这里0x00 05指向常量池中的第5项，第5项内部又指向常量池中的第26项，即com/paddx/test/asm/HelloWorld<br><img src="/2018/03/30/JVM字节码详解/ddc7ff32-1c7f-4666-ac05-c7321c700705.jpg" alt="ddc7ff32-1c7f-4666-ac05-c7321c700705.jpg"></li>
+</ul>
+<p><img src="/2018/03/30/JVM字节码详解/9e924e85-3bf6-441b-8a8f-e6d46fd4824d.jpg" alt="9e924e85-3bf6-441b-8a8f-e6d46fd4824d.jpg"></p>
+<ul>
+<li><p>super_class（u2）：00 06<br>当前字节码定义的类或接口的直接父类<br>指向constant pool的索引值，所指表必须是CONSTANT_Class_info类型<br>这里指向的是java/lang/object<br><img src="/2018/03/30/JVM字节码详解/c80dde05-d714-43e8-a825-e890309023ab.jpg" alt="c80dde05-d714-43e8-a825-e890309023ab.jpg"></p>
+</li>
+<li><p>interfaces_count（u2）：00 00<br>实现接口的数量<br><img src="/2018/03/30/JVM字节码详解/df052c38-ffc9-4f8f-9789-047821305410.jpg" alt="df052c38-ffc9-4f8f-9789-047821305410.jpg"></p>
+</li>
+<li><p>interfaces[interfaces_count]<br>因为没有实现接口，所以这里没有</p>
+</li>
+<li><p>field_count（u2）：00 00<br>属性数量，这里是0个<br><img src="/2018/03/30/JVM字节码详解/f7736a6f-254b-4a4f-894c-f552d0b215e7.jpg" alt="f7736a6f-254b-4a4f-894c-f552d0b215e7.jpg"></p>
+</li>
+<li><p>field_info<br>因为没有属性，所以这里没有</p>
+</li>
+</ul>
+<ul>
+<li><p>method_count（u2）：00 02<br>方法数量<br>虽然HelloWorld中只实现了一个，但因有<init>，所以是两个<br><img src="/2018/03/30/JVM字节码详解/25f16515-7123-4c64-aea0-8f18e822a0b5.jpg" alt="25f16515-7123-4c64-aea0-8f18e822a0b5.jpg"></init></p>
+<ul>
+<li><p>method_info<br>方法表，格式如下表，对应数据如下</p>
+<ul>
+<li>access_flag（u2）: 00 01</li>
+<li>name_index（u2）:00 07</li>
+<li>descriptor_index（u2）:00 08<br><img src="/2018/03/30/JVM字节码详解/e5692e36861bd1d2fa1735c5ab801af7.png" alt="e5692e36861bd1d2fa1735c5ab801af7.png"><br><img src="/2018/03/30/JVM字节码详解/7f4d1bd5-6d49-462a-8415-9d2ec5c93544.jpg" alt="7f4d1bd5-6d49-462a-8415-9d2ec5c93544.jpg"><br>这里 07、08就对应的常量池里面的常量索引，从下图可知，即07 对应的是 <init>，08 对应的是()<br><img src="/2018/03/30/JVM字节码详解/13e72175-5f91-4af4-93db-16bbf90a3d8d.jpg" alt="13e72175-5f91-4af4-93db-16bbf90a3d8d.jpg"></init></li>
+</ul>
+</li>
+<li><p>attributes_count（u2）：00 01<br>表示包含一个属性</p>
+</li>
+<li><p>attribute_info（）：属性表，该表的结构如右表：</p>
+<ul>
+<li>attribute_name_index（u2）: 00 09<br>指向常量池中的索引。</li>
+<li>attribute_length（u4）：00 00 00 2F<br>属性的长度47。<br><img src="/2018/03/30/JVM字节码详解/b0f95169782409e7576bc9704b93b693.png" alt="b0f95169782409e7576bc9704b93b693.png"><br><img src="/2018/03/30/JVM字节码详解/9c1d7e0e-c7ba-43ba-b37d-3b6b381b27f1.jpg" alt="9c1d7e0e-c7ba-43ba-b37d-3b6b381b27f1.jpg"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
             
         </div>
     </div>
@@ -343,7 +378,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">标签</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/Debug/">Debug</a> <a class="tag tag--primary tag--small t-link" href="/tags/Python/">Python</a> <a class="tag tag--primary tag--small t-link" href="/tags/VS-Code/">VS Code</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/JVM/">JVM</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a>
 
             </div>
         
@@ -352,7 +387,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/28/Maple-setup-tutorial/"  data-tooltip="软件动态分析：Maple配置和使用详细教程">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/05/15/MPI并行：Pthread入门教程/"  data-tooltip="MPI并行：Pthread入门教程">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -360,7 +395,7 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/" data-tooltip="使用Hexo搭建Github博客：(一)20min搭完主体框架">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -375,17 +410,17 @@
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM字节码详解/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM字节码详解/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM字节码详解/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -433,7 +468,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/28/Maple-setup-tutorial/"  data-tooltip="软件动态分析：Maple配置和使用详细教程">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/05/15/MPI并行：Pthread入门教程/"  data-tooltip="MPI并行：Pthread入门教程">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
@@ -441,7 +476,7 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/" data-tooltip="使用Hexo搭建Github博客：(一)20min搭完主体框架">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
                     <i class="fa fa-angle-right"></i>
@@ -456,17 +491,17 @@
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM字节码详解/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM字节码详解/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM字节码详解/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -492,17 +527,17 @@
                 <div id="share-options-bar" class="share-options-bar" data-behavior="4">
     <ul class="share-options">
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM字节码详解/">
                 <i class="fa fa-google-plus"></i><span>分享到 Google+</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM字节码详解/">
                 <i class="fa fa-facebook-official"></i><span>分享到 Facebook</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM字节码详解/">
                 <i class="fa fa-twitter"></i><span>分享到 Twitter</span>
             </a>
         </li>
@@ -715,9 +750,9 @@
     
         <script>
              var disqus_config = function () {
-                 this.page.url = 'http://plytools.github.io/2017/04/29/VSCode-Debug-Python/';
+                 this.page.url = 'http://plytools.github.io/2018/03/30/JVM字节码详解/';
                  
-                    this.page.identifier = '2017/04/29/VSCode-Debug-Python/';
+                    this.page.identifier = '2018/03/30/JVM字节码详解/';
                  
              };
             (function() {
