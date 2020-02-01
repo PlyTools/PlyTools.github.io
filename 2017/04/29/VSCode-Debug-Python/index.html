@@ -12,16 +12,15 @@
         <meta name="keywords" content="VS Code,Python,Debug">
     
     
-        <link rel="icon" href="http://plytools.github.io/assets/images/rq.jpg">
     
-    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"articleBody":"\n问题: \n\n拿到项目中的.py文件，怎么用VS Code进行调试？\nVS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。（笔者试用过Google的Atom，Sublime Text等其他轻量级编辑器，认为VS Code虽然体量稍大，但在易用性和功能方面依然具有优势）\n那么，这篇文章以在VS Code名称为maple-master的项目文件中，调试maple-master/script/idiom/main.py文件为例，介绍调试python文件的方法（默认已装好python环境）。\n\n要求：\n\n目标是，调试时让main.py文件在maple-master/example/shared_counter/路径下，以两个输入参数display 和test_history运行。\n\n1.  设置.py文件调试所需的运行环境？\n导入项目\n\n将整个工程文件夹maple-master加入到VS Code的project列表中。\n打开要调试的main.py文件，如下图：\n\n框1显示了所有打开的文件及其路径，框2显示了导入的整个project文件夹，框3显示了打开的.py文件所在具体位置，这里打开的是maple-master/script/maple/idiom中的main.py文件。\n如果调试project的单个.py文件，而且这个文件需要特定的运行路径、环境变量、参数才能运行，可使用如下方式：\n\n生成launch.json文件\n\n点击框4，进入如下界面\n\n然后，点击红框中的齿轮标志，随后会生成并打开项目的launch.json文件，可以在其中任意配置运行参数。因为此处调试.py文件，因此需要增加一个python的配置。\n\n生成python默认配置\n\n在launch.json文件中，点击右下角Add Configuration按钮如下图\n\n会生成如下默认配置的选择框，选择其中的python项\n\n于是launch.json中添加了如下关于Python的默认运行参数配置\n\n\n修改特定的.py运行参数\n\n这里，因为我们的目标是让main.py文件在特定的路径下接受两个参数调试运行，默认的参数不符合，所以要进行修改，修改后代码如下\n1234567891011121314151617181920&#123;            \"name\": \"idiom_main\",            \"type\": \"python\",            \"request\": \"launch\",            \"stopOnEntry\": true,            \"pythonPath\": \"$&#123;config:python.pythonPath&#125;\",            \"program\": \"$&#123;file&#125;\",            \"cwd\": \"$&#123;workspaceRoot&#125;/example/shared_counter/\",            \"args\":[                \"display\",                \"test_history\"            ],            \"env\": null,            \"envFile\": \"$&#123;workspaceRoot&#125;/.env\",            \"debugOptions\": [                \"WaitOnAbnormalExit\",                \"WaitOnNormalExit\",                \"RedirectOutput\"            ]        &#125;,\n于是launch.json变为下图\n\n红框部分为修改部分，下面做简要解释\n&quot;args&quot; 表示以这个配置运行文件时，传给文件的参数，这里我们传了两个参数display和test_history\n&quot;cwd&quot; 表示在什么位置运行的这个文件\n&quot;name&quot; 参数表示为我们生成的这个配置的名称，原本因为添加的python默认运行参数，名称也是默认的python，但是因为这里设置的”args”和”cwd”只适用于main.py这个文件，所以改写名称为idiom_main作为和其他.py文件调试配置的区分。\n保存！\n\n注意：如果想修改其他参数，比如环境变量&quot;env&quot;等等，可以鼠标移动到参数上面看浮动解释框内容。如果有需要main.py运行前需要做的事情，可以在&quot;task&quot;选项和对应的task.json文件中配置，调试python用的少，调试C++用的多，这里不再赘述。\n\n2.  开始debug进入需要调试的main.py文件，点击下图的框1，然后点击框2选择idiom_main作为运行配置，最后点击框3开始debug\n\n下图中框1代表到达的默认断点位置（再也不用担心闪退了），后续操作可以通过框2浮动窗口的命令和提示进行。\n\n​ ​:happy:​ Good Luck!! \n\n 转载请注明出处，欢迎大家指正交流，我会持续更新\n","dateCreated":"2017-04-29T02:02:17+08:00","dateModified":"2017-04-29T02:02:17+08:00","datePublished":"2017-04-29T02:02:17+08:00","description":"VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。拿到项目的.py文件，怎么用VS Code进行调试","headline":"使用VS Code调试Python代码","image":["vscode.png","learning.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"},"publisher":{"@type":"Organization","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"url":"http://plytools.github.io/2017/04/29/VSCode-Debug-Python/","keywords":"VS Code, Python, Debug","thumbnailUrl":"vscode.png"}</script>
     <meta name="description" content="VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。拿到项目的.py文件，怎么用VS Code进行调试">
-<meta name="keywords" content="VS Code,Python,Debug">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="使用VS Code调试Python代码">
 <meta property="og:url" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/index.html">
 <meta property="og:site_name" content="PlyTools">
 <meta property="og:description" content="VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。拿到项目的.py文件，怎么用VS Code进行调试">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/596217250.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/596375187.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/596725703.png">
@@ -30,31 +29,39 @@
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/597214328.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/598042953.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/598155609.png">
-<meta property="og:updated_time" content="2017-04-28T18:02:17.000Z">
+<meta property="article:published_time" content="2017-04-28T18:02:17.000Z">
+<meta property="article:modified_time" content="2017-04-28T18:02:17.000Z">
+<meta property="article:author" content="Qian Ren">
+<meta property="article:tag" content="VS Code">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Debug">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用VS Code调试Python代码">
-<meta name="twitter:description" content="VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。拿到项目的.py文件，怎么用VS Code进行调试">
 <meta name="twitter:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/596217250.png">
     
     
         
     
     
-        <meta property="og:image" content="http://plytools.github.io/assets/images/starry-sky.jpg"/>
-    
     
         <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png" />
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png"/>
     
     
         <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/learning.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/learning.jpg" />
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/learning.jpg"/>
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-yrst5vo1nxaxbp2g3v9na2wg1lixlpr3ghbjdvskeixmu79deycecx3rh4bt.min.css">
+    
+<link rel="stylesheet" href="/assets/css/style-z3qi4gz142yeg8mt2l3rjqka9kni9avjuo2rtvye8gagczygddddz14l3mpu.min.css">
+
     <!--STYLES END-->
     
+
+    
+
+    
+        
     
 </head>
 
@@ -64,23 +71,26 @@
 
 
     
-        
-            
-        
-    
 
 <header id="header" data-behavior="4">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
-        <a class="header-title-link" href="/ ">PlyTools</a>
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            PlyTools
+        </a>
     </div>
     
         
-            <a  class="header-right-picture "
-                href="#about">
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
         
-        
-            <img class="header-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
         
         </a>
     
@@ -89,23 +99,8 @@
             <!-- Define author's picture -->
 
 
-
-        
-    
-
 <nav id="sidebar" data-behavior="4">
     <div class="sidebar-container">
-        
-            <div class="sidebar-profile">
-                <a href="/#about">
-                    <img class="sidebar-profile-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
-                </a>
-                <h4 class="sidebar-profile-name">Qian Ren</h4>
-                
-                    <h5 class="sidebar-profile-bio"><p>author.bio</p>
-</h5>
-                
-            </div>
         
         
             <ul class="sidebar-buttons">
@@ -113,12 +108,13 @@
                 <li class="sidebar-button">
                     
                         <a  class="sidebar-button-link "
-                             href="/ "
+                             href="/%20"
                             
+                            title="Home"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
-                        <span class="sidebar-button-desc">首页</span>
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
                     </a>
             </li>
             
@@ -127,10 +123,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-categories"
                             
+                            title="Categories"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
-                        <span class="sidebar-button-desc">分类</span>
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
                     </a>
             </li>
             
@@ -139,10 +136,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-tags"
                             
+                            title="Tags"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-                        <span class="sidebar-button-desc">标签</span>
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
                     </a>
             </li>
             
@@ -151,10 +149,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-archives"
                             
+                            title="Archives"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-                        <span class="sidebar-button-desc">归档</span>
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
                     </a>
             </li>
             
@@ -163,10 +162,11 @@
                         <a  class="sidebar-button-link open-algolia-search"
                              href="#search"
                             
+                            title="Search"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-search"></i>
-                        <span class="sidebar-button-desc">搜索</span>
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
                     </a>
             </li>
             
@@ -175,10 +175,11 @@
                         <a  class="sidebar-button-link "
                              href="#about"
                             
+                            title="About"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
-                        <span class="sidebar-button-desc">关于</span>
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
                     </a>
             </li>
             
@@ -188,28 +189,67 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://github.com/PlyTools" target="_blank">
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">GitHub</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/qian-ren-831486b3/" target="_blank">
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://facebook.com/" target="_blank" rel="noopener" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://plus.google.com/" target="_blank" rel="noopener" title="Google +">
+                    
+                        <i class="sidebar-button-icon fab fa-google-plus" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Google +</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/profile/" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">LinkedIn</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="mailto:qianren1024@gmail.com" target="_blank">
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
-                        <span class="sidebar-button-desc">邮箱</span>
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
                     </a>
             </li>
             
@@ -222,9 +262,10 @@
                         <a  class="sidebar-button-link "
                              href="/atom.xml"
                             
+                            title="RSS"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">RSS</span>
                     </a>
             </li>
@@ -248,25 +289,26 @@
                         hasCoverMetaOut
                         hasCoverCaption">
                 
-<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+<article class="post">
     
         <span class="post-header-cover-caption caption">Share Knowledge</span>
     
     
         <div class="post-header main-content-wrap text-center">
     
-        <h1 class="post-title" itemprop="headline">
+        <h1 class="post-title">
             使用VS Code调试Python代码
         </h1>
     
-    <div class="post-meta">
-    <time itemprop="datePublished" datetime="2017-04-29T01:18:17+08:00">
+    
+        <div class="post-meta">
+    <time datetime="2017-04-29T02:02:17+08:00">
 	
 		    4月 29, 2017
     	
     </time>
     
-        <span>发布在 </span>
+        <span>in </span>
         
     <a class="category-link" href="/categories/Debug/">Debug</a>
 
@@ -274,9 +316,11 @@
     
 </div>
 
-</div>
     
-    <div class="post-content markdown" itemprop="articleBody">
+</div>
+
+    
+    <div class="post-content markdown">
         <div class="main-content-wrap">
             <!-- excerpt -->
 <p><strong>问题: </strong></p>
@@ -336,71 +380,111 @@
 <p> 转载请注明出处，欢迎大家指正交流，我会持续更新</p>
 </blockquote>
             
+
+
         </div>
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
         
             <div class="post-footer-tags">
-                <span class="text-color-light text-small">标签</span><br/>
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/Debug/">Debug</a> <a class="tag tag--primary tag--small t-link" href="/tags/Python/">Python</a> <a class="tag tag--primary tag--small t-link" href="/tags/VS-Code/">VS Code</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/Debug/" rel="tag">Debug</a> <a class="tag tag--primary tag--small t-link" href="/tags/Python/" rel="tag">Python</a> <a class="tag tag--primary tag--small t-link" href="/tags/VS-Code/" rel="tag">VS Code</a>
 
             </div>
         
-        <div class="post-actions-wrap">
+        
+            <div class="post-actions-wrap">
     <nav>
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/28/Maple-setup-tutorial/"  data-tooltip="软件动态分析：Maple配置和使用详细教程">
-                
-                    <i class="fa fa-angle-left"></i>
-                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
-                </a>
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                    data-tooltip="使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                    aria-label="PREVIOUS: 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/" data-tooltip="使用Hexo搭建Github博客：(一)20min搭完主体框架">
-                
-                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/04/28/Maple-setup-tutorial/"
+                    data-tooltip="软件动态分析：Maple配置和使用详细教程"
+                    aria-label="NEXT: 软件动态分析：Maple配置和使用详细教程"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
             </li>
         </ul>
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
-                <i class="fa fa-share-alt"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
-                <i class="fa fa-google-plus"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
-                <i class="fa fa-facebook-official"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
-                <i class="fa fa-twitter"></i>
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
         
-            <li class="post-action">
-                <a class="post-action-btn btn btn--default" href="#disqus_thread">
-                    <i class="fa fa-comment-o"></i>
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
         
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <i class="fa fa-list"></i>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
         </li>
     </ul>
@@ -408,10 +492,7 @@
 
 
         
-            
-                <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
+        
             
         
     </div>
@@ -421,7 +502,7 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2018 Qian Ren. All Rights Reserved.
+        Copyrights &copy; 2020 Qian Ren. All Rights Reserved.
     </span>
 </footer>
 
@@ -433,55 +514,92 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/28/Maple-setup-tutorial/"  data-tooltip="软件动态分析：Maple配置和使用详细教程">
-                
-                    <i class="fa fa-angle-left"></i>
-                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
-                </a>
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                    data-tooltip="使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                    aria-label="PREVIOUS: 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/" data-tooltip="使用Hexo搭建Github博客：(一)20min搭完主体框架">
-                
-                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/04/28/Maple-setup-tutorial/"
+                    data-tooltip="软件动态分析：Maple配置和使用详细教程"
+                    aria-label="NEXT: 软件动态分析：Maple配置和使用详细教程"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
             </li>
         </ul>
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
-                <i class="fa fa-share-alt"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
-                <i class="fa fa-google-plus"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
-                <i class="fa fa-facebook-official"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
-                <i class="fa fa-twitter"></i>
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
         
-            <li class="post-action">
-                <a class="post-action-btn btn btn--default" href="#disqus_thread">
-                    <i class="fa fa-comment-o"></i>
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
         
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <i class="fa fa-list"></i>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
         </li>
     </ul>
@@ -489,43 +607,64 @@
 
 
                 </div>
-                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
-    <ul class="share-options">
-        <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
-                <i class="fa fa-google-plus"></i><span>分享到 Google+</span>
-            </a>
-        </li>
-        <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
-                <i class="fa fa-facebook-official"></i><span>分享到 Facebook</span>
-            </a>
-        </li>
-        <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
-                <i class="fa fa-twitter"></i><span>分享到 Twitter</span>
-            </a>
-        </li>
-    </ul>
-</div>
-<div id="share-options-mask" class="share-options-mask"></div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
 
             
         </div>
         
 
 
-    
-        
-    
-
 <div id="about">
     <div id="about-card">
         <div id="about-btn-close">
-            <i class="fa fa-remove"></i>
+            <i class="fa fa-times"></i>
         </div>
-        
-            <img id="about-card-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
         
             <h4 id="about-card-name">Qian Ren</h4>
         
@@ -541,44 +680,47 @@
             </div>
         
         
-            <div id="about-card-location">
-                <i class="fa fa-map-marker"></i>
-                <br/>
-                Beijing, China
-            </div>
-        
     </div>
 </div>
 
-        <div id="algolia-search-modal" class="modal-container">
+        
+            <div id="algolia-search-modal" class="modal-container">
     <div class="modal">
         <div class="modal-header">
-            <span class="close-button"><i class="fa fa-close"></i></span>
-            <a href="https://algolia.com" target="_blank" class="searchby-algolia text-color-light link-unstyled">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
                 <span class="searchby-algolia-text text-color-light text-small">by</span>
-                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
             </a>
             <i class="search-icon fa fa-search"></i>
             <form id="algolia-search-form">
                 <input type="text" id="algolia-search-input" name="search"
                     class="form-control input--large search-input" placeholder="Search "
-                    autofocus="autofocus"/>
+                    />
             </form>
         </div>
         <div class="modal-body">
-            <div class="no-result text-color-light text-center">没有找到文章</div>
+            <div class="no-result text-color-light text-center">no post found</div>
             <div class="results">
                 
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                            aria-label=": 软件动态分析：Maple配置和使用详细教程"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                            aria-label=": 软件动态分析：Maple配置和使用详细教程"
+                        >
                             <h3 class="media-heading">软件动态分析：Maple配置和使用详细教程</h3>
                         </a>
                         <span class="media-meta">
@@ -597,13 +739,21 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                            aria-label=": 使用VS Code调试Python代码"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                            aria-label=": 使用VS Code调试Python代码"
+                        >
                             <h3 class="media-heading">使用VS Code调试Python代码</h3>
                         </a>
                         <span class="media-meta">
@@ -622,13 +772,21 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                            aria-label=": 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/hexo-logo.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                            aria-label=": 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                        >
                             <h3 class="media-heading">使用Hexo搭建Github博客：(一)20min搭完主体框架</h3>
                         </a>
                         <span class="media-meta">
@@ -647,19 +805,27 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/05/15/MPI并行：Pthread入门教程/">
-                            <img class="media-image" src="http://plytools.github.io/2017/05/15/MPI并行：Pthread入门教程/mpi-logo.png" width="90" height="90"/>
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                            aria-label=": MPI并行：Pthread入门教程"
+                        >
+                            <img class="media-image" src="http://plytools.github.io/2018/03/30/MPI并行：Pthread入门教程/mpi-logo.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/05/15/MPI并行：Pthread入门教程/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                            aria-label=": MPI并行：Pthread入门教程"
+                        >
                             <h3 class="media-heading">MPI并行：Pthread入门教程</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
                                 
-                                    2017年5月15日
+                                    2018年3月30日
                                 
                             </span>
                         </span>
@@ -672,13 +838,21 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2018/03/30/JVM字节码详解/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                            aria-label=": JVM字节码详解"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2018/03/30/JVM字节码详解/java-logo.svg" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2018/03/30/JVM字节码详解/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                            aria-label=": JVM字节码详解"
+                        >
                             <h3 class="media-heading">JVM字节码详解</h3>
                         </a>
                         <span class="media-meta">
@@ -698,47 +872,40 @@
         </div>
         <div class="modal-footer">
             <p class="results-count text-medium"
-                data-message-zero="没有找到文章"
-                data-message-one="找到 1 篇文章"
-                data-message-other="找到 {n} 篇文章">
-                找到 5 篇文章
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                5 posts found
             </p>
         </div>
     </div>
 </div>
+
+        
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-rt08quwts7iav5x0cfd2ym0gb5qkd1lvrsmwrakxtkhefmaaes4ywkmnjnwf.min.js"></script>
+
+<script src="/assets/js/script-ek4ywkrdmen2f0f6pnmh0zlezvmmnk0zpkt8yipys4xe94u87gxxysen4bo2.min.js"></script>
+
 <!--SCRIPTS END-->
 
-    
-        <script>
-             var disqus_config = function () {
-                 this.page.url = 'http://plytools.github.io/2017/04/29/VSCode-Debug-Python/';
-                 
-                    this.page.identifier = '2017/04/29/VSCode-Debug-Python/';
-                 
-             };
-            (function() {
-                var d = document, s = d.createElement('script');
-                var disqus_shortname = 'plytools-github-io';
-                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
 
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-            })();
-        </script>
     
 
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
-    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    
+<script src="/assets/js/moment-with-locales.js"></script>
+
+    
+<script src="/assets/js/algoliasearch.js"></script>
+
     <script>
-        var algoliaClient = algoliasearch('IIGDAO65S7', 'a5e943fbe88ee973daee86eab6666e06');
-        var algoliaIndex = algoliaClient.initIndex('plytools-github-io');
+      var algoliaClient = algoliasearch('IIGDAO65S7', 'a5e943fbe88ee973daee86eab6666e06');
+      var algoliaIndex = algoliaClient.initIndex('plytools-github-io');
     </script>
+
 
     </body>
 </html>

@@ -1,0 +1,936 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="PlyTools">
+    <title>MPI并行：Pthread入门教程 - PlyTools</title>
+    <meta name="author" content="Qian Ren">
+    
+        <meta name="keywords" content="MPI,Pthread">
+    
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"articleBody":"\n前言本文转自：https://hanbingyan.github.io/2016/03/07/pthread_on_linux/#section\n文档参考: https://computing.llnl.gov/tutorials/pthreads/\nPOSIX 委员会定义了一系列基本功能和数据结构，希望能够被大量厂商采用，以便线程代码能够轻松地在各种操作系统上移植. 委员会的梦想由 UNIX 厂商实现了，他们都广泛 Pthreads . 最著名的例外就是 Sun，它继续采用 Solaris 线程作为其主要线程 API .\nPthreads 指定 API 来处理线程要求的大部分行为. 这些行为包括创建和终止线程、等待线程完成、以及管理线程之间的交互. 后面的目录中存在各种锁定机制，能够阻止两个线程同时尝试修改相同的数据值，这些锁定机制包括互斥锁、条件变量.\n在 Linux 环境下，可以在 Shell 中通过 man 查询到 Pthreads 的部分函数命令,如： man pthread_create\n线程的创建和管理每个线程都有一个在进程中唯一的线程标识符，用一个数据类型 pthread_t 表示，该数据类型在 Linux 中就是一个无符号长整型数据.\n创建新的线程1int pthread_create (pthread_t *thread,pthread_attr_t *attr,void *(*start_routine)(void *),void *arg)\n若创建成功，返回0；若出错，则返回错误编号. thread 是线程标识符，但这个参数不是由用户指定的，而是由 pthread_create 函数在创建时将新的线程的标识符放到这个变量中. attr 指定线程的属性，可以用 NULL 表示默认属性. start_routine 指定线程开始运行的函数，arg 是 start_routine 所需要的参数，是一个无类型指针.\n默认地，线程在被创建时要被赋予一定的属性，这个属性存放在数据类型 pthread_attr_t 中，它包含了线程的调度策略，堆栈的相关信息，join or detach 的状态等.\npthread_attr_init 和 pthread_attr_destroy 函数分别用来创建和销毁 pthread_attr_t，具体函数声明可参考man帮助.\n结束线程当发生以下情形之一时，线程就会结束：\n\n线程运行的函数return了，也就是线程的任务已经完成；\n线程调用了 pthread_exit 函数；\n其他线程调用 pthread_cancel 结束这个线程；\n进程调用 exec() or exit()，结束了；\nmain() 函数先结束了，而且 main() 自己没有调用 pthread_exit 来等所有线程完成任务.\n\n当然，一个线程结束，并不意味着它的所有信息都已经消失，后面会看到僵尸线程的问题.\n下面介绍这两个函数.\n1void pthread_exit (void *retval)\nretval 是由用户指定的参数， pthread_exit 完成之后可以通过这个参数获得线程的退出状态.\n1int pthread_cancel (pthread_t thread)\n一个线程可以通过调用 pthread_cancel 函数来请求取消同一进程中的线程，这个线程由thread 参数指定. 如果操作成功则返回0，失败则返回对应的错误编号.\n看一个例子：\n123456789101112131415161718192021222324252627282930313233343536/******************************************************************************* FILE: hello.c* DESCRIPTION:* A &quot;hello world&quot; Pthreads program.  Demonstrates thread creation and termination.* AUTHOR: Blaise Barney* LAST REVISED: 08/09/11******************************************************************************/#include &lt;pthread.h&gt;#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;#define NUM_THREADS\t5void *PrintHello(void *threadid)&#123;   long tid;   tid = (long)threadid;   printf(&quot;Hello World! It&apos;s me, thread #%ld!\\n&quot;, tid);   pthread_exit(NULL);&#125;int main(int argc, char *argv[])&#123;   pthread_t threads[NUM_THREADS];   int rc;   long t;   for(t=0;t&lt;NUM_THREADS;t++)&#123;     printf(&quot;In main: creating thread %ld\\n&quot;, t);     rc = pthread_create(&amp;threads[t], NULL, PrintHello, (void *)t);     if (rc)&#123;       printf(&quot;ERROR; return code from pthread_create() is %d\\n&quot;, rc);       exit(-1);       &#125;     &#125;   /* Last thing that main() should do */   pthread_exit(NULL);&#125;\n在 Shell 中输入以下命令编译执行:\n12gcc -Wall hello.c -lpthread -o hello./hello\n输出结果\n12345678910In main: creating thread 0In main: creating thread 1In main: creating thread 2Hello World! It&apos;s me, thread #0!In main: creating thread 3In main: creating thread 4Hello World! It&apos;s me, thread #3!Hello World! It&apos;s me, thread #1!Hello World! It&apos;s me, thread #4!Hello World! It&apos;s me, thread #2!\n注意输出的顺序可能不同， 要特别注意的是， main() 显示地调用了 pthread_exit() 来等待其他线程的结束.\n下面这个例子传给线程一些初始化用的参数.\n1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071/******************************************************************************* FILE: hello_arg2.c* DESCRIPTION:*   A &quot;hello world&quot; Pthreads program which demonstrates another safe way*   to pass arguments to threads during thread creation.  In this case,*   a structure is used to pass multiple arguments.* AUTHOR: Blaise Barney* LAST REVISED: 01/29/09******************************************************************************/#include &lt;pthread.h&gt;#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;#define NUM_THREADS\t8char *messages[NUM_THREADS];struct thread_data&#123;   int\tthread_id;   int  sum;   char *message;&#125;;struct thread_data thread_data_array[NUM_THREADS];void *PrintHello(void *threadarg)&#123;   int taskid, sum;   char *hello_msg;   struct thread_data *my_data;   sleep(1);   my_data = (struct thread_data *) threadarg;   taskid = my_data-&gt;thread_id;   sum = my_data-&gt;sum;   hello_msg = my_data-&gt;message;   printf(&quot;Thread %d: %s  Sum=%d\\n&quot;, taskid, hello_msg, sum);   pthread_exit(NULL);&#125;int main(int argc, char *argv[])&#123;pthread_t threads[NUM_THREADS];int *taskids[NUM_THREADS];int rc, t, sum;sum=0;messages[0] = &quot;English: Hello World!&quot;;messages[1] = &quot;French: Bonjour, le monde!&quot;;messages[2] = &quot;Spanish: Hola al mundo&quot;;messages[3] = &quot;Klingon: Nuq neH!&quot;;messages[4] = &quot;German: Guten Tag, Welt!&quot;; messages[5] = &quot;Russian: Zdravstvytye, mir!&quot;;messages[6] = &quot;Japan: Sekai e konnichiwa!&quot;;messages[7] = &quot;Latin: Orbis, te saluto!&quot;;for(t=0;t&lt;NUM_THREADS;t++) &#123;  sum = sum + t;  thread_data_array[t].thread_id = t;  thread_data_array[t].sum = sum;  thread_data_array[t].message = messages[t];  printf(&quot;Creating thread %d\\n&quot;, t);  rc = pthread_create(&amp;threads[t], NULL, PrintHello, (void *)        &amp;thread_data_array[t]);  if (rc) &#123;    printf(&quot;ERROR; return code from pthread_create() is %d\\n&quot;, rc);    exit(-1);    &#125;  &#125;pthread_exit(NULL);&#125;\n输出结果：\n12345678910111213141516Creating thread 0Creating thread 1Creating thread 2Creating thread 3Creating thread 4Creating thread 5Creating thread 6Creating thread 7Thread 0: English: Hello World!  Sum=0Thread 1: French: Bonjour, le monde!  Sum=1Thread 2: Spanish: Hola al mundo  Sum=3Thread 3: Klingon: Nuq neH!  Sum=6Thread 4: German: Guten Tag, Welt!  Sum=10Thread 5: Russian: Zdravstvytye, mir!  Sum=15Thread 7: Latin: Orbis, te saluto!  Sum=28Thread 6: Japan: Sekai e konnichiwa!  Sum=21\n对线程的阻塞（Joining and Detaching Threads）阻塞是线程之间同步的一种方法.\n1int pthread_join(pthread_t threadid, void **value_ptr)\npthread_join 函数会让调用它的线程等待 threadid 线程运行结束之后再运行. value_ptr 存放了其他线程的返回值. 一个可以被join的线程，仅仅可以被别的一个线程 join，如果同时有多个线程尝试 join 同一个线程时，最终结果是未知的. 另外，线程不能 join 自己.\n上面提到过，创建一个线程时，要赋予它一定的属性，这其中就包括joinable or detachable 的属性，只有被声明成joinable的线程，可以被其他线程join. POSIX标准的最终版本指出线程应该被设置成joinable的. 显式地设置一个线程为joinable,需要以下四个步骤：\n\nDeclare a pthread attribute variable of the pthread_attr_t data type\nInitialize the attribute variable with pthread_attr_init()\nSet the attribute detached status with pthread_attr_setdetachstate()\nWhen done, free library resources used by the attribute with pthread_attr_destroy()\n\n值得注意的的是：僵尸线程 ( “zombie” thread) 是一种已经退出了的 joinable 的线程，但是等待其他线程调用 pthread_join 来 join 它，以收集它的退出信息(exit status). 如果没有其他线程调用 pthread_join 来 join 它的话，它占用的一些系统资源不会被释放，比如堆栈. 如果main()函数需要长时间运行，并且创建大量 joinable 的线程，就有可能出现堆栈不足的 error . 对于那些不需要 join 的线程，最好利用 pthread_detach，这样它运行结束后，资源就会及时得到释放. 注意一个线程被使用 pthread_detach 之后，它就不能再被改成 joinable 的了.\n总而言之，创建的每一个线程都应该使用 pthread_join 或者 pthread_detach 其中一个，以防止僵尸线程的出现.\n相关函数：\n123pthread_detach (threadid)pthread_attr_setdetachstate (attr,detachstate)pthread_attr_getdetachstate (attr,detachstate)\n下面看一个例子，可以具体体会显式地设置一个线程为 joinable 的过程.\n12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455#include&lt;stdlib.h&gt;#include &lt;pthread.h&gt;#include &lt;stdio.h&gt;#include &lt;math.h&gt;#define NUM_THREADS 4void *BusyWork(void *t)&#123;  int i;  long tid;  double result=0.0;  tid = (long)t;  printf(&quot;Thread %ld starting...\\n&quot;,tid);  for (i=0; i&lt;1000000; i++) &#123; result = result + sin(i) * tan(i); &#125;  printf(&quot;Thread %ld done. Result = %e\\n&quot;,tid, result);  pthread_exit((void*) t);&#125;int main (int argc, char *argv[])&#123;pthread_t thread[NUM_THREADS];pthread_attr_t attr;int rc;long t;void *status;/* Initialize and set thread detached attribute */pthread_attr_init(&amp;attr);pthread_attr_setdetachstate(&amp;attr, PTHREAD_CREATE_JOINABLE);for(t=0; t&lt;NUM_THREADS; t++) &#123;printf(&quot;Main: creating thread %ld\\n&quot;, t);rc = pthread_create(&amp;thread[t], &amp;attr, BusyWork, (void *)t);if (rc) &#123;printf(&quot;ERROR; return code from pthread_create() is %d\\n&quot;, rc);exit(-1); &#125;&#125;/* Free attribute and wait for the other threads */pthread_attr_destroy(&amp;attr);for(t=0; t&lt;NUM_THREADS; t++) &#123;rc = pthread_join(thread[t], &amp;status);if (rc) &#123;printf(&quot;ERROR; return code from pthread_join() is %d\\n&quot;, rc);exit(-1); &#125;printf(&quot;Main: completed join with thread %ld having a status of %ld\\n&quot;,t,(long)status);&#125;printf(&quot;Main: program completed. Exiting.\\n&quot;);pthread_exit(NULL);&#125;\n输出结果：\n123456789Main: creating thread 0Main: creating thread 1Thread 0 starting...Thread 1 starting...Thread 0 done. Result = 3.135632e+06Main: completed join with thread 0 having a status of 0Thread 1 done. Result = 3.135632e+06Main: completed join with thread 1 having a status of 1Main: program completed. Exiting.\n堆栈管理 （Stack Management）1234pthread_attr_getstacksize (attr, stacksize)pthread_attr_setstacksize (attr, stacksize)pthread_attr_getstackaddr (attr, stackaddr)pthread_attr_setstackaddr (attr, stackaddr)\nPOSIX标准没有规定一个线程的堆栈大小. 安全可移植的程序不会依赖于具体实现默认的堆栈限制，而是显式地调用 pthread_attr_setstacksize 来分配足够的堆栈空间.\n下面是关于堆栈大小的一个例子.\n12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849#include&lt;stdlib.h&gt;#include &lt;pthread.h&gt;#include &lt;stdio.h&gt;#define NTHREADS 4#define N 1000#define MEGEXTRA 1000000 pthread_attr_t attr;void *dowork(void *threadid)&#123;   double A[N][N];   int i,j;   long tid;   size_t mystacksize;   tid = (long)threadid;   pthread_attr_getstacksize (&amp;attr, &amp;mystacksize);   printf(&quot;Thread %ld: stack size = %li bytes \\n&quot;, tid, mystacksize);   for (i=0; i&lt;N; i++)     for (j=0; j&lt;N; j++)      A[i][j] = ((i*j)/3.452) + (N-i);   pthread_exit(NULL);&#125; int main(int argc, char *argv[])&#123;   pthread_t threads[NTHREADS];   size_t stacksize;   int rc;   long t;    pthread_attr_init(&amp;attr);   pthread_attr_getstacksize (&amp;attr, &amp;stacksize);   printf(&quot;Default stack size = %li\\n&quot;, stacksize);   stacksize = sizeof(double)*N*N+MEGEXTRA;   printf(&quot;Amount of stack needed per thread = %li\\n&quot;,stacksize);   pthread_attr_setstacksize (&amp;attr, stacksize);   printf(&quot;Creating threads with stack size = %li bytes\\n&quot;,stacksize);   for(t=0; t&lt;NTHREADS; t++)&#123;      rc = pthread_create(&amp;threads[t], &amp;attr, dowork, (void *)t);      if (rc)&#123;         printf(&quot;ERROR; return code from pthread_create() is %d\\n&quot;, rc);         exit(-1);      &#125;   &#125;   printf(&quot;Created %ld threads.\\n&quot;, t);   pthread_exit(NULL);&#125;\n输出结果：\n12345678Default stack size = 8388608Amount of stack needed per thread = 9000000Creating threads with stack size = 9000000 bytesThread 2: stack size = 9000000 bytes Created 4 threads.Thread 1: stack size = 9000000 bytes Thread 0: stack size = 9000000 bytes Thread 3: stack size = 9000000 bytes\n其他重要函数12pthread_self ()pthread_equal (thread1,thread2)\n调用pthread_self 可以返回它的 thread ID. pthread_equal 比较两个线程的 ID,如果不同则返回0,否则返回一个非零值.\n互斥锁 MutexMutex 常常被用来保护那些可以被多个线程访问的共享资源，比如可以防止多个线程同时更新同一个数据时出现混乱.\n使用互斥锁的一般步骤是：\n\n创建一个互斥锁，即声明一个pthread_mutex_t类型的数据,然后初始化，只有初始化之后才能使用；\n多个线程尝试锁定这个互斥锁；\n只有一个成功锁定互斥锁，成为互斥锁的拥有者，然后进行一些指令；\n拥有者解锁互斥锁；\n其他线程尝试锁定这个互斥锁，重复上面的过程；\n最后互斥锁被显式地调用 pthread_mutex_destroy 来进行销毁.\n\n有两种方式初始化一个互斥锁：第一种，利用已经定义的常量初始化，例如\n1pthread_mutex_t mymutex = PTHREAD_MUTEX_INITIALIZER;\n第二种方式是调用 pthread_mutex_init (mutex,attr) 进行初始化.\n当多个线程同时去锁定同一个互斥锁时，失败的那些线程，如果是用 pthread_mutex_lock 函数，那么会被阻塞，直到这个互斥锁被解锁，它们再继续竞争；如果是用 pthread_mutex_trylock 函数，那么失败者只会返回一个错误.\n最后需要指出的是，保护共享数据是程序员的责任. 程序员要负责所有可以访问该数据的线程都使用mutex这种机制，否则，不使用 mutex 的线程还是有可能对数据造成破坏.\n相关函数 (具体声明可以用 man 查看 )\n1234567pthread_mutex_init (mutex,attr)pthread_mutex_destroy (pthread_mutex_t *mutex)pthread_mutexattr_init (attr)pthread_mutexattr_destroy (attr)phtread_mutex_lock(pthread_mutex_t *mutex)phtread_mutex_trylock(pthread_mutex_t *mutex)phtread_mutex_unlock(pthread_mutex_t *mutex)\n下面是一个利用多线程进行向量点乘的程序，其中需要对 dotstr.sum 这个共同读写的数据进行保护.\n123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115116117118119120121122123124125126127128129130131132133134135136137138139140141142143144145146147148/****************************************************************************** FILE: dotprod_mutex.c* DESCRIPTION:*   This example program illustrates the use of mutex variables *   in a threads program. The main data is made available to all threads through *   a globally accessible  structure. Each thread works on a different *   part of the data. The main thread waits for all the threads to complete *   their computations, and then it prints the resulting sum.* SOURCE: Vijay Sonnad, IBM* LAST REVISED: 01/29/09 Blaise Barney******************************************************************************/#include &lt;pthread.h&gt;#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;/*   The following structure contains the necessary information  to allow the function &quot;dotprod&quot; to access its input data and place its output into the structure.  This structure is unchanged from the sequential version.*/typedef struct  &#123;   double      *a;   double      *b;   double     sum;    int     veclen;  &#125; DOTDATA;/* Define globally accessible variables and a mutex */#define NUMTHRDS 4#define VECLEN 100000   DOTDATA dotstr;    pthread_t callThd[NUMTHRDS];   pthread_mutex_t mutexsum;/*The function dotprod is activated when the thread is created.As before, all input to this routine is obtained from a structure of type DOTDATA and all output from this function is written intothis structure. The benefit of this approach is apparent for the multi-threaded program: when a thread is created we pass a singleargument to the activated function - typically this argumentis a thread number. All  the other information required by the function is accessed from the globally accessible structure. */void *dotprod(void *arg)&#123;/* Define and use local variables for convenience */   int i, start, end, len ;   long offset;   double mysum, *x, *y;   offset = (long)arg;        len = dotstr.veclen;   start = offset*len;   end   = start + len;   x = dotstr.a;   y = dotstr.b;/*Perform the dot product and assign resultto the appropriate variable in the structure. */   mysum = 0;   for (i=start; i&lt;end ; i++)      &#123;      mysum += (x[i] * y[i]);    &#125;/*Lock a mutex prior to updating the value in the sharedstructure, and unlock it upon updating.*/   pthread_mutex_lock (&amp;mutexsum);   dotstr.sum += mysum;   printf(&quot;Thread %ld did %d to %d: mysum=%f global sum=%f\\n&quot;, offset, start,   end, mysum, dotstr.sum);   pthread_mutex_unlock (&amp;mutexsum);   pthread_exit((void*) 0);&#125;/* The main program creates threads which do all the work and then print out result upon completion. Before creating the threads, The input data is created. Since all threads update a shared structure, we need a mutex for mutual exclusion. The main thread needs to wait for all threads to complete, it waits for each one of the threads. We specify a thread attribute value that allow the main thread tojoin with the threads it creates. Note also that we free up handles  when theyare no longer needed.*/int main (int argc, char *argv[])&#123;long i;double *a, *b;void *status;pthread_attr_t attr;/* Assign storage and initialize values */a = (double*) malloc (NUMTHRDS*VECLEN*sizeof(double));b = (double*) malloc (NUMTHRDS*VECLEN*sizeof(double));  for (i=0; i&lt;VECLEN*NUMTHRDS; i++) &#123;  a[i]=1;  b[i]=a[i];  &#125;dotstr.veclen = VECLEN; dotstr.a = a; dotstr.b = b; dotstr.sum=0;pthread_mutex_init(&amp;mutexsum, NULL);         /* Create threads to perform the dotproduct  */pthread_attr_init(&amp;attr);pthread_attr_setdetachstate(&amp;attr, PTHREAD_CREATE_JOINABLE);for(i=0;i&lt;NUMTHRDS;i++)  &#123;  /* Each thread works on a different set of data.   * The offset is specified by &apos;i&apos;. The size of   * the data for each thread is indicated by VECLEN.   */   pthread_create(&amp;callThd[i], &amp;attr, dotprod, (void *)i);    &#125;pthread_attr_destroy(&amp;attr);/* Wait on the other threads */for(i=0;i&lt;NUMTHRDS;i++) &#123;  pthread_join(callThd[i], &amp;status);  &#125;/* After joining, print out the results and cleanup */printf (&quot;Sum =  %f \\n&quot;, dotstr.sum);free (a);free (b);pthread_mutex_destroy(&amp;mutexsum);pthread_exit(NULL);&#125;\n输出结果：\n12345Thread 0 did 0 to 100000:  mysum=100000.000000 global sum=100000.000000Thread 1 did 100000 to 200000:  mysum=100000.000000 global sum=200000.000000Thread 2 did 200000 to 300000:  mysum=100000.000000 global sum=300000.000000Thread 3 did 300000 to 400000:  mysum=100000.000000 global sum=400000.000000Sum =  400000.000000\n条件变量 Condition Variable互斥锁只有两种状态，这限制了它的用途. 条件变量允许线程在阻塞的时候等待另一个线程发送的信号，当收到信号后，阻塞的线程就被唤醒并试图锁定与之相关的互斥锁. 条件变量要和互斥锁结合使用.\n条件变量的声明和初始化通过声明 pthread_cond_t 类型的数据,并且必须先初始化才能使用.\n初始化的方法也有两种：\n第一种，利用内部定义的常量，例如：\n1pthread_cond_t myconvar = PTHREAD_COND_INITIALIZER;\n第二种，利用函数 pthread_cond_init(cond,attr),其中 attr 由 pthread_condattr_init() 和 pthread_condattr_destroy() 创建和销毁.\n可以用 pthread_cond_destroy() 销毁一个条件变量.\n相关函数：\n123pthread_cond_wait (condition,mutex)pthread_cond_signal (condition)pthread_cond_broadcast (condition)\npthread_cond_wait() 会阻塞调用它的线程，直到收到某一信号. 这个函数需要在 mutex 已经被锁之后进行调用，并且当线程被阻塞时，会自动解锁 mutex. 信号收到后，线程被唤醒，这时 mutex 又会被这个线程锁定.\npthread_cond_signal() 函数结束时，必须解锁 mutex，以供 pthread_cond_wait() 锁定mutex. 当不止一个线程在等待信号时，要用 pthread_cond_broadcast() 代替 pthread_cond_signal() 来告诉所有被该条件变量阻塞的线程结束阻塞状态.\n下面是一个例子，三个线程共同访问 count 变量，thread 2 和 thread 3 竞争地对其进行加 1 的操作，thread 1 等 count 达到 12 的时候，一次性加 125 . 然后 thread 2 和 thread 3 再去竞争 count 的控制权，直到完成自己的对 count 加 10 次的任务.\n123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899100101102103104105106107108109110111112113114115/******************************************************************************* FILE: condvar.c* DESCRIPTION:*   Example code for using Pthreads condition variables.  The main thread*   creates three threads.  Two of those threads increment a &quot;count&quot; variable,*   while the third thread watches the value of &quot;count&quot;.  When &quot;count&quot; *   reaches a predefined limit, the waiting thread is signaled by one of the*   incrementing threads. The waiting thread &quot;awakens&quot; and then modifies*   count. The program continues until the incrementing threads reach*   TCOUNT. The main program prints the final value of count.* SOURCE: Adapted from example code in &quot;Pthreads Programming&quot;, B. Nichols*   et al. O&apos;Reilly and Associates. * LAST REVISED: 10/14/10  Blaise Barney******************************************************************************/#include &lt;pthread.h&gt;#include &lt;stdio.h&gt;#include &lt;stdlib.h&gt;#define NUM_THREADS  3#define TCOUNT 10#define COUNT_LIMIT 12int     count = 0;pthread_mutex_t count_mutex;pthread_cond_t count_threshold_cv;void *inc_count(void *t) &#123;  int i;  long my_id = (long)t;  for (i=0; i &lt; TCOUNT; i++) &#123;    pthread_mutex_lock(&amp;count_mutex);    count++;    /*     Check the value of count and signal waiting thread when condition is    reached.  Note that this occurs while mutex is locked.     */    if (count == COUNT_LIMIT) &#123;      printf(&quot;inc_count(): thread %ld, count = %d  Threshold reached. &quot;,             my_id, count);      pthread_cond_signal(&amp;count_threshold_cv);      printf(&quot;Just sent signal.\\n&quot;);      &#125;    printf(&quot;inc_count(): thread %ld, count = %d, unlocking mutex\\n&quot;, \t   my_id, count);    pthread_mutex_unlock(&amp;count_mutex);    /* Do some work so threads can alternate on mutex lock */    sleep(1);    &#125;  pthread_exit(NULL);&#125;void *watch_count(void *t) &#123;  long my_id = (long)t;  printf(&quot;Starting watch_count(): thread %ld\\n&quot;, my_id);  /*  Lock mutex and wait for signal.  Note that the pthread_cond_wait routine  will automatically and atomically unlock mutex while it waits.   Also, note that if COUNT_LIMIT is reached before this routine is run by  the waiting thread, the loop will be skipped to prevent pthread_cond_wait  from never returning.  */  pthread_mutex_lock(&amp;count_mutex);  while (count &lt; COUNT_LIMIT) &#123;    printf(&quot;watch_count(): thread %ld Count= %d. Going into wait...\\n&quot;, my_id,count);    pthread_cond_wait(&amp;count_threshold_cv, &amp;count_mutex);    printf(&quot;watch_count(): thread %ld Condition signal received. Count= %d\\n&quot;, my_id,    count);    printf(&quot;watch_count(): thread %ld Updating the value of count...\\n&quot;, my_id,count);    count += 125;    printf(&quot;watch_count(): thread %ld count now = %d.\\n&quot;, my_id, count);    &#125;  printf(&quot;watch_count(): thread %ld Unlocking mutex.\\n&quot;, my_id);  pthread_mutex_unlock(&amp;count_mutex);  pthread_exit(NULL);&#125;int main(int argc, char *argv[])&#123;  int i, rc;   long t1=1, t2=2, t3=3;  pthread_t threads[3];  pthread_attr_t attr;  /* Initialize mutex and condition variable objects */  pthread_mutex_init(&amp;count_mutex, NULL);  pthread_cond_init (&amp;count_threshold_cv, NULL);  /* For portability, explicitly create threads in a joinable state */  pthread_attr_init(&amp;attr);  pthread_attr_setdetachstate(&amp;attr, PTHREAD_CREATE_JOINABLE);  pthread_create(&amp;threads[0], &amp;attr, watch_count, (void *)t1);  pthread_create(&amp;threads[1], &amp;attr, inc_count, (void *)t2);  pthread_create(&amp;threads[2], &amp;attr, inc_count, (void *)t3);  /* Wait for all threads to complete */  for (i = 0; i &lt; NUM_THREADS; i++) &#123;    pthread_join(threads[i], NULL);  &#125;  printf(&quot;Main(): Waited and joined with %d threads. Final value of count = %d. Done.\\n&quot;,           NUM_THREADS, count);  /* Clean up and exit */  pthread_attr_destroy(&amp;attr);  pthread_mutex_destroy(&amp;count_mutex);  pthread_cond_destroy(&amp;count_threshold_cv);  pthread_exit (NULL);&#125;\n输出结果：\n12345678910111213141516171819202122232425262728inc_count(): thread 3, count = 1, unlocking mutexinc_count(): thread 2, count = 2, unlocking mutexStarting watch_count(): thread 1watch_count(): thread 1 Count= 2. Going into wait...inc_count(): thread 3, count = 3, unlocking mutexinc_count(): thread 2, count = 4, unlocking mutexinc_count(): thread 3, count = 5, unlocking mutexinc_count(): thread 2, count = 6, unlocking mutexinc_count(): thread 3, count = 7, unlocking mutexinc_count(): thread 2, count = 8, unlocking mutexinc_count(): thread 3, count = 9, unlocking mutexinc_count(): thread 2, count = 10, unlocking mutexinc_count(): thread 3, count = 11, unlocking mutexinc_count(): thread 2, count = 12  Threshold reached. Just sent signal.inc_count(): thread 2, count = 12, unlocking mutexwatch_count(): thread 1 Condition signal received. Count= 12watch_count(): thread 1 Updating the value of count...watch_count(): thread 1 count now = 137.watch_count(): thread 1 Unlocking mutex.inc_count(): thread 3, count = 138, unlocking mutexinc_count(): thread 2, count = 139, unlocking mutexinc_count(): thread 3, count = 140, unlocking mutexinc_count(): thread 2, count = 141, unlocking mutexinc_count(): thread 3, count = 142, unlocking mutexinc_count(): thread 2, count = 143, unlocking mutexinc_count(): thread 3, count = 144, unlocking mutexinc_count(): thread 2, count = 145, unlocking mutexMain(): Waited and joined with 3 threads. Final value of count = 145. Done.","dateCreated":"2018-03-30T21:44:10+08:00","dateModified":"2018-03-30T21:44:10+08:00","datePublished":"2018-03-30T21:44:10+08:00","description":"Pthreads 是 IEEE（电子和电气工程师协会）委员会开发的一组线程接口，负责指定便携式操作系统接口（POSIX）. Pthreads 中的 P 表示 POSIX，实际上，Pthreads 有时候也代表 POSIX 线程.","headline":"MPI并行：Pthread入门教程","image":["mpi-logo.png","mpi.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"},"publisher":{"@type":"Organization","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"url":"http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/","keywords":"MPI","thumbnailUrl":"mpi-logo.png"}</script>
+    <meta name="description" content="Pthreads 是 IEEE（电子和电气工程师协会）委员会开发的一组线程接口，负责指定便携式操作系统接口（POSIX）. Pthreads 中的 P 表示 POSIX，实际上，Pthreads 有时候也代表 POSIX 线程.">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="MPI并行：Pthread入门教程">
+<meta property="og:url" content="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="PlyTools">
+<meta property="og:description" content="Pthreads 是 IEEE（电子和电气工程师协会）委员会开发的一组线程接口，负责指定便携式操作系统接口（POSIX）. Pthreads 中的 P 表示 POSIX，实际上，Pthreads 有时候也代表 POSIX 线程.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-03-30T13:44:10.000Z">
+<meta property="article:modified_time" content="2018-03-30T13:44:10.000Z">
+<meta property="article:author" content="Qian Ren">
+<meta property="article:tag" content="MPI">
+<meta property="article:tag" content="Pthread">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+    
+        <meta property="og:image" content="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/mpi-logo.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/mpi-logo.png"/>
+    
+    
+        <meta property="og:image" content="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/mpi.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/mpi.jpg"/>
+    
+    
+    <!--STYLES-->
+    
+<link rel="stylesheet" href="/assets/css/style-z3qi4gz142yeg8mt2l3rjqka9kni9avjuo2rtvye8gagczygddddz14l3mpu.min.css">
+
+    <!--STYLES END-->
+    
+
+    
+
+    
+        
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            PlyTools
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
+        
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/%20"
+                            
+                            title="Home"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="Categories"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="Tags"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="Archives"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link open-algolia-search"
+                             href="#search"
+                            
+                            title="Search"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="About"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
+                    
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://facebook.com/" target="_blank" rel="noopener" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://plus.google.com/" target="_blank" rel="noopener" title="Google +">
+                    
+                        <i class="sidebar-button-icon fab fa-google-plus" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Google +</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/profile/" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/atom.xml"
+                            
+                            title="RSS"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+        <div class="post-header-cover
+                    text-center
+                    "
+             style="background-image:url('/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/mpi.jpg');"
+             data-behavior="4">
+            
+        </div>
+
+            <div id="main" data-behavior="4"
+                 class="hasCover
+                        hasCoverMetaOut
+                        hasCoverCaption">
+                
+<article class="post">
+    
+        <span class="post-header-cover-caption caption">并行</span>
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            MPI并行：Pthread入门教程
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2018-03-30T21:44:10+08:00">
+	
+		    3月 30, 2018
+    	
+    </time>
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <!-- excerpt -->
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>本文转自：<a href="https://hanbingyan.github.io/2016/03/07/pthread_on_linux/#section" target="_blank" rel="external">https://hanbingyan.github.io/2016/03/07/pthread_on_linux/#section</a></p>
+<p>文档参考: <a href="https://computing.llnl.gov/tutorials/pthreads/" target="_blank" rel="external">https://computing.llnl.gov/tutorials/pthreads/</a></p>
+<p>POSIX 委员会定义了一系列基本功能和数据结构，希望能够被大量厂商采用，以便线程代码能够轻松地在各种操作系统上移植. 委员会的梦想由 UNIX 厂商实现了，他们都广泛 Pthreads . 最著名的例外就是 Sun，它继续采用 Solaris 线程作为其主要线程 API .</p>
+<p>Pthreads 指定 API 来处理线程要求的大部分行为. 这些行为包括创建和终止线程、等待线程完成、以及管理线程之间的交互. 后面的目录中存在各种锁定机制，能够阻止两个线程同时尝试修改相同的数据值，这些锁定机制包括互斥锁、条件变量.</p>
+<p>在 Linux 环境下，可以在 Shell 中通过 man 查询到 Pthreads 的部分函数命令,如： man pthread_create</p>
+<h1 id="线程的创建和管理"><a href="#线程的创建和管理" class="headerlink" title="线程的创建和管理"></a>线程的创建和管理</h1><p>每个线程都有一个在进程中唯一的线程标识符，用一个数据类型 pthread_t 表示，该数据类型在 Linux 中就是一个无符号长整型数据.</p>
+<h2 id="创建新的线程"><a href="#创建新的线程" class="headerlink" title="创建新的线程"></a>创建新的线程</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">int pthread_create (pthread_t *thread,pthread_attr_t *attr,void *(*start_routine)(void *),void *arg)</div></pre></td></tr></table></figure>
+<p>若创建成功，返回0；若出错，则返回错误编号. thread 是线程标识符，但这个参数不是由用户指定的，而是由 pthread_create 函数在创建时将新的线程的标识符放到这个变量中. attr 指定线程的属性，可以用 NULL 表示默认属性. start_routine 指定线程开始运行的函数，arg 是 start_routine 所需要的参数，是一个无类型指针.</p>
+<p>默认地，线程在被创建时要被赋予一定的属性，这个属性存放在数据类型 pthread_attr_t 中，它包含了线程的调度策略，堆栈的相关信息，join or detach 的状态等.</p>
+<p>pthread_attr_init 和 pthread_attr_destroy 函数分别用来创建和销毁 pthread_attr_t，具体函数声明可参考man帮助.</p>
+<h2 id="结束线程"><a href="#结束线程" class="headerlink" title="结束线程"></a>结束线程</h2><p>当发生以下情形之一时，线程就会结束：</p>
+<ul>
+<li>线程运行的函数return了，也就是线程的任务已经完成；</li>
+<li>线程调用了 pthread_exit 函数；</li>
+<li>其他线程调用 pthread_cancel 结束这个线程；</li>
+<li>进程调用 exec() or exit()，结束了；</li>
+<li>main() 函数先结束了，而且 main() 自己没有调用 pthread_exit 来等所有线程完成任务.</li>
+</ul>
+<p>当然，一个线程结束，并不意味着它的所有信息都已经消失，后面会看到僵尸线程的问题.</p>
+<p>下面介绍这两个函数.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">void pthread_exit (void *retval)</div></pre></td></tr></table></figure>
+<p>retval 是由用户指定的参数， pthread_exit 完成之后可以通过这个参数获得线程的退出状态.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">int pthread_cancel (pthread_t thread)</div></pre></td></tr></table></figure>
+<p>一个线程可以通过调用 pthread_cancel 函数来请求取消同一进程中的线程，这个线程由thread 参数指定. 如果操作成功则返回0，失败则返回对应的错误编号.</p>
+<p>看一个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">/******************************************************************************</div><div class="line">* FILE: hello.c</div><div class="line">* DESCRIPTION:</div><div class="line">* A &quot;hello world&quot; Pthreads program.  Demonstrates thread creation and termination.</div><div class="line">* AUTHOR: Blaise Barney</div><div class="line">* LAST REVISED: 08/09/11</div><div class="line">******************************************************************************/</div><div class="line">#include &lt;pthread.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#define NUM_THREADS	5</div><div class="line"></div><div class="line">void *PrintHello(void *threadid)</div><div class="line">&#123;</div><div class="line">   long tid;</div><div class="line">   tid = (long)threadid;</div><div class="line">   printf(&quot;Hello World! It&apos;s me, thread #%ld!\n&quot;, tid);</div><div class="line">   pthread_exit(NULL);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char *argv[])</div><div class="line">&#123;</div><div class="line">   pthread_t threads[NUM_THREADS];</div><div class="line">   int rc;</div><div class="line">   long t;</div><div class="line">   for(t=0;t&lt;NUM_THREADS;t++)&#123;</div><div class="line">     printf(&quot;In main: creating thread %ld\n&quot;, t);</div><div class="line">     rc = pthread_create(&amp;threads[t], NULL, PrintHello, (void *)t);</div><div class="line">     if (rc)&#123;</div><div class="line">       printf(&quot;ERROR; return code from pthread_create() is %d\n&quot;, rc);</div><div class="line">       exit(-1);</div><div class="line">       &#125;</div><div class="line">     &#125;</div><div class="line">   /* Last thing that main() should do */</div><div class="line">   pthread_exit(NULL);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在 Shell 中输入以下命令编译执行:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gcc -Wall hello.c -lpthread -o hello</div><div class="line">./hello</div></pre></td></tr></table></figure>
+<p>输出结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">In main: creating thread 0</div><div class="line">In main: creating thread 1</div><div class="line">In main: creating thread 2</div><div class="line">Hello World! It&apos;s me, thread #0!</div><div class="line">In main: creating thread 3</div><div class="line">In main: creating thread 4</div><div class="line">Hello World! It&apos;s me, thread #3!</div><div class="line">Hello World! It&apos;s me, thread #1!</div><div class="line">Hello World! It&apos;s me, thread #4!</div><div class="line">Hello World! It&apos;s me, thread #2!</div></pre></td></tr></table></figure>
+<p>注意输出的顺序可能不同， 要特别注意的是， main() 显示地调用了 pthread_exit() 来等待其他线程的结束.</p>
+<p>下面这个例子传给线程一些初始化用的参数.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">/******************************************************************************</div><div class="line">* FILE: hello_arg2.c</div><div class="line">* DESCRIPTION:</div><div class="line">*   A &quot;hello world&quot; Pthreads program which demonstrates another safe way</div><div class="line">*   to pass arguments to threads during thread creation.  In this case,</div><div class="line">*   a structure is used to pass multiple arguments.</div><div class="line">* AUTHOR: Blaise Barney</div><div class="line">* LAST REVISED: 01/29/09</div><div class="line">******************************************************************************/</div><div class="line">#include &lt;pthread.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line">#define NUM_THREADS	8</div><div class="line"></div><div class="line">char *messages[NUM_THREADS];</div><div class="line"></div><div class="line">struct thread_data</div><div class="line">&#123;</div><div class="line">   int	thread_id;</div><div class="line">   int  sum;</div><div class="line">   char *message;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">struct thread_data thread_data_array[NUM_THREADS];</div><div class="line"></div><div class="line">void *PrintHello(void *threadarg)</div><div class="line">&#123;</div><div class="line">   int taskid, sum;</div><div class="line">   char *hello_msg;</div><div class="line">   struct thread_data *my_data;</div><div class="line"></div><div class="line">   sleep(1);</div><div class="line">   my_data = (struct thread_data *) threadarg;</div><div class="line">   taskid = my_data-&gt;thread_id;</div><div class="line">   sum = my_data-&gt;sum;</div><div class="line">   hello_msg = my_data-&gt;message;</div><div class="line">   printf(&quot;Thread %d: %s  Sum=%d\n&quot;, taskid, hello_msg, sum);</div><div class="line">   pthread_exit(NULL);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char *argv[])</div><div class="line">&#123;</div><div class="line">pthread_t threads[NUM_THREADS];</div><div class="line">int *taskids[NUM_THREADS];</div><div class="line">int rc, t, sum;</div><div class="line"></div><div class="line">sum=0;</div><div class="line">messages[0] = &quot;English: Hello World!&quot;;</div><div class="line">messages[1] = &quot;French: Bonjour, le monde!&quot;;</div><div class="line">messages[2] = &quot;Spanish: Hola al mundo&quot;;</div><div class="line">messages[3] = &quot;Klingon: Nuq neH!&quot;;</div><div class="line">messages[4] = &quot;German: Guten Tag, Welt!&quot;; </div><div class="line">messages[5] = &quot;Russian: Zdravstvytye, mir!&quot;;</div><div class="line">messages[6] = &quot;Japan: Sekai e konnichiwa!&quot;;</div><div class="line">messages[7] = &quot;Latin: Orbis, te saluto!&quot;;</div><div class="line"></div><div class="line">for(t=0;t&lt;NUM_THREADS;t++) &#123;</div><div class="line">  sum = sum + t;</div><div class="line">  thread_data_array[t].thread_id = t;</div><div class="line">  thread_data_array[t].sum = sum;</div><div class="line">  thread_data_array[t].message = messages[t];</div><div class="line">  printf(&quot;Creating thread %d\n&quot;, t);</div><div class="line">  rc = pthread_create(&amp;threads[t], NULL, PrintHello, (void *) </div><div class="line">       &amp;thread_data_array[t]);</div><div class="line">  if (rc) &#123;</div><div class="line">    printf(&quot;ERROR; return code from pthread_create() is %d\n&quot;, rc);</div><div class="line">    exit(-1);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">pthread_exit(NULL);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">Creating thread 0</div><div class="line">Creating thread 1</div><div class="line">Creating thread 2</div><div class="line">Creating thread 3</div><div class="line">Creating thread 4</div><div class="line">Creating thread 5</div><div class="line">Creating thread 6</div><div class="line">Creating thread 7</div><div class="line">Thread 0: English: Hello World!  Sum=0</div><div class="line">Thread 1: French: Bonjour, le monde!  Sum=1</div><div class="line">Thread 2: Spanish: Hola al mundo  Sum=3</div><div class="line">Thread 3: Klingon: Nuq neH!  Sum=6</div><div class="line">Thread 4: German: Guten Tag, Welt!  Sum=10</div><div class="line">Thread 5: Russian: Zdravstvytye, mir!  Sum=15</div><div class="line">Thread 7: Latin: Orbis, te saluto!  Sum=28</div><div class="line">Thread 6: Japan: Sekai e konnichiwa!  Sum=21</div></pre></td></tr></table></figure>
+<h2 id="对线程的阻塞（Joining-and-Detaching-Threads）"><a href="#对线程的阻塞（Joining-and-Detaching-Threads）" class="headerlink" title="对线程的阻塞（Joining and Detaching Threads）"></a>对线程的阻塞（Joining and Detaching Threads）</h2><p>阻塞是线程之间同步的一种方法.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">int pthread_join(pthread_t threadid, void **value_ptr)</div></pre></td></tr></table></figure>
+<p>pthread_join 函数会让调用它的线程等待 threadid 线程运行结束之后再运行. value_ptr 存放了其他线程的返回值. 一个可以被join的线程，仅仅可以被别的一个线程 join，如果同时有多个线程尝试 join 同一个线程时，最终结果是未知的. 另外，线程不能 join 自己.</p>
+<p>上面提到过，创建一个线程时，要赋予它一定的属性，这其中就包括joinable or detachable 的属性，只有被声明成joinable的线程，可以被其他线程join. POSIX标准的最终版本指出线程应该被设置成joinable的. 显式地设置一个线程为joinable,需要以下四个步骤：</p>
+<ul>
+<li>Declare a pthread attribute variable of the pthread_attr_t data type</li>
+<li>Initialize the attribute variable with pthread_attr_init()</li>
+<li>Set the attribute detached status with pthread_attr_setdetachstate()</li>
+<li>When done, free library resources used by the attribute with pthread_attr_destroy()</li>
+</ul>
+<p>值得注意的的是：僵尸线程 ( “zombie” thread) 是一种已经退出了的 joinable 的线程，但是等待其他线程调用 pthread_join 来 join 它，以收集它的退出信息(exit status). 如果没有其他线程调用 pthread_join 来 join 它的话，它占用的一些系统资源不会被释放，比如堆栈. 如果main()函数需要长时间运行，并且创建大量 joinable 的线程，就有可能出现堆栈不足的 error . 对于那些不需要 join 的线程，最好利用 pthread_detach，这样它运行结束后，资源就会及时得到释放. 注意一个线程被使用 pthread_detach 之后，它就不能再被改成 joinable 的了.</p>
+<p>总而言之，创建的每一个线程都应该使用 pthread_join 或者 pthread_detach 其中一个，以防止僵尸线程的出现.</p>
+<p>相关函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">pthread_detach (threadid)</div><div class="line">pthread_attr_setdetachstate (attr,detachstate)</div><div class="line">pthread_attr_getdetachstate (attr,detachstate)</div></pre></td></tr></table></figure>
+<p>下面看一个例子，可以具体体会显式地设置一个线程为 joinable 的过程.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdlib.h&gt;</div><div class="line">#include &lt;pthread.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;math.h&gt;</div><div class="line">#define NUM_THREADS 4</div><div class="line">void *BusyWork(void *t)</div><div class="line">&#123;</div><div class="line">  int i;</div><div class="line">  long tid;</div><div class="line">  double result=0.0;</div><div class="line">  tid = (long)t;</div><div class="line">  printf(&quot;Thread %ld starting...\n&quot;,tid);</div><div class="line">  for (i=0; i&lt;1000000; i++)</div><div class="line"> &#123;</div><div class="line"> result = result + sin(i) * tan(i);</div><div class="line"> &#125;</div><div class="line">  printf(&quot;Thread %ld done. Result = %e\n&quot;,tid, result);</div><div class="line">  pthread_exit((void*) t);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main (int argc, char *argv[])</div><div class="line">&#123;</div><div class="line">pthread_t thread[NUM_THREADS];</div><div class="line">pthread_attr_t attr;</div><div class="line">int rc;</div><div class="line">long t;</div><div class="line">void *status;</div><div class="line">/* Initialize and set thread detached attribute */</div><div class="line">pthread_attr_init(&amp;attr);</div><div class="line">pthread_attr_setdetachstate(&amp;attr, PTHREAD_CREATE_JOINABLE);</div><div class="line">for(t=0; t&lt;NUM_THREADS; t++) &#123;</div><div class="line">printf(&quot;Main: creating thread %ld\n&quot;, t);</div><div class="line">rc = pthread_create(&amp;thread[t], &amp;attr, BusyWork, (void *)t);</div><div class="line">if (rc) &#123;</div><div class="line">printf(&quot;ERROR; return code from pthread_create() is %d\n&quot;, rc);</div><div class="line">exit(-1);</div><div class="line"> &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">/* Free attribute and wait for the other threads */</div><div class="line">pthread_attr_destroy(&amp;attr);</div><div class="line"></div><div class="line"></div><div class="line">for(t=0; t&lt;NUM_THREADS; t++) &#123;</div><div class="line">rc = pthread_join(thread[t], &amp;status);</div><div class="line">if (rc) &#123;</div><div class="line">printf(&quot;ERROR; return code from pthread_join() is %d\n&quot;, rc);</div><div class="line">exit(-1);</div><div class="line"> &#125;</div><div class="line">printf(&quot;Main: completed join with thread %ld having a status of %ld\n&quot;,t,(long)status);</div><div class="line">&#125;</div><div class="line">printf(&quot;Main: program completed. Exiting.\n&quot;);</div><div class="line"></div><div class="line">pthread_exit(NULL);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">Main: creating thread 0</div><div class="line">Main: creating thread 1</div><div class="line">Thread 0 starting...</div><div class="line">Thread 1 starting...</div><div class="line">Thread 0 done. Result = 3.135632e+06</div><div class="line">Main: completed join with thread 0 having a status of 0</div><div class="line">Thread 1 done. Result = 3.135632e+06</div><div class="line">Main: completed join with thread 1 having a status of 1</div><div class="line">Main: program completed. Exiting.</div></pre></td></tr></table></figure>
+<h2 id="堆栈管理-（Stack-Management）"><a href="#堆栈管理-（Stack-Management）" class="headerlink" title="堆栈管理 （Stack Management）"></a>堆栈管理 （Stack Management）</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">pthread_attr_getstacksize (attr, stacksize)</div><div class="line">pthread_attr_setstacksize (attr, stacksize)</div><div class="line">pthread_attr_getstackaddr (attr, stackaddr)</div><div class="line">pthread_attr_setstackaddr (attr, stackaddr)</div></pre></td></tr></table></figure>
+<p>POSIX标准没有规定一个线程的堆栈大小. 安全可移植的程序不会依赖于具体实现默认的堆栈限制，而是显式地调用 pthread_attr_setstacksize 来分配足够的堆栈空间.</p>
+<p>下面是关于堆栈大小的一个例子.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">#include&lt;stdlib.h&gt;</div><div class="line">#include &lt;pthread.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#define NTHREADS 4</div><div class="line">#define N 1000</div><div class="line">#define MEGEXTRA 1000000</div><div class="line"> </div><div class="line">pthread_attr_t attr;</div><div class="line"></div><div class="line">void *dowork(void *threadid)</div><div class="line">&#123;</div><div class="line">   double A[N][N];</div><div class="line">   int i,j;</div><div class="line">   long tid;</div><div class="line">   size_t mystacksize;</div><div class="line"></div><div class="line">   tid = (long)threadid;</div><div class="line">   pthread_attr_getstacksize (&amp;attr, &amp;mystacksize);</div><div class="line">   printf(&quot;Thread %ld: stack size = %li bytes \n&quot;, tid, mystacksize);</div><div class="line">   for (i=0; i&lt;N; i++)</div><div class="line">     for (j=0; j&lt;N; j++)</div><div class="line">      A[i][j] = ((i*j)/3.452) + (N-i);</div><div class="line">   pthread_exit(NULL);</div><div class="line">&#125;</div><div class="line"> </div><div class="line">int main(int argc, char *argv[])</div><div class="line">&#123;</div><div class="line">   pthread_t threads[NTHREADS];</div><div class="line">   size_t stacksize;</div><div class="line">   int rc;</div><div class="line">   long t;</div><div class="line"> </div><div class="line">   pthread_attr_init(&amp;attr);</div><div class="line">   pthread_attr_getstacksize (&amp;attr, &amp;stacksize);</div><div class="line">   printf(&quot;Default stack size = %li\n&quot;, stacksize);</div><div class="line">   stacksize = sizeof(double)*N*N+MEGEXTRA;</div><div class="line">   printf(&quot;Amount of stack needed per thread = %li\n&quot;,stacksize);</div><div class="line">   pthread_attr_setstacksize (&amp;attr, stacksize);</div><div class="line">   printf(&quot;Creating threads with stack size = %li bytes\n&quot;,stacksize);</div><div class="line">   for(t=0; t&lt;NTHREADS; t++)&#123;</div><div class="line">      rc = pthread_create(&amp;threads[t], &amp;attr, dowork, (void *)t);</div><div class="line">      if (rc)&#123;</div><div class="line">         printf(&quot;ERROR; return code from pthread_create() is %d\n&quot;, rc);</div><div class="line">         exit(-1);</div><div class="line">      &#125;</div><div class="line">   &#125;</div><div class="line">   printf(&quot;Created %ld threads.\n&quot;, t);</div><div class="line">   pthread_exit(NULL);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Default stack size = 8388608</div><div class="line">Amount of stack needed per thread = 9000000</div><div class="line">Creating threads with stack size = 9000000 bytes</div><div class="line">Thread 2: stack size = 9000000 bytes </div><div class="line">Created 4 threads.</div><div class="line">Thread 1: stack size = 9000000 bytes </div><div class="line">Thread 0: stack size = 9000000 bytes </div><div class="line">Thread 3: stack size = 9000000 bytes</div></pre></td></tr></table></figure>
+<h2 id="其他重要函数"><a href="#其他重要函数" class="headerlink" title="其他重要函数"></a>其他重要函数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">pthread_self ()</div><div class="line">pthread_equal (thread1,thread2)</div></pre></td></tr></table></figure>
+<p>调用pthread_self 可以返回它的 thread ID. pthread_equal 比较两个线程的 ID,如果不同则返回0,否则返回一个非零值.</p>
+<h1 id="互斥锁-Mutex"><a href="#互斥锁-Mutex" class="headerlink" title="互斥锁 Mutex"></a>互斥锁 Mutex</h1><p>Mutex 常常被用来保护那些可以被多个线程访问的共享资源，比如可以防止多个线程同时更新同一个数据时出现混乱.</p>
+<p>使用互斥锁的一般步骤是：</p>
+<ul>
+<li>创建一个互斥锁，即声明一个pthread_mutex_t类型的数据,然后初始化，只有初始化之后才能使用；</li>
+<li>多个线程尝试锁定这个互斥锁；</li>
+<li>只有一个成功锁定互斥锁，成为互斥锁的拥有者，然后进行一些指令；</li>
+<li>拥有者解锁互斥锁；</li>
+<li>其他线程尝试锁定这个互斥锁，重复上面的过程；</li>
+<li>最后互斥锁被显式地调用 pthread_mutex_destroy 来进行销毁.</li>
+</ul>
+<p>有两种方式初始化一个互斥锁：第一种，利用已经定义的常量初始化，例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pthread_mutex_t mymutex = PTHREAD_MUTEX_INITIALIZER;</div></pre></td></tr></table></figure>
+<p>第二种方式是调用 pthread_mutex_init (mutex,attr) 进行初始化.</p>
+<p>当多个线程同时去锁定同一个互斥锁时，失败的那些线程，如果是用 pthread_mutex_lock 函数，那么会被阻塞，直到这个互斥锁被解锁，它们再继续竞争；如果是用 pthread_mutex_trylock 函数，那么失败者只会返回一个错误.</p>
+<p>最后需要指出的是，保护共享数据是程序员的责任. 程序员要负责所有可以访问该数据的线程都使用mutex这种机制，否则，不使用 mutex 的线程还是有可能对数据造成破坏.</p>
+<p>相关函数 (具体声明可以用 man 查看 )</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">pthread_mutex_init (mutex,attr)</div><div class="line">pthread_mutex_destroy (pthread_mutex_t *mutex)</div><div class="line">pthread_mutexattr_init (attr)</div><div class="line">pthread_mutexattr_destroy (attr)</div><div class="line">phtread_mutex_lock(pthread_mutex_t *mutex)</div><div class="line">phtread_mutex_trylock(pthread_mutex_t *mutex)</div><div class="line">phtread_mutex_unlock(pthread_mutex_t *mutex)</div></pre></td></tr></table></figure>
+<p>下面是一个利用多线程进行向量点乘的程序，其中需要对 dotstr.sum 这个共同读写的数据进行保护.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div></pre></td><td class="code"><pre><div class="line">/*****************************************************************************</div><div class="line">* FILE: dotprod_mutex.c</div><div class="line">* DESCRIPTION:</div><div class="line">*   This example program illustrates the use of mutex variables </div><div class="line">*   in a threads program. The main data is made available to all threads through </div><div class="line">*   a globally accessible  structure. Each thread works on a different </div><div class="line">*   part of the data. The main thread waits for all the threads to complete </div><div class="line">*   their computations, and then it prints the resulting sum.</div><div class="line">* SOURCE: Vijay Sonnad, IBM</div><div class="line">* LAST REVISED: 01/29/09 Blaise Barney</div><div class="line">******************************************************************************/</div><div class="line">#include &lt;pthread.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line">/*   </div><div class="line">The following structure contains the necessary information  </div><div class="line">to allow the function &quot;dotprod&quot; to access its input data and </div><div class="line">place its output into the structure.  This structure is </div><div class="line">unchanged from the sequential version.</div><div class="line">*/</div><div class="line"></div><div class="line">typedef struct </div><div class="line"> &#123;</div><div class="line">   double      *a;</div><div class="line">   double      *b;</div><div class="line">   double     sum; </div><div class="line">   int     veclen; </div><div class="line"> &#125; DOTDATA;</div><div class="line"></div><div class="line">/* Define globally accessible variables and a mutex */</div><div class="line"></div><div class="line">#define NUMTHRDS 4</div><div class="line">#define VECLEN 100000</div><div class="line">   DOTDATA dotstr; </div><div class="line">   pthread_t callThd[NUMTHRDS];</div><div class="line">   pthread_mutex_t mutexsum;</div><div class="line"></div><div class="line">/*</div><div class="line">The function dotprod is activated when the thread is created.</div><div class="line">As before, all input to this routine is obtained from a structure </div><div class="line">of type DOTDATA and all output from this function is written into</div><div class="line">this structure. The benefit of this approach is apparent for the </div><div class="line">multi-threaded program: when a thread is created we pass a single</div><div class="line">argument to the activated function - typically this argument</div><div class="line">is a thread number. All  the other information required by the </div><div class="line">function is accessed from the globally accessible structure. </div><div class="line">*/</div><div class="line"></div><div class="line">void *dotprod(void *arg)</div><div class="line">&#123;</div><div class="line"></div><div class="line">/* Define and use local variables for convenience */</div><div class="line"></div><div class="line">   int i, start, end, len ;</div><div class="line">   long offset;</div><div class="line">   double mysum, *x, *y;</div><div class="line">   offset = (long)arg;</div><div class="line">     </div><div class="line">   len = dotstr.veclen;</div><div class="line">   start = offset*len;</div><div class="line">   end   = start + len;</div><div class="line">   x = dotstr.a;</div><div class="line">   y = dotstr.b;</div><div class="line"></div><div class="line">/*</div><div class="line">Perform the dot product and assign result</div><div class="line">to the appropriate variable in the structure. </div><div class="line">*/</div><div class="line">   mysum = 0;</div><div class="line">   for (i=start; i&lt;end ; i++)  </div><div class="line">    &#123;</div><div class="line">      mysum += (x[i] * y[i]);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">/*</div><div class="line">Lock a mutex prior to updating the value in the shared</div><div class="line">structure, and unlock it upon updating.</div><div class="line">*/</div><div class="line">   pthread_mutex_lock (&amp;mutexsum);</div><div class="line">   dotstr.sum += mysum;</div><div class="line">   printf(&quot;Thread %ld did %d to %d: mysum=%f global sum=%f\n&quot;, offset, start,</div><div class="line">   end, mysum, dotstr.sum);</div><div class="line">   pthread_mutex_unlock (&amp;mutexsum);</div><div class="line">   pthread_exit((void*) 0);</div><div class="line">&#125;</div><div class="line"></div><div class="line">/* </div><div class="line">The main program creates threads which do all the work and then print out result </div><div class="line">upon completion. Before creating the threads, The input data is created. Since </div><div class="line">all threads update a shared structure, we need a mutex for mutual exclusion. </div><div class="line">The main thread needs to wait for all threads to complete, it waits for each one </div><div class="line">of the threads. We specify a thread attribute value that allow the main thread to</div><div class="line">join with the threads it creates. Note also that we free up handles  when they</div><div class="line">are no longer needed.</div><div class="line">*/</div><div class="line"></div><div class="line">int main (int argc, char *argv[])</div><div class="line">&#123;</div><div class="line">long i;</div><div class="line">double *a, *b;</div><div class="line">void *status;</div><div class="line">pthread_attr_t attr;</div><div class="line"></div><div class="line">/* Assign storage and initialize values */</div><div class="line"></div><div class="line">a = (double*) malloc (NUMTHRDS*VECLEN*sizeof(double));</div><div class="line">b = (double*) malloc (NUMTHRDS*VECLEN*sizeof(double));</div><div class="line">  </div><div class="line">for (i=0; i&lt;VECLEN*NUMTHRDS; i++) &#123;</div><div class="line">  a[i]=1;</div><div class="line">  b[i]=a[i];</div><div class="line">  &#125;</div><div class="line"></div><div class="line">dotstr.veclen = VECLEN; </div><div class="line">dotstr.a = a; </div><div class="line">dotstr.b = b; </div><div class="line">dotstr.sum=0;</div><div class="line"></div><div class="line">pthread_mutex_init(&amp;mutexsum, NULL);</div><div class="line">         </div><div class="line">/* Create threads to perform the dotproduct  */</div><div class="line">pthread_attr_init(&amp;attr);</div><div class="line">pthread_attr_setdetachstate(&amp;attr, PTHREAD_CREATE_JOINABLE);</div><div class="line"></div><div class="line">for(i=0;i&lt;NUMTHRDS;i++)</div><div class="line">  &#123;</div><div class="line">  /* Each thread works on a different set of data.</div><div class="line">   * The offset is specified by &apos;i&apos;. The size of</div><div class="line">   * the data for each thread is indicated by VECLEN.</div><div class="line">   */</div><div class="line">   pthread_create(&amp;callThd[i], &amp;attr, dotprod, (void *)i); </div><div class="line">   &#125;</div><div class="line"></div><div class="line">pthread_attr_destroy(&amp;attr);</div><div class="line">/* Wait on the other threads */</div><div class="line"></div><div class="line">for(i=0;i&lt;NUMTHRDS;i++) &#123;</div><div class="line">  pthread_join(callThd[i], &amp;status);</div><div class="line">  &#125;</div><div class="line">/* After joining, print out the results and cleanup */</div><div class="line"></div><div class="line">printf (&quot;Sum =  %f \n&quot;, dotstr.sum);</div><div class="line">free (a);</div><div class="line">free (b);</div><div class="line">pthread_mutex_destroy(&amp;mutexsum);</div><div class="line">pthread_exit(NULL);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Thread 0 did 0 to 100000:  mysum=100000.000000 global sum=100000.000000</div><div class="line">Thread 1 did 100000 to 200000:  mysum=100000.000000 global sum=200000.000000</div><div class="line">Thread 2 did 200000 to 300000:  mysum=100000.000000 global sum=300000.000000</div><div class="line">Thread 3 did 300000 to 400000:  mysum=100000.000000 global sum=400000.000000</div><div class="line">Sum =  400000.000000</div></pre></td></tr></table></figure>
+<h1 id="条件变量-Condition-Variable"><a href="#条件变量-Condition-Variable" class="headerlink" title="条件变量 Condition Variable"></a>条件变量 Condition Variable</h1><p>互斥锁只有两种状态，这限制了它的用途. 条件变量允许线程在阻塞的时候等待另一个线程发送的信号，当收到信号后，阻塞的线程就被唤醒并试图锁定与之相关的互斥锁. 条件变量要和互斥锁结合使用.</p>
+<h2 id="条件变量的声明和初始化"><a href="#条件变量的声明和初始化" class="headerlink" title="条件变量的声明和初始化"></a>条件变量的声明和初始化</h2><p>通过声明 pthread_cond_t 类型的数据,并且必须先初始化才能使用.</p>
+<p>初始化的方法也有两种：</p>
+<p>第一种，利用内部定义的常量，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pthread_cond_t myconvar = PTHREAD_COND_INITIALIZER;</div></pre></td></tr></table></figure>
+<p>第二种，利用函数 pthread_cond_init(cond,attr),其中 attr 由 pthread_condattr_init() 和 pthread_condattr_destroy() 创建和销毁.</p>
+<p>可以用 pthread_cond_destroy() 销毁一个条件变量.</p>
+<p>相关函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">pthread_cond_wait (condition,mutex)</div><div class="line">pthread_cond_signal (condition)</div><div class="line">pthread_cond_broadcast (condition)</div></pre></td></tr></table></figure>
+<p>pthread_cond_wait() 会阻塞调用它的线程，直到收到某一信号. 这个函数需要在 mutex 已经被锁之后进行调用，并且当线程被阻塞时，会自动解锁 mutex. 信号收到后，线程被唤醒，这时 mutex 又会被这个线程锁定.</p>
+<p>pthread_cond_signal() 函数结束时，必须解锁 mutex，以供 pthread_cond_wait() 锁定mutex. 当不止一个线程在等待信号时，要用 pthread_cond_broadcast() 代替 pthread_cond_signal() 来告诉所有被该条件变量阻塞的线程结束阻塞状态.</p>
+<p>下面是一个例子，三个线程共同访问 count 变量，thread 2 和 thread 3 竞争地对其进行加 1 的操作，thread 1 等 count 达到 12 的时候，一次性加 125 . 然后 thread 2 和 thread 3 再去竞争 count 的控制权，直到完成自己的对 count 加 10 次的任务.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div></pre></td><td class="code"><pre><div class="line">/******************************************************************************</div><div class="line">* FILE: condvar.c</div><div class="line">* DESCRIPTION:</div><div class="line">*   Example code for using Pthreads condition variables.  The main thread</div><div class="line">*   creates three threads.  Two of those threads increment a &quot;count&quot; variable,</div><div class="line">*   while the third thread watches the value of &quot;count&quot;.  When &quot;count&quot; </div><div class="line">*   reaches a predefined limit, the waiting thread is signaled by one of the</div><div class="line">*   incrementing threads. The waiting thread &quot;awakens&quot; and then modifies</div><div class="line">*   count. The program continues until the incrementing threads reach</div><div class="line">*   TCOUNT. The main program prints the final value of count.</div><div class="line">* SOURCE: Adapted from example code in &quot;Pthreads Programming&quot;, B. Nichols</div><div class="line">*   et al. O&apos;Reilly and Associates. </div><div class="line">* LAST REVISED: 10/14/10  Blaise Barney</div><div class="line">******************************************************************************/</div><div class="line">#include &lt;pthread.h&gt;</div><div class="line">#include &lt;stdio.h&gt;</div><div class="line">#include &lt;stdlib.h&gt;</div><div class="line"></div><div class="line">#define NUM_THREADS  3</div><div class="line">#define TCOUNT 10</div><div class="line">#define COUNT_LIMIT 12</div><div class="line"></div><div class="line">int     count = 0;</div><div class="line">pthread_mutex_t count_mutex;</div><div class="line">pthread_cond_t count_threshold_cv;</div><div class="line"></div><div class="line">void *inc_count(void *t) </div><div class="line">&#123;</div><div class="line">  int i;</div><div class="line">  long my_id = (long)t;</div><div class="line"></div><div class="line">  for (i=0; i &lt; TCOUNT; i++) &#123;</div><div class="line">    pthread_mutex_lock(&amp;count_mutex);</div><div class="line">    count++;</div><div class="line"></div><div class="line">    /* </div><div class="line">    Check the value of count and signal waiting thread when condition is</div><div class="line">    reached.  Note that this occurs while mutex is locked. </div><div class="line">    */</div><div class="line">    if (count == COUNT_LIMIT) &#123;</div><div class="line">      printf(&quot;inc_count(): thread %ld, count = %d  Threshold reached. &quot;,</div><div class="line">             my_id, count);</div><div class="line">      pthread_cond_signal(&amp;count_threshold_cv);</div><div class="line">      printf(&quot;Just sent signal.\n&quot;);</div><div class="line">      &#125;</div><div class="line">    printf(&quot;inc_count(): thread %ld, count = %d, unlocking mutex\n&quot;, </div><div class="line">	   my_id, count);</div><div class="line">    pthread_mutex_unlock(&amp;count_mutex);</div><div class="line"></div><div class="line">    /* Do some work so threads can alternate on mutex lock */</div><div class="line">    sleep(1);</div><div class="line">    &#125;</div><div class="line">  pthread_exit(NULL);</div><div class="line">&#125;</div><div class="line"></div><div class="line">void *watch_count(void *t) </div><div class="line">&#123;</div><div class="line">  long my_id = (long)t;</div><div class="line"></div><div class="line">  printf(&quot;Starting watch_count(): thread %ld\n&quot;, my_id);</div><div class="line"></div><div class="line">  /*</div><div class="line">  Lock mutex and wait for signal.  Note that the pthread_cond_wait routine</div><div class="line">  will automatically and atomically unlock mutex while it waits. </div><div class="line">  Also, note that if COUNT_LIMIT is reached before this routine is run by</div><div class="line">  the waiting thread, the loop will be skipped to prevent pthread_cond_wait</div><div class="line">  from never returning.</div><div class="line">  */</div><div class="line">  pthread_mutex_lock(&amp;count_mutex);</div><div class="line">  while (count &lt; COUNT_LIMIT) &#123;</div><div class="line">    printf(&quot;watch_count(): thread %ld Count= %d. Going into wait...\n&quot;, my_id,count);</div><div class="line">    pthread_cond_wait(&amp;count_threshold_cv, &amp;count_mutex);</div><div class="line">    printf(&quot;watch_count(): thread %ld Condition signal received. Count= %d\n&quot;, my_id,</div><div class="line">    count);</div><div class="line">    printf(&quot;watch_count(): thread %ld Updating the value of count...\n&quot;, my_id,count);</div><div class="line">    count += 125;</div><div class="line">    printf(&quot;watch_count(): thread %ld count now = %d.\n&quot;, my_id, count);</div><div class="line">    &#125;</div><div class="line">  printf(&quot;watch_count(): thread %ld Unlocking mutex.\n&quot;, my_id);</div><div class="line">  pthread_mutex_unlock(&amp;count_mutex);</div><div class="line">  pthread_exit(NULL);</div><div class="line">&#125;</div><div class="line"></div><div class="line">int main(int argc, char *argv[])</div><div class="line">&#123;</div><div class="line">  int i, rc; </div><div class="line">  long t1=1, t2=2, t3=3;</div><div class="line">  pthread_t threads[3];</div><div class="line">  pthread_attr_t attr;</div><div class="line"></div><div class="line">  /* Initialize mutex and condition variable objects */</div><div class="line">  pthread_mutex_init(&amp;count_mutex, NULL);</div><div class="line">  pthread_cond_init (&amp;count_threshold_cv, NULL);</div><div class="line"></div><div class="line">  /* For portability, explicitly create threads in a joinable state */</div><div class="line">  pthread_attr_init(&amp;attr);</div><div class="line">  pthread_attr_setdetachstate(&amp;attr, PTHREAD_CREATE_JOINABLE);</div><div class="line">  pthread_create(&amp;threads[0], &amp;attr, watch_count, (void *)t1);</div><div class="line">  pthread_create(&amp;threads[1], &amp;attr, inc_count, (void *)t2);</div><div class="line">  pthread_create(&amp;threads[2], &amp;attr, inc_count, (void *)t3);</div><div class="line"></div><div class="line">  /* Wait for all threads to complete */</div><div class="line">  for (i = 0; i &lt; NUM_THREADS; i++) &#123;</div><div class="line">    pthread_join(threads[i], NULL);</div><div class="line">  &#125;</div><div class="line">  printf(&quot;Main(): Waited and joined with %d threads. Final value of count = %d. Done.\n&quot;, </div><div class="line">          NUM_THREADS, count);</div><div class="line"></div><div class="line">  /* Clean up and exit */</div><div class="line">  pthread_attr_destroy(&amp;attr);</div><div class="line">  pthread_mutex_destroy(&amp;count_mutex);</div><div class="line">  pthread_cond_destroy(&amp;count_threshold_cv);</div><div class="line">  pthread_exit (NULL);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">inc_count(): thread 3, count = 1, unlocking mutex</div><div class="line">inc_count(): thread 2, count = 2, unlocking mutex</div><div class="line">Starting watch_count(): thread 1</div><div class="line">watch_count(): thread 1 Count= 2. Going into wait...</div><div class="line">inc_count(): thread 3, count = 3, unlocking mutex</div><div class="line">inc_count(): thread 2, count = 4, unlocking mutex</div><div class="line">inc_count(): thread 3, count = 5, unlocking mutex</div><div class="line">inc_count(): thread 2, count = 6, unlocking mutex</div><div class="line">inc_count(): thread 3, count = 7, unlocking mutex</div><div class="line">inc_count(): thread 2, count = 8, unlocking mutex</div><div class="line">inc_count(): thread 3, count = 9, unlocking mutex</div><div class="line">inc_count(): thread 2, count = 10, unlocking mutex</div><div class="line">inc_count(): thread 3, count = 11, unlocking mutex</div><div class="line">inc_count(): thread 2, count = 12  Threshold reached. Just sent signal.</div><div class="line">inc_count(): thread 2, count = 12, unlocking mutex</div><div class="line">watch_count(): thread 1 Condition signal received. Count= 12</div><div class="line">watch_count(): thread 1 Updating the value of count...</div><div class="line">watch_count(): thread 1 count now = 137.</div><div class="line">watch_count(): thread 1 Unlocking mutex.</div><div class="line">inc_count(): thread 3, count = 138, unlocking mutex</div><div class="line">inc_count(): thread 2, count = 139, unlocking mutex</div><div class="line">inc_count(): thread 3, count = 140, unlocking mutex</div><div class="line">inc_count(): thread 2, count = 141, unlocking mutex</div><div class="line">inc_count(): thread 3, count = 142, unlocking mutex</div><div class="line">inc_count(): thread 2, count = 143, unlocking mutex</div><div class="line">inc_count(): thread 3, count = 144, unlocking mutex</div><div class="line">inc_count(): thread 2, count = 145, unlocking mutex</div><div class="line">Main(): Waited and joined with 3 threads. Final value of count = 145. Done.</div></pre></td></tr></table></figure>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/MPI/" rel="tag">MPI</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                    data-tooltip="JVM字节码详解"
+                    aria-label="PREVIOUS: JVM字节码详解"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                    data-tooltip="使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                    aria-label="NEXT: 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2020 Qian Ren. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                    data-tooltip="JVM字节码详解"
+                    aria-label="PREVIOUS: JVM字节码详解"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                    data-tooltip="使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                    aria-label="NEXT: 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <h4 id="about-card-name">Qian Ren</h4>
+        
+            <div id="about-card-bio"><p>author.bio</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </div>
+        
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                            aria-label=": 软件动态分析：Maple配置和使用详细教程"
+                        >
+                            <img class="media-image" src="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.png" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                            aria-label=": 软件动态分析：Maple配置和使用详细教程"
+                        >
+                            <h3 class="media-heading">软件动态分析：Maple配置和使用详细教程</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年4月28日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>Maple是一个面向C/C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                            aria-label=": 使用VS Code调试Python代码"
+                        >
+                            <img class="media-image" src="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                            aria-label=": 使用VS Code调试Python代码"
+                        >
+                            <h3 class="media-heading">使用VS Code调试Python代码</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年4月29日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。<strong>拿到项目的.py文件，怎么用VS Code进行调试</strong></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                            aria-label=": 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                        >
+                            <img class="media-image" src="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/hexo-logo.png" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                            aria-label=": 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                        >
+                            <h3 class="media-heading">使用Hexo搭建Github博客：(一)20min搭完主体框架</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年4月29日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>技术的世界是纯粹而新奇的，想记录一些探索和思考与大家分享，于是萌生了写博客的想法。可是，<strong>颜值控该以什么样的姿势开博客呢？</strong></p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                            aria-label=": MPI并行：Pthread入门教程"
+                        >
+                            <img class="media-image" src="http://plytools.github.io/2018/03/30/MPI并行：Pthread入门教程/mpi-logo.png" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                            aria-label=": MPI并行：Pthread入门教程"
+                        >
+                            <h3 class="media-heading">MPI并行：Pthread入门教程</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2018年3月30日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>Pthreads 是 IEEE（电子和电气工程师协会）委员会开发的一组线程接口，负责指定便携式操作系统接口（POSIX）. Pthreads 中的 P 表示 POSIX，实际上，Pthreads 有时候也代表 POSIX 线程.</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-left">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                            aria-label=": JVM字节码详解"
+                        >
+                            <img class="media-image" src="http://plytools.github.io/2018/03/30/JVM字节码详解/java-logo.svg" width="90" height="90"/>
+                        </a>
+                    </div>
+                    
+                    <div class="media-body">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                            aria-label=": JVM字节码详解"
+                        >
+                            <h3 class="media-heading">JVM字节码详解</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2018年3月30日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。今天，我就从大家最熟悉的程序“HelloWorld”程序入手，分析整个 Class 文件的结构。</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                5 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+
+<script src="/assets/js/script-ek4ywkrdmen2f0f6pnmh0zlezvmmnk0zpkt8yipys4xe94u87gxxysen4bo2.min.js"></script>
+
+<!--SCRIPTS END-->
+
+
+    
+
+
+
+    
+<script src="/assets/js/moment-with-locales.js"></script>
+
+    
+<script src="/assets/js/algoliasearch.js"></script>
+
+    <script>
+      var algoliaClient = algoliasearch('IIGDAO65S7', 'a5e943fbe88ee973daee86eab6666e06');
+      var algoliaIndex = algoliaClient.initIndex('plytools-github-io');
+    </script>
+
+
+    </body>
+</html>

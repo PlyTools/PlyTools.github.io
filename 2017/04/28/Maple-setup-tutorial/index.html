@@ -12,16 +12,15 @@
         <meta name="keywords" content="Maple,软件动态分析">
     
     
-        <link rel="icon" href="http://plytools.github.io/assets/images/rq.jpg">
     
-    
-    <meta name="description" content="Maple是一个面向C/C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。">
-<meta name="keywords" content="Dynamic Analysis,C/C++,Maple">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"articleBody":"\n\nMaple是一种面向C/C++的以覆盖率驱动的主动动态测试工具。\n\nMaple原理见论文：Maple: A Coverage-Driven Testing Tool for Multithreaded Programs\n\nMaple源码及配置方式参考：https://github.com/jieyu/maple\n\n以下讲述如何配置Maple使用环境：\n\n\n\n1. 配置Maple环境1.1 配置目标vmware12 pro + Ubuntu12.04 64位（自带：GNU make 3.8.1 ; python 2.7 ; gcc 4.6.3）Python2Google ProtobufPinPlay\n1.2 安装OS下载Ubuntu 12.04.5 Desktop (64-bit) 的镜像文件安装并配置虚拟机（这里使用的是VMware® Workstation 12 Pro，配置过程略）\n\n注释：基于Ubuntu16.04配置过程中遇到多种问题，比如下面错误这是gcc版本引发的错误，多种方法解决未成功，为了方便，直接使用作者建议的Ubuntu12.04为操作系统平台。（没有尝试使用14.04）\n\n1.3 配置Pinplay\n下载这里选择PINplay2.2版本下载[OLD:with_DCFG_support:pinplay-drdebug-2.2-pldi2015-updated-pin-2.14-71313-gcc.4.4.7-linux.tar.gz (92.76 MB)] (https://software.intel.com/en-us/protected-download/366522/366520/step2)\n解压在Ubuntu用户文件夹下创建DA文件夹，则其完整路径为/home/ren/DA，这里ren是我的用户名。\n\n123$ cd ~$ mkdir DA$ cd DA\n将下载的文件放在DA文件夹中解压\n1$ tar zxvf OLD:with_DCFG_support:pinplay-drdebug-2.2-pldi2015-updated-pin-2.14-71313-gcc.4.4.7-linux.tar.gz\n\n安装支持库因为PinPlay是由PIN改进而来的工具，为了支持PIN的运行，需要32bit的库支持安装32bit库\n\n1$ sudo apt-get install ia32-libs\n然后，因为PIN还要使用g++编译，甚至交叉编译，所以使用如下方式安装\n12$ sudo apt-get install build-essential module-assistant  $ sudo apt-get install gcc-multilib g++-multilib\n\n安装PIN从命令行进入PinPlay文件夹\n\n1$ cd ~/DA/pinplay-drdebug-2.2-pldi2015-pin-2.14-71313-gcc.4.4.7-linux\n然后\n12$ cd source/tools/SimpleExamples$ make obj-intel64/opcodemix.so$ ../../../pin -t obj-intel64/opcodemix.so -- /bin/ls\n成功后，结果为打开用户目录下的.dashrc文件设置PIN_ROOT\n1$ cd ~$ gedit .bashrc\n在.dashrc文件结尾添加\n1export PIN_ROOT=&quot;/home/ren/DA/pinplay-drdebug-2.2-pldi2015-pin-2.14-71313-gcc.4.4.7-linux&quot;\n然后重新装.dashrc文件\n1$ source .bashrc\n\n安装PinPlay\n\n123$ cd $PIN_ROOT/extras/pinplay/examples$ make instclean$ make\n同理配置PIN_HOME\n12$ cd ~$ gedit .bashrc\n添加如下命令到结尾\n1export PIN_HOME=&quot;/home/ren/DA/pinplay-drdebug-2.2-pldi2015-pin-2.14-71313-gcc.4.4.7-linux&quot;\n关闭保存，重新加载\n1$ source .bashrc\n1.4 配置Protobuf\n下载下载 protobuf2.4.1同样在DA文件件下解压\n\n1$ cd ~/DA$ tar zxvf protobuf-2.4.1.tar.gz\n然后在protobuf-2.4.1目录下运行\n12345$ cd protobuf-2.4.1  $ ./configure  $ make  $ make check  $ sudo make install\n无报错则OK，然后配置PROTOBUF_HOME\n12$ cd ~$ gedit .bashrc\n添加如下\n1export PROTOBUF_HOME=&quot;/usr/local&quot;\n关闭并保存，然后重新加载.bashrc\n1$ source .bashrc\n\nprotobuf安装成功后，位置为/usr/local/bin。因为maple已经考虑了bin，PROTOBUF_HOME的位置是/usr/local\n\n2. 配置Maple\n下载从GitHub上下载Maple：https://github.com/jieyu/maple同样在DA下解压：\n\n1$ cd ~/DA$ unzip maple-master.zip\n然后配置$MAPLE_HOME\n12$ cd ~$ gedit .bashrc\n添加如下命令到结尾\n1export MAPLE_HOME=&quot;/home/ren/DA/maple-master&quot;\n关闭保存，重新加载\n1$ source .bashrc\n\n安装\n\n123$ cd $MAPLE_HOME$ make$ make compiletype=release\n成功之后，maple的主页面下面会多出两个文件\n\n给予权限然后配置Maple让其能够修改调度的优先级。使用ulimit命令可查看Linux平台的实时优先级\n\n1$ ulimit -e -r\n要更改，需要root权限，修改/etc/security/limits.conf文件可使用如下命令\n1$ sudo gedit /etc/security/limits.conf\n打开文件后，在末尾添加如下内容注意，这里的ren要换成你自己的用户名，然后保存。配置成功！！\n3. 使用Maple3.1 测试以$MAPLE_HOME/example/shared_counter下面的main.cc为例使用下面的命令，将main.cc编译成可执行文件：\n12$ cd $MAPLE_HOME/example/shared_counter$ g++ -fno-omit-frame-pointer -g -pthread -o main main.cc\n\n注意：下面所有命令都是在$MAPLE_HOME/example/shared_counter路径下运行的然后用下面命令运行，使用maple测试可执行文件main，最后一个参数2是main文件运行所需参数\n\n1$ $MAPLE_HOME/maple --- ./main 2\n结果如下图可以看到，文件夹中多出来很多文件，这些文件将会被maple的其他部件使用。不要对他们进行删除或修改操作\n3.2 查看iRoots查看第一步中成功触发的iRoots\n1$ $MAPLE_HOME/script/idiom display test_history\n结果如下第一列表示目标iRoots的标号为24，最后一列1489391714是触发这个iRoot所需的随机仲裁的随机种子。所以要重新触发这个iRoot引起的bug，只需要提供iRoot的标号和随机数种子给maple的active scheduler即可。\n3.3 重现bug重现特定的iRoot/bug，使用下述命令\n1$ $MAPLE_HOME/script/idiom active --target_iroot=24 --random_seed=1489391714 --- ./main 2\n如下图所示，确实触发了这个编号为24的iRoot\n###3.4 PinPlay记录和重现bug使用下述命令\n1$ $MAPLE_HOME/script/idiom active --pinplay --pinplay_options=&quot;-log:basename,failing.pinball/log&quot; --target_iroot=24 --random_seed=1489391714 --- ./main 2\n结果如下并且会在当前测试文件所在文件夹下生成一个记录运行过程的日志文件夹使用下面的命令可以从日志重现该次运行\n1$ $PIN_HOME/pin -t $PIN_HOME/extras/pinplay/bin/intel64/pinplay-driver.so -replay -replay:addr_trans -replay:basename failing.pinball/log -- /bin/true\n如下图所示按照日志的记录，对触发这个iRoot的运行进行了重现\n3.5 使用GDB调试运行下面的命令：\n1$  $PIN_HOME/pin -appdebug -t  $PIN_HOME/extras/pinplay/bin/intel64/pinplay-driver.so -replay -replay:addr_trans -replay:basename failing.pinball/log -- bin/trueApplication\n然后，重新打开一个shell，在其中以gdb加载可执行文件main\n1$ gdb main\n然后，建立远程调试的链接\n1(gdb) target remote :37020\n运行main前，设置main运行所需的参数\n1(gdb) set args 2\n使用下面命令确认，运行参数是不是设置成功了\n1(gdb) show args\n结果如下然后可以使用gdbtui的source调试窗口，并且给main函数添加一个断点\n12(gdb) layout src(gdb) b main\n\n注意：语法中因为breakpoint命令与其他命令的头字母不重复，所以可以直接以b简写；如果使用run命令，一般情况下可以用r简写代表，但是在远程调试中，不支持run命令（因为已经启动），所以不行。其他的命令与breakpoint类似，比如continue可简写为c。\n\n比如继续运行\n1(gdb) c\n结果如下图，上面的窗口即为gdbtui窗口，显示了源码。高亮行代表了运行到的代码行。可以通过n等命令（n在这里是next的简写），逐步运行程序\n1(gdb) n\n由于是从log复现触发编号为24的iRoot的运行，所以运行过程是固定的，持续使用continue或step，next等命令运行即可触发，如下图\n\n注意：有关gui的详细教程可参见：GDB的使用,重点讲解图像化 gdb -tui 方式25 GDB Text User InterfaceDebugging C and C++ programs with gdb (and ddd)gdb 调试利器gdb常用命令\n\n4 Maple进阶4.1 查看Maple所有命令直接调用$MAPLE/maple调用的Mmaple的默认方法 (profiling + active testing)，可以使用下面语法查看Maple的所有命令。\n1$ $MAPLE_HOME/script/idiom --help\n结果有对于每一个命令也可使使用下面的命令查看其用途和用法，比如查看active命令\n1$ $MAPLE_HOME/script/idiom active --help\n4.2 Script模式有时，程序不适合直接从命令行运行（例如服务器程序）。 此外，很可能程序有副作用。 由于Maple会一次又一次地重新运行程序，我们需要一种方法来在每次执行之前和之后指定setup()和tear_down()函数。 因此，我们在Maple中引入一个脚本模式来测试这样的程序。仍然使用上面的例子。 要使用脚本模式，程序员需要创建一个简单的Python脚本，并将其放入目录$MAPLE_HOME/ script/maple/benchmark。 这里作者已经创建了一些脚本，以shared_counter.py为例，脚本的内容如下所示：可以修改为如下形式\n12345678910111213from maple.core import testingclass \tTest(testing.CmdlineTest):    \t\tdef __init__(self, input_idx):        \t\t\ttesting.CmdlineTest.__init__(self, input_idx)        \t\t\tself.add_input(([self.bin(), '2'], [None, None, None]))    \t\tdef setup(self):        \t\t\tpass # do nothing    \t\tdef tear_down(self):        \t\t\tpass # do nothing    \t\tdef bin(self):        \t\t\treturn '~/example/main'\t\tdef get_test(input_idx='default'):    \t\t\treturn Test(input_idx)\n程序员可以覆盖setup（）和tear_down（）函数，如果他们想在程序的每次执行之前和之后做一些初始化和清理作业。之后，运行以下命令以验证脚本是否可用。 基准的名称应该与脚本文件的名称匹配。\n1$ $MAPLE_HOME/maple_script --help\n只要结果中有shared_counter现在可以重新测试之前的程序，在测试之前，如果之前测试过，要删除掉之前测试产生的所有文件。然后使用下面的命令重新测试\n1$ $MAPLE_HOME/maple_script --- shared_counter\n5. 错误解决\ngdb建立远程连接时Ignoring packet error, continuing \n\n如果出现上图所说问题，这可能是因为main在运行时没有设置运行参数，请仔细阅读第3.5节\n\nSegment fault \n\n详见：C/C++中的段错误（Segmentation fault）)\n\nAttach to pid 3047 failed错误信息为\n\n1E: Attach to pid 3047 failed. E:   The Operating System configuration prevents Pin from using the default (parent) injection mode.E:   To resolve this, either execute the following (as root):E:   $ echo 0 &gt; /proc/sys/kernel/yama/ptrace_scopeE:   Or use the \"-injection child\" option.E:   For more information, regarding child injection, see Injection section in the Pin User Manual.\n详情如下图这是因为系统内核的kernel.yama.ptrace_scope变量设置为了1，详情见Protect against ptrace of processes: kernel.yama.ptrace_scope只需要打开/proc/sys/kernel/yama/ptrace_scope文件，将1改成0即可。","dateCreated":"2017-04-28T15:57:00+08:00","dateModified":"2018-03-30T21:52:50+08:00","datePublished":"2017-04-28T15:57:00+08:00","description":"Maple是一个面向C/C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。","headline":"软件动态分析：Maple配置和使用详细教程","image":["maple.png","city-750-2.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"},"publisher":{"@type":"Organization","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"url":"http://plytools.github.io/2017/04/28/Maple-setup-tutorial/","keywords":"Dynamic Analysis, C/C++, Maple","thumbnailUrl":"maple.png"}</script>
+    <meta name="description" content="Maple是一个面向C&#x2F;C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="软件动态分析：Maple配置和使用详细教程">
 <meta property="og:url" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/index.html">
 <meta property="og:site_name" content="PlyTools">
-<meta property="og:description" content="Maple是一个面向C/C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。">
+<meta property="og:description" content="Maple是一个面向C&#x2F;C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。">
+<meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/3d562862-e3a5-4c66-a62a-adeb0eb97aee.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/13873312.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/18051765.png">
@@ -42,31 +41,38 @@
 <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/332734046.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/594ccdd1-e28d-4172-8ed0-44976c4f8505.png">
 <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/431553875.png">
-<meta property="og:updated_time" content="2018-03-30T13:52:50.000Z">
+<meta property="article:published_time" content="2017-04-28T07:57:00.000Z">
+<meta property="article:modified_time" content="2018-03-30T13:52:50.000Z">
+<meta property="article:author" content="Qian Ren">
+<meta property="article:tag" content="Maple">
+<meta property="article:tag" content="软件动态分析">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="软件动态分析：Maple配置和使用详细教程">
-<meta name="twitter:description" content="Maple是一个面向C/C++的，以覆盖率驱动的主动动态测试工具。本文引导大家正确配置其运行环境。">
 <meta name="twitter:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/3d562862-e3a5-4c66-a62a-adeb0eb97aee.png">
     
     
         
     
     
-        <meta property="og:image" content="http://plytools.github.io/assets/images/starry-sky.jpg"/>
-    
     
         <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.png"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.png" />
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.png"/>
     
     
         <meta property="og:image" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/city-750-2.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/city-750-2.jpg" />
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/city-750-2.jpg"/>
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-yrst5vo1nxaxbp2g3v9na2wg1lixlpr3ghbjdvskeixmu79deycecx3rh4bt.min.css">
+    
+<link rel="stylesheet" href="/assets/css/style-z3qi4gz142yeg8mt2l3rjqka9kni9avjuo2rtvye8gagczygddddz14l3mpu.min.css">
+
     <!--STYLES END-->
     
+
+    
+
+    
+        
     
 </head>
 
@@ -76,23 +82,26 @@
 
 
     
-        
-            
-        
-    
 
 <header id="header" data-behavior="4">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
-        <a class="header-title-link" href="/ ">PlyTools</a>
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            PlyTools
+        </a>
     </div>
     
         
-            <a  class="header-right-picture "
-                href="#about">
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
         
-        
-            <img class="header-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
         
         </a>
     
@@ -101,23 +110,8 @@
             <!-- Define author's picture -->
 
 
-
-        
-    
-
 <nav id="sidebar" data-behavior="4">
     <div class="sidebar-container">
-        
-            <div class="sidebar-profile">
-                <a href="/#about">
-                    <img class="sidebar-profile-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
-                </a>
-                <h4 class="sidebar-profile-name">Qian Ren</h4>
-                
-                    <h5 class="sidebar-profile-bio"><p>author.bio</p>
-</h5>
-                
-            </div>
         
         
             <ul class="sidebar-buttons">
@@ -125,12 +119,13 @@
                 <li class="sidebar-button">
                     
                         <a  class="sidebar-button-link "
-                             href="/ "
+                             href="/%20"
                             
+                            title="Home"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
-                        <span class="sidebar-button-desc">首页</span>
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
                     </a>
             </li>
             
@@ -139,10 +134,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-categories"
                             
+                            title="Categories"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
-                        <span class="sidebar-button-desc">分类</span>
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
                     </a>
             </li>
             
@@ -151,10 +147,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-tags"
                             
+                            title="Tags"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-                        <span class="sidebar-button-desc">标签</span>
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
                     </a>
             </li>
             
@@ -163,10 +160,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-archives"
                             
+                            title="Archives"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-                        <span class="sidebar-button-desc">归档</span>
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
                     </a>
             </li>
             
@@ -175,10 +173,11 @@
                         <a  class="sidebar-button-link open-algolia-search"
                              href="#search"
                             
+                            title="Search"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-search"></i>
-                        <span class="sidebar-button-desc">搜索</span>
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
                     </a>
             </li>
             
@@ -187,10 +186,11 @@
                         <a  class="sidebar-button-link "
                              href="#about"
                             
+                            title="About"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
-                        <span class="sidebar-button-desc">关于</span>
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
                     </a>
             </li>
             
@@ -200,28 +200,67 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://github.com/PlyTools" target="_blank">
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">GitHub</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/qian-ren-831486b3/" target="_blank">
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://facebook.com/" target="_blank" rel="noopener" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://plus.google.com/" target="_blank" rel="noopener" title="Google +">
+                    
+                        <i class="sidebar-button-icon fab fa-google-plus" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Google +</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/profile/" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">LinkedIn</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="mailto:qianren1024@gmail.com" target="_blank">
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
-                        <span class="sidebar-button-desc">邮箱</span>
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
                     </a>
             </li>
             
@@ -234,9 +273,10 @@
                         <a  class="sidebar-button-link "
                              href="/atom.xml"
                             
+                            title="RSS"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">RSS</span>
                     </a>
             </li>
@@ -260,25 +300,26 @@
                         hasCoverMetaOut
                         hasCoverCaption">
                 
-<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+<article class="post">
     
         <span class="post-header-cover-caption caption">Share Knowledge</span>
     
     
         <div class="post-header main-content-wrap text-center">
     
-        <h1 class="post-title" itemprop="headline">
+        <h1 class="post-title">
             软件动态分析：Maple配置和使用详细教程
         </h1>
     
-    <div class="post-meta">
-    <time itemprop="datePublished" datetime="2017-04-28T15:57:00+08:00">
+    
+        <div class="post-meta">
+    <time datetime="2017-04-28T15:57:00+08:00">
 	
 		    4月 28, 2017
     	
     </time>
     
-        <span>发布在 </span>
+        <span>in </span>
         
     <a class="category-link" href="/categories/Debug/">Debug</a>
 
@@ -286,9 +327,11 @@
     
 </div>
 
-</div>
     
-    <div class="post-content markdown" itemprop="articleBody">
+</div>
+
+    
+    <div class="post-content markdown">
         <div class="main-content-wrap">
             <!-- excerpt -->
 <ul>
@@ -444,71 +487,108 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">E: Attach to pid 3047 failed. E:   The Operating System configuration prevents Pin from using the default (parent) injection mode.E:   To resolve this, either execute the following (as root):E:   $ echo 0 &gt; /proc/sys/kernel/yama/ptrace_scopeE:   Or use the "-injection child" option.E:   For more information, regarding child injection, see Injection section in the Pin User Manual.</div></pre></td></tr></table></figure>
 <p>详情如下图<br><img src="/2017/04/28/Maple-setup-tutorial/431553875.png" alt="img"><br>这是因为系统内核的kernel.yama.ptrace_scope变量设置为了1，详情见<br><a href="https://linux-audit.com/protect-ptrace-processes-kernel-yama-ptrace_scope/" target="_blank" rel="external">Protect against ptrace of processes: kernel.yama.ptrace_scope</a><br>只需要打开/proc/sys/kernel/yama/ptrace_scope文件，将1改成0即可。</p>
             
+
+
         </div>
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
         
             <div class="post-footer-tags">
-                <span class="text-color-light text-small">标签</span><br/>
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/C-C/">C/C++</a> <a class="tag tag--primary tag--small t-link" href="/tags/Dynamic-Analysis/">Dynamic Analysis</a> <a class="tag tag--primary tag--small t-link" href="/tags/Maple/">Maple</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/C-C/" rel="tag">C/C++</a> <a class="tag tag--primary tag--small t-link" href="/tags/Dynamic-Analysis/" rel="tag">Dynamic Analysis</a> <a class="tag tag--primary tag--small t-link" href="/tags/Maple/" rel="tag">Maple</a>
 
             </div>
         
-        <div class="post-actions-wrap">
+        
+            <div class="post-actions-wrap">
     <nav>
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
-                
-                    <i class="fa fa-angle-left"></i>
-                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
-                </a>
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/04/29/VSCode-Debug-Python/"
+                    data-tooltip="使用VS Code调试Python代码"
+                    aria-label="PREVIOUS: 使用VS Code调试Python代码"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/29/VSCode-Debug-Python/" data-tooltip="使用VS Code调试Python代码">
-                
-                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
             </li>
         </ul>
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
-                <i class="fa fa-share-alt"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
-                <i class="fa fa-google-plus"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
-                <i class="fa fa-facebook-official"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
-                <i class="fa fa-twitter"></i>
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
         
-            <li class="post-action">
-                <a class="post-action-btn btn btn--default" href="#disqus_thread">
-                    <i class="fa fa-comment-o"></i>
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
         
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <i class="fa fa-list"></i>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
         </li>
     </ul>
@@ -516,10 +596,7 @@
 
 
         
-            
-                <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
+        
             
         
     </div>
@@ -529,7 +606,7 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2018 Qian Ren. All Rights Reserved.
+        Copyrights &copy; 2020 Qian Ren. All Rights Reserved.
     </span>
 </footer>
 
@@ -541,55 +618,89 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
-                
-                    <i class="fa fa-angle-left"></i>
-                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
-                </a>
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2017/04/29/VSCode-Debug-Python/"
+                    data-tooltip="使用VS Code调试Python代码"
+                    aria-label="PREVIOUS: 使用VS Code调试Python代码"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/04/29/VSCode-Debug-Python/" data-tooltip="使用VS Code调试Python代码">
-                
-                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
             </li>
         </ul>
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
-                <i class="fa fa-share-alt"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
-                <i class="fa fa-google-plus"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
-                <i class="fa fa-facebook-official"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
-                <i class="fa fa-twitter"></i>
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
         
-            <li class="post-action">
-                <a class="post-action-btn btn btn--default" href="#disqus_thread">
-                    <i class="fa fa-comment-o"></i>
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
         
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <i class="fa fa-list"></i>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
         </li>
     </ul>
@@ -597,43 +708,64 @@
 
 
                 </div>
-                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
-    <ul class="share-options">
-        <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
-                <i class="fa fa-google-plus"></i><span>分享到 Google+</span>
-            </a>
-        </li>
-        <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
-                <i class="fa fa-facebook-official"></i><span>分享到 Facebook</span>
-            </a>
-        </li>
-        <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
-                <i class="fa fa-twitter"></i><span>分享到 Twitter</span>
-            </a>
-        </li>
-    </ul>
-</div>
-<div id="share-options-mask" class="share-options-mask"></div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
 
             
         </div>
         
 
 
-    
-        
-    
-
 <div id="about">
     <div id="about-card">
         <div id="about-btn-close">
-            <i class="fa fa-remove"></i>
+            <i class="fa fa-times"></i>
         </div>
-        
-            <img id="about-card-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
         
             <h4 id="about-card-name">Qian Ren</h4>
         
@@ -649,44 +781,47 @@
             </div>
         
         
-            <div id="about-card-location">
-                <i class="fa fa-map-marker"></i>
-                <br/>
-                Beijing, China
-            </div>
-        
     </div>
 </div>
 
-        <div id="algolia-search-modal" class="modal-container">
+        
+            <div id="algolia-search-modal" class="modal-container">
     <div class="modal">
         <div class="modal-header">
-            <span class="close-button"><i class="fa fa-close"></i></span>
-            <a href="https://algolia.com" target="_blank" class="searchby-algolia text-color-light link-unstyled">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
                 <span class="searchby-algolia-text text-color-light text-small">by</span>
-                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
             </a>
             <i class="search-icon fa fa-search"></i>
             <form id="algolia-search-form">
                 <input type="text" id="algolia-search-input" name="search"
                     class="form-control input--large search-input" placeholder="Search "
-                    autofocus="autofocus"/>
+                    />
             </form>
         </div>
         <div class="modal-body">
-            <div class="no-result text-color-light text-center">没有找到文章</div>
+            <div class="no-result text-color-light text-center">no post found</div>
             <div class="results">
                 
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                            aria-label=": 软件动态分析：Maple配置和使用详细教程"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                            aria-label=": 软件动态分析：Maple配置和使用详细教程"
+                        >
                             <h3 class="media-heading">软件动态分析：Maple配置和使用详细教程</h3>
                         </a>
                         <span class="media-meta">
@@ -705,13 +840,21 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                            aria-label=": 使用VS Code调试Python代码"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                            aria-label=": 使用VS Code调试Python代码"
+                        >
                             <h3 class="media-heading">使用VS Code调试Python代码</h3>
                         </a>
                         <span class="media-meta">
@@ -730,13 +873,21 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                            aria-label=": 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/hexo-logo.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                            aria-label=": 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                        >
                             <h3 class="media-heading">使用Hexo搭建Github博客：(一)20min搭完主体框架</h3>
                         </a>
                         <span class="media-meta">
@@ -755,19 +906,27 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/05/15/MPI并行：Pthread入门教程/">
-                            <img class="media-image" src="http://plytools.github.io/2017/05/15/MPI并行：Pthread入门教程/mpi-logo.png" width="90" height="90"/>
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                            aria-label=": MPI并行：Pthread入门教程"
+                        >
+                            <img class="media-image" src="http://plytools.github.io/2018/03/30/MPI并行：Pthread入门教程/mpi-logo.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/05/15/MPI并行：Pthread入门教程/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                            aria-label=": MPI并行：Pthread入门教程"
+                        >
                             <h3 class="media-heading">MPI并行：Pthread入门教程</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
                                 
-                                    2017年5月15日
+                                    2018年3月30日
                                 
                             </span>
                         </span>
@@ -780,13 +939,21 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2018/03/30/JVM字节码详解/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                            aria-label=": JVM字节码详解"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2018/03/30/JVM字节码详解/java-logo.svg" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2018/03/30/JVM字节码详解/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                            aria-label=": JVM字节码详解"
+                        >
                             <h3 class="media-heading">JVM字节码详解</h3>
                         </a>
                         <span class="media-meta">
@@ -806,47 +973,40 @@
         </div>
         <div class="modal-footer">
             <p class="results-count text-medium"
-                data-message-zero="没有找到文章"
-                data-message-one="找到 1 篇文章"
-                data-message-other="找到 {n} 篇文章">
-                找到 5 篇文章
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                5 posts found
             </p>
         </div>
     </div>
 </div>
+
+        
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-rt08quwts7iav5x0cfd2ym0gb5qkd1lvrsmwrakxtkhefmaaes4ywkmnjnwf.min.js"></script>
+
+<script src="/assets/js/script-ek4ywkrdmen2f0f6pnmh0zlezvmmnk0zpkt8yipys4xe94u87gxxysen4bo2.min.js"></script>
+
 <!--SCRIPTS END-->
 
-    
-        <script>
-             var disqus_config = function () {
-                 this.page.url = 'http://plytools.github.io/2017/04/28/Maple-setup-tutorial/';
-                 
-                    this.page.identifier = '2017/04/28/Maple-setup-tutorial/';
-                 
-             };
-            (function() {
-                var d = document, s = d.createElement('script');
-                var disqus_shortname = 'plytools-github-io';
-                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
 
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-            })();
-        </script>
     
 
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
-    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    
+<script src="/assets/js/moment-with-locales.js"></script>
+
+    
+<script src="/assets/js/algoliasearch.js"></script>
+
     <script>
-        var algoliaClient = algoliasearch('IIGDAO65S7', 'a5e943fbe88ee973daee86eab6666e06');
-        var algoliaIndex = algoliaClient.initIndex('plytools-github-io');
+      var algoliaClient = algoliasearch('IIGDAO65S7', 'a5e943fbe88ee973daee86eab6666e06');
+      var algoliaIndex = algoliaClient.initIndex('plytools-github-io');
     </script>
+
 
     </body>
 </html>

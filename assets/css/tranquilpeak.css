@@ -3,43 +3,43 @@
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 400;
-  src: local("Open Sans"), local("OpenSans"), url(https://fonts.gstatic.com/s/opensans/v10/cJZKeOuBrn4kERxqtaUH3SZ2oysoEQEeKwjgmXLRnTc.ttf) format("truetype"); }
+  src: local("Open Sans"), local("OpenSans"), url(../fonts/open-sans.ttf) format("truetype"); }
 
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
   font-weight: 700;
-  src: local("Open Sans Bold"), local("OpenSans-Bold"), url(https://fonts.gstatic.com/s/opensans/v10/k3k702ZOKiLJc3WVjuplzJS3E-kSBmtLoNJPDtbj2Pk.ttf) format("truetype"); }
+  src: local("Open Sans Bold"), local("OpenSans-Bold"), url(../fonts/open-sans-bold.ttf) format("truetype"); }
 
 @font-face {
   font-family: 'Merriweather';
   font-style: normal;
   font-weight: 300;
-  src: local("Merriweather Light"), local("Merriweather-Light"), url(https://fonts.gstatic.com/s/merriweather/v8/ZvcMqxEwPfh2qDWBPxn6nk7nEl83IKQRaQwpv_tz1Eg.ttf) format("truetype"); }
+  src: local("Merriweather Light"), local("Merriweather-Light"), url(../fonts/merriweather-light.ttf) format("truetype"); }
 
 @font-face {
   font-family: 'Merriweather';
   font-style: normal;
   font-weight: 400;
-  src: local("Merriweather"), url(https://fonts.gstatic.com/s/merriweather/v8/RFda8w1V0eDZheqfcyQ4EJS3E-kSBmtLoNJPDtbj2Pk.ttf) format("truetype"); }
+  src: local("Merriweather"), url(../fonts/merriweather.ttf) format("truetype"); }
 
 @font-face {
   font-family: 'Merriweather';
   font-style: normal;
   font-weight: 700;
-  src: local("Merriweather Bold"), local("Merriweather-Bold"), url(https://fonts.gstatic.com/s/merriweather/v8/ZvcMqxEwPfh2qDWBPxn6nv83cGrqhiQgWmjXfohD0fc.ttf) format("truetype"); }
+  src: local("Merriweather Bold"), local("Merriweather-Bold"), url(../fonts/merriweather-bold.ttf) format("truetype"); }
 
 @font-face {
   font-family: 'Merriweather';
   font-style: italic;
   font-weight: 300;
-  src: local("Merriweather Light Italic"), local("Merriweather-LightItalic"), url(https://fonts.gstatic.com/s/merriweather/v8/EYh7Vl4ywhowqULgRdYwIGrKw6K5wsYdxr6rUL2ZGaM.ttf) format("truetype"); }
+  src: local("Merriweather Light Italic"), local("Merriweather-LightItalic"), url(../fonts/merriweather-light-italic.ttf) format("truetype"); }
 
 @font-face {
   font-family: 'Merriweather';
   font-style: italic;
   font-weight: 700;
-  src: local("Merriweather Bold Italic"), local("Merriweather-BoldItalic"), url(https://fonts.gstatic.com/s/merriweather/v8/EYh7Vl4ywhowqULgRdYwII1kRdeHIFWYEsp6A2f99b0.ttf) format("truetype"); }
+  src: local("Merriweather Bold Italic"), local("Merriweather-BoldItalic"), url(../fonts/merriweather-bold-italic.ttf) format("truetype"); }
 
 html {
   font-family: "Open Sans", sans-serif;
@@ -47,8 +47,8 @@ html {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent;
-  tap-highlight-color: transparent; }
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  tap-highlight-color: rgba(0, 0, 0, 0); }
 
 body {
   width: 100%;
@@ -154,7 +154,7 @@ pre > code {
   width: 100%;
   box-sizing: border-box;
   padding: 15px;
-  font-family: Menlo;
+  font-family: Menlo, Consolas, monospace;
   border: none;
   margin: 0;
   cursor: text;
@@ -165,7 +165,7 @@ pre > code {
 code {
   font-size: 1.5rem;
   display: inline-block;
-  font-family: Menlo;
+  font-family: Menlo, Consolas, monospace;
   font-weight: 400;
   background-color: #f7f8f8;
   padding: 0 10px; }
@@ -227,6 +227,7 @@ blockquote {
   line-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  cursor: pointer;
   z-index: 30; }
   #about #about-card {
     position: relative;
@@ -237,6 +238,7 @@ blockquote {
     margin: 15px auto;
     border-radius: 3px;
     padding: 30px 0;
+    cursor: initial;
     -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); }
@@ -522,6 +524,10 @@ blockquote {
     -moz-transform: translate3d(250px, 0, 0);
     transform: translate3d(250px, 0, 0); } }
 
+@media print {
+  #header {
+    display: none; } }
+
 #main {
   display: block;
   min-height: 100%;
@@ -699,7 +705,7 @@ blockquote {
         padding-left: 23px;
         padding-top: 0; }
         #sidebar[data-behavior="1"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon, #sidebar[data-behavior="2"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon, #sidebar[data-behavior="4"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon, #sidebar[data-behavior="5"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -737,7 +743,7 @@ blockquote {
         text-align: center;
         width: 100%; }
         #sidebar[data-behavior="3"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon, #sidebar[data-behavior="6"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -769,7 +775,7 @@ blockquote {
         text-align: center;
         width: 100%; }
         #sidebar[data-behavior="1"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon, #sidebar[data-behavior="2"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon, #sidebar[data-behavior="3"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -805,7 +811,7 @@ blockquote {
         padding-left: 23px;
         padding-top: 0; }
         #sidebar[data-behavior="4"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon, #sidebar[data-behavior="5"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -843,7 +849,7 @@ blockquote {
         text-align: center;
         width: 100%; }
         #sidebar[data-behavior="6"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -880,7 +886,7 @@ blockquote {
         padding-left: 23px;
         padding-top: 0; }
         #sidebar[data-behavior="1"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon, #sidebar[data-behavior="2"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -917,7 +923,7 @@ blockquote {
         text-align: center;
         width: 100%; }
         #sidebar[data-behavior="3"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -953,7 +959,7 @@ blockquote {
         padding-left: 23px;
         padding-top: 0; }
         #sidebar[data-behavior="4"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon, #sidebar[data-behavior="5"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -991,7 +997,7 @@ blockquote {
         text-align: center;
         width: 100%; }
         #sidebar[data-behavior="6"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -1009,14 +1015,16 @@ blockquote {
 @media only screen and (min-width: 1280px) {
   #sidebar[data-behavior="1"] {
     width: 500px;
-    box-sizing: border-box;
-    padding: 0 80px; }
+    display: -webkit-flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; }
     #sidebar[data-behavior="1"] .sidebar-container {
       position: relative;
-      top: 50%;
-      transform: translateY(-50%);
-      -webkit-transform: translateY(-50%);
-      -moz-transform: translateY(-50%); }
+      padding: 0 80px; }
     #sidebar[data-behavior="1"] .sidebar-profile {
       padding-top: 0;
       padding-bottom: 7.5px; }
@@ -1049,7 +1057,7 @@ blockquote {
           padding-top: 0;
           white-space: nowrap; }
           #sidebar[data-behavior="1"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-            font-size: 2rem;
+            font-size: 1.8rem;
             float: left;
             text-align: center;
             width: 30px;
@@ -1096,7 +1104,7 @@ blockquote {
         padding-left: 23px;
         padding-top: 0; }
         #sidebar[data-behavior="2"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -1133,7 +1141,7 @@ blockquote {
         text-align: center;
         width: 100%; }
         #sidebar[data-behavior="3"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -1150,14 +1158,16 @@ blockquote {
   #sidebar[data-behavior="4"] {
     left: -500px;
     width: 500px;
-    box-sizing: border-box;
-    padding: 0 80px; }
+    display: -webkit-flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; }
     #sidebar[data-behavior="4"] .sidebar-container {
       position: relative;
-      top: 50%;
-      transform: translateY(-50%);
-      -webkit-transform: translateY(-50%);
-      -moz-transform: translateY(-50%); }
+      padding: 0 80px; }
     #sidebar[data-behavior="4"] .sidebar-profile {
       padding-top: 0;
       padding-bottom: 7.5px; }
@@ -1190,7 +1200,7 @@ blockquote {
           padding-top: 0;
           white-space: nowrap; }
           #sidebar[data-behavior="4"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-            font-size: 2rem;
+            font-size: 1.8rem;
             float: left;
             text-align: center;
             width: 30px;
@@ -1238,7 +1248,7 @@ blockquote {
         padding-left: 23px;
         padding-top: 0; }
         #sidebar[data-behavior="5"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -1276,7 +1286,7 @@ blockquote {
         text-align: center;
         width: 100%; }
         #sidebar[data-behavior="6"] ul.sidebar-buttons li.sidebar-button .sidebar-button-link .sidebar-button-icon {
-          font-size: 2rem;
+          font-size: 1.8rem;
           display: inline-block;
           text-align: center;
           width: 30px;
@@ -1297,6 +1307,10 @@ blockquote {
   #sidebar .sidebar-profile-bio {
     display: none; } }
 
+@media print {
+  #sidebar {
+    display: none; } }
+
 .alert {
   position: relative;
   text-align: left;
@@ -1304,7 +1318,8 @@ blockquote {
   min-height: 30px;
   margin: 1em 0 0;
   border: none;
-  border-left: 3px solid; }
+  border-left: 3px solid;
+  word-break: break-word; }
   .alert p {
     margin: 1.5em 0 0; }
     .alert p:first-child {
@@ -1315,8 +1330,9 @@ blockquote {
       position: absolute;
       top: 10px;
       left: 15px;
-      font-family: 'FontAwesome';
-      font-size: 2.5rem; }
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 600;
+      font-size: 2rem; }
   .alert.info {
     border-color: #349ef3;
     background-color: #e6f3fe; }
@@ -1361,7 +1377,8 @@ blockquote {
   .archive .archive-posts .archive-post .archive-post-date {
     color: #9eabb3; }
   .archive .archive-posts .archive-post::before {
-    font-family: 'FontAwesome';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 600;
     content: '\f0da';
     font-size: 1.3rem; }
 
@@ -1459,7 +1476,7 @@ figure.highlight,
   .codeblock .code,
   .codeblock .tag {
     background-color: inherit;
-    font-family: Menlo;
+    font-family: Menlo, Consolas, monospace;
     border: none;
     padding: 0;
     margin: 0;
@@ -1518,9 +1535,32 @@ figure.highlight,
 
 .gist .line,
 .gist .line-number {
-  font-family: Menlo;
+  font-family: Menlo, Consolas, monospace;
   font-size: 1em;
   margin: 0 0 5px 0; }
+
+.fancybox-caption-wrap {
+  padding: 0;
+  background: transparent; }
+  .fancybox-caption-wrap .fancybox-caption {
+    text-align: center;
+    border: none; }
+
+.fancybox-thumbs {
+  top: auto;
+  width: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 95px;
+  padding: 10px 10px 5px 10px;
+  box-sizing: border-box;
+  opacity: 1;
+  background: transparent; }
+
+.fancybox-show-thumbs .fancybox-inner {
+  right: 0;
+  bottom: 95px; }
 
 .figure.clear {
   clear: both; }
@@ -1538,6 +1578,10 @@ figure.highlight,
 .figure.right {
   float: right;
   margin: 2px; }
+
+.figure .fig-video {
+  width: 100%;
+  height: auto; }
 
 .figure.fig-20 {
   width: calc(20% - 4px); }
@@ -1837,6 +1881,7 @@ a.fancybox {
   width: 100%;
   height: 60px; }
   .pagination-bar .pagination {
+    position: relative;
     height: 60px;
     line-height: 60px;
     display: block;
@@ -1886,8 +1931,10 @@ a.fancybox {
       display: block;
       width: auto;
       max-width: 100%; }
-    .post .post-content :not(blockquote):not(.alert) > p {
+    .post .post-content :not(blockquote):not(li):not(.alert) > p {
       margin: 1.5em 0 0 0; }
+    .post .post-content li p {
+      margin: 0 0 0 0; }
   .post .post-footer {
     margin-top: 20px; }
     .post .post-footer-tags {
@@ -1921,15 +1968,15 @@ a.fancybox {
       width: auto;
       text-align: center; }
   .post-actions-wrap ul.post-action-nav {
-    width: 45%;
+    width: 35%;
     z-index: 42; }
     .post-actions-wrap ul.post-action-nav li.post-action {
       float: left;
-      min-width: 42px; }
+      min-width: 45px; }
       .post-actions-wrap ul.post-action-nav li.post-action:last-child .post-action-btn {
         margin-left: 15px; }
   .post-actions-wrap ul.post-action-share {
-    width: 55%;
+    width: 65%;
     z-index: 41; }
     .post-actions-wrap ul.post-action-share li.post-action {
       float: right; }
@@ -1947,6 +1994,10 @@ a.fancybox {
     width: 35%; }
   .post-actions-wrap ul.post-action-share {
     width: 65%; } }
+
+@media print {
+  .post-actions-wrap {
+    display: none; } }
 
 .pullquote {
   text-align: left;
@@ -2215,27 +2266,37 @@ a.fancybox {
     overflow: hidden;
     margin: 15px 0 15px 0; }
     .postShorten.postShorten--thumbnailimg-bottom .postShorten-thumbnailimg img {
-      width: auto;
-      height: auto; } }
+      width: 100%;
+      height: auto;
+      max-height: 250px;
+      object-fit: cover; } }
 
 .share-options-bar {
   position: fixed;
-  bottom: -156px;
+  bottom: -100%;
   background: white;
-  height: 155px;
+  height: 100%;
   clear: both;
+  box-sizing: border-box;
   border-top: 1px solid #eef2f8;
   transition: transform .25s ease-in-out;
   z-index: 50;
-  -webkit-transition: -webkit-transform .25s ease-in-out; }
+  -webkit-transition: -webkit-transform .25s ease-in-out;
+  display: -webkit-flex;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; }
   .share-options-bar.opened {
-    -webkit-transform: translate3d(0, -155px, 0);
-    -moz-transform: translate3d(0, -155px, 0);
-    transform: translate3d(0, -155px, 0); }
+    -webkit-transform: translate3d(0, -100%, 0);
+    -moz-transform: translate3d(0, -100%, 0);
+    transform: translate3d(0, -100%, 0); }
   .share-options-bar .share-options {
     padding: 0;
     margin: 0;
-    text-align: center;
     list-style: none; }
     .share-options-bar .share-options .share-option:first-child .share-option-btn {
       padding: 20px 0 10px 0; }
@@ -2246,17 +2307,17 @@ a.fancybox {
       display: block;
       width: 100%;
       padding: 10px 0 10px 0; }
-      .share-options-bar .share-options .share-option .share-option-btn .fa {
+      .share-options-bar .share-options .share-option .share-option-btn .fa,
+      .share-options-bar .share-options .share-option .share-option-btn .fab {
         margin-right: 15px; }
 
-.share-options-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: none;
-  z-index: 30; }
+#btn-close-shareoptions {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 20px;
+  color: #5d686f;
+  cursor: pointer; }
 
 @media only screen and (max-width: 767px) {
   .share-options-bar {
@@ -2278,6 +2339,10 @@ a.fancybox {
     left: 75px; }
   .share-options-bar[data-behavior="4"], .share-options-bar[data-behavior="5"], .share-options-bar[data-behavior="6"] {
     width: 100%; } }
+
+@media print {
+  .share-options-bar {
+    display: none; } }
 
 a.tag,
 .tag {
@@ -2712,6 +2777,15 @@ figure.highlight,
   .codeblock.c .code .number,
   .codeblock.c .code .built_in {
     color: #0086b3; }
+  figure.highlight.clj .code .builtin-name,
+  .codeblock.clj .code .builtin-name {
+    color: #df5000; }
+  figure.highlight.clj .code .name,
+  .codeblock.clj .code .name {
+    color: #795da3; }
+  figure.highlight.clj .code .number,
+  .codeblock.clj .code .number {
+    color: #0086b3; }
   figure.highlight.cs .code .preprocessor,
   figure.highlight.cs .code .preprocessor .keyword,
   .codeblock.cs .code .preprocessor,
@@ -3056,6 +3130,12 @@ figure.highlight,
   .codeblock.less .selector-class,
   .codeblock.less .selector-tag {
     color: #795da3; }
+  figure.highlight.lisp .code .name,
+  .codeblock.lisp .code .name {
+    color: #df5000; }
+  figure.highlight.lisp .code .number,
+  .codeblock.lisp .code .number {
+    color: #0086b3; }
   figure.highlight.scss .tag,
   figure.highlight.scss .at_rule,
   figure.highlight.scss .important,

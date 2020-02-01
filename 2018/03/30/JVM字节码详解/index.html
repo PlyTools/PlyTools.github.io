@@ -12,62 +12,68 @@
         <meta name="keywords" content="bytecode,Java">
     
     
-        <link rel="icon" href="http://plytools.github.io/assets/images/rq.jpg">
     
-    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"articleBody":"\n\n本文大量借鉴了从字节码层面看“HelloWorld”\n\n1. JVM字节码简介官方资料见这里：Java Language and Virtual Machine Specifications下面以helloworld为例简单介绍1.7版本（51）的字节码规范\n2. 以helloworld为例介绍1.7版字节码规范2.1 源码\nHelloWorld源代码\n1234567package com.paddx.test.asm;public class HelloWorld &#123;    public static void main(String[] args) &#123;        System.out.println(&quot;Hello,World!&quot;);    &#125;&#125;\n\nMaven编译配置以1.7编译器，编译为1.7版字节码\n12345678&lt;plugin&gt;          &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;          &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;          &lt;configuration&gt;              &lt;source&gt;1.7&lt;/source&gt;              &lt;target&gt;1.7&lt;/target&gt;          &lt;/configuration&gt;&lt;/plugin&gt;\n\n\n2.2 详细规范2.2.1 编译结果编译后结果过如下：UltraEdit的16进制模式打开，红色框内为\u000bhelloworld.class内容。红框左边是行号，右边是解析出的字符串字节码中所有内容对应着固定的格式，以如下顺序以及内容依次排列\n2.2.2 详细内容\nmagic（u4）：CA FE BA BE代表这个文件是字节码文件\n\nminor_version（u2）：00 00小版本号因为是1.7，所以是0\n\nmajor_version（u2）：00 33大版本号0x0033转换为十进制是51，指1.7\n\nconstant_pool_count（u2）：00 22常量池数量转换为十进制后为34从1开始，所以指有33个常量\n\nconstant_pool[cosntant_pool_count – 1]常量池，如右图红色区域常量池中数据是cp_infocp_info由一个一个的表组成\n\n方法引用表如上图粗红框部分就是一个表，具体内容为\n\ntag（u1）：0A表类型，0x0A转换为十进制是10表示CONSTANT_Methodref\u000b所以是个表类型是方法引用\nindex（u2）：00 06指向声明方法的类描述符\u000bCONSTANT_Class_info的索引值\nindex（u2）：00 14CONSTANT_NameAndType_info\u000b的索引值\n\n\n常量池中表的类型常量池中表的类型有14种，如下所示，上面的例子就是其中的CONSTANT_Methodref_info\n\n\n\naccess_flags（u2）：00 21访问标识0021=0020 + 0001即public + invokespecial\n\naccess_flags（u2）访问标识符的规范\n\n\n\n\nthis_class（u2）：00 05当前类信息是指向constant pool的索引值这里0x00 05指向常量池中的第5项，第5项内部又指向常量池中的第26项，即com/paddx/test/asm/HelloWorld\n\n\n\nsuper_class（u2）：00 06当前字节码定义的类或接口的直接父类指向constant pool的索引值，所指表必须是CONSTANT_Class_info类型这里指向的是java/lang/object\n\ninterfaces_count（u2）：00 00实现接口的数量\n\ninterfaces[interfaces_count]因为没有实现接口，所以这里没有\n\nfield_count（u2）：00 00属性数量，这里是0个\n\nfield_info因为没有属性，所以这里没有\n\n\n\nmethod_count（u2）：00 02方法数量虽然HelloWorld中只实现了一个，但因有，所以是两个\n\nmethod_info方法表，格式如下表，对应数据如下\n\naccess_flag（u2）: 00 01\nname_index（u2）:00 07\ndescriptor_index（u2）:00 08这里 07、08就对应的常量池里面的常量索引，从下图可知，即07 对应的是 ，08 对应的是()\n\n\nattributes_count（u2）：00 01表示包含一个属性\n\nattribute_info（）：属性表，该表的结构如右表：\n\nattribute_name_index（u2）: 00 09指向常量池中的索引。\nattribute_length（u4）：00 00 00 2F属性的长度47。\n\n\n\n\n","dateCreated":"2018-03-30T21:53:11+08:00","dateModified":"2018-03-30T21:53:11+08:00","datePublished":"2018-03-30T21:53:11+08:00","description":"任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。今天，我就从大家最熟悉的程序“HelloWorld”程序入手，分析整个 Class 文件的结构。","headline":"JVM字节码详解","image":["java-logo.svg","java.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"},"publisher":{"@type":"Organization","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"url":"http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/","keywords":"Java, JVM","thumbnailUrl":"java-logo.svg"}</script>
     <meta name="description" content="任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。今天，我就从大家最熟悉的程序“HelloWorld”程序入手，分析整个 Class 文件的结构。">
-<meta name="keywords" content="Java,JVM">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="JVM字节码详解">
-<meta property="og:url" content="http://plytools.github.io/2018/03/30/JVM字节码详解/index.html">
+<meta property="og:url" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/index.html">
 <meta property="og:site_name" content="PlyTools">
 <meta property="og:description" content="任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。今天，我就从大家最熟悉的程序“HelloWorld”程序入手，分析整个 Class 文件的结构。">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/4fc902d6-5747-47e1-bc36-dacad2c1debf.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/b4a94312-256a-4863-840a-0682e9f494a2.png">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/6ebad447-dc2e-4f4b-853c-91ae93757725.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/f0ad56de-2474-468a-9fe5-3f6d957560bb.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/1e13efa0-2d1b-431a-bc4a-dd5a631a03f5.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/ba8bce58-336b-406c-837a-f98a6293b10e.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/0fec4d21-fdcc-4759-8079-435ddf9e1b65.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/9b2b980e2959c4f996cafddb03fa5d4d.png">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/9509e5da-880e-4f56-b568-4ed0c4fdbeea.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/60b9ff398449db2dcfef9197e2187ae6.png">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/ddc7ff32-1c7f-4666-ac05-c7321c700705.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/9e924e85-3bf6-441b-8a8f-e6d46fd4824d.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/c80dde05-d714-43e8-a825-e890309023ab.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/df052c38-ffc9-4f8f-9789-047821305410.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/f7736a6f-254b-4a4f-894c-f552d0b215e7.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/25f16515-7123-4c64-aea0-8f18e822a0b5.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/e5692e36861bd1d2fa1735c5ab801af7.png">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/7f4d1bd5-6d49-462a-8415-9d2ec5c93544.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/13e72175-5f91-4af4-93db-16bbf90a3d8d.jpg">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/b0f95169782409e7576bc9704b93b693.png">
-<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/9c1d7e0e-c7ba-43ba-b37d-3b6b381b27f1.jpg">
-<meta property="og:updated_time" content="2018-03-30T13:53:11.443Z">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/4fc902d6-5747-47e1-bc36-dacad2c1debf.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/b4a94312-256a-4863-840a-0682e9f494a2.png">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/6ebad447-dc2e-4f4b-853c-91ae93757725.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/f0ad56de-2474-468a-9fe5-3f6d957560bb.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/1e13efa0-2d1b-431a-bc4a-dd5a631a03f5.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/ba8bce58-336b-406c-837a-f98a6293b10e.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/0fec4d21-fdcc-4759-8079-435ddf9e1b65.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/9b2b980e2959c4f996cafddb03fa5d4d.png">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/9509e5da-880e-4f56-b568-4ed0c4fdbeea.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/60b9ff398449db2dcfef9197e2187ae6.png">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/ddc7ff32-1c7f-4666-ac05-c7321c700705.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/9e924e85-3bf6-441b-8a8f-e6d46fd4824d.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/c80dde05-d714-43e8-a825-e890309023ab.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/df052c38-ffc9-4f8f-9789-047821305410.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/f7736a6f-254b-4a4f-894c-f552d0b215e7.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/25f16515-7123-4c64-aea0-8f18e822a0b5.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/e5692e36861bd1d2fa1735c5ab801af7.png">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/7f4d1bd5-6d49-462a-8415-9d2ec5c93544.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/13e72175-5f91-4af4-93db-16bbf90a3d8d.jpg">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/b0f95169782409e7576bc9704b93b693.png">
+<meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/9c1d7e0e-c7ba-43ba-b37d-3b6b381b27f1.jpg">
+<meta property="article:published_time" content="2018-03-30T13:53:11.000Z">
+<meta property="article:modified_time" content="2018-03-30T13:53:11.000Z">
+<meta property="article:author" content="Qian Ren">
+<meta property="article:tag" content="bytecode">
+<meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM字节码详解">
-<meta name="twitter:description" content="任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。今天，我就从大家最熟悉的程序“HelloWorld”程序入手，分析整个 Class 文件的结构。">
-<meta name="twitter:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/4fc902d6-5747-47e1-bc36-dacad2c1debf.jpg">
+<meta name="twitter:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/4fc902d6-5747-47e1-bc36-dacad2c1debf.jpg">
     
     
         
     
     
-        <meta property="og:image" content="http://plytools.github.io/assets/images/starry-sky.jpg"/>
+    
+        <meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/java-logo.svg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/java-logo.svg"/>
     
     
-        <meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/java-logo.svg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/03/30/JVM字节码详解/java-logo.svg" />
-    
-    
-        <meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM字节码详解/java.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/03/30/JVM字节码详解/java.jpg" />
+        <meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/java.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/java.jpg"/>
     
     
     <!--STYLES-->
-    <link rel="stylesheet" href="/assets/css/style-yrst5vo1nxaxbp2g3v9na2wg1lixlpr3ghbjdvskeixmu79deycecx3rh4bt.min.css">
+    
+<link rel="stylesheet" href="/assets/css/style-z3qi4gz142yeg8mt2l3rjqka9kni9avjuo2rtvye8gagczygddddz14l3mpu.min.css">
+
     <!--STYLES END-->
     
+
+    
+
+    
+        
     
 </head>
 
@@ -77,23 +83,26 @@
 
 
     
-        
-            
-        
-    
 
 <header id="header" data-behavior="4">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
     <div class="header-title">
-        <a class="header-title-link" href="/ ">PlyTools</a>
+        <a
+            class="header-title-link"
+            href="/%20"
+            aria-label=""
+        >
+            PlyTools
+        </a>
     </div>
     
         
-            <a  class="header-right-picture "
-                href="#about">
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="Open the link: /#about"
+            >
         
-        
-            <img class="header-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
         
         </a>
     
@@ -102,23 +111,8 @@
             <!-- Define author's picture -->
 
 
-
-        
-    
-
 <nav id="sidebar" data-behavior="4">
     <div class="sidebar-container">
-        
-            <div class="sidebar-profile">
-                <a href="/#about">
-                    <img class="sidebar-profile-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
-                </a>
-                <h4 class="sidebar-profile-name">Qian Ren</h4>
-                
-                    <h5 class="sidebar-profile-bio"><p>author.bio</p>
-</h5>
-                
-            </div>
         
         
             <ul class="sidebar-buttons">
@@ -126,12 +120,13 @@
                 <li class="sidebar-button">
                     
                         <a  class="sidebar-button-link "
-                             href="/ "
+                             href="/%20"
                             
+                            title="Home"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
-                        <span class="sidebar-button-desc">首页</span>
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
                     </a>
             </li>
             
@@ -140,10 +135,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-categories"
                             
+                            title="Categories"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
-                        <span class="sidebar-button-desc">分类</span>
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
                     </a>
             </li>
             
@@ -152,10 +148,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-tags"
                             
+                            title="Tags"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
-                        <span class="sidebar-button-desc">标签</span>
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
                     </a>
             </li>
             
@@ -164,10 +161,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-archives"
                             
+                            title="Archives"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
-                        <span class="sidebar-button-desc">归档</span>
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
                     </a>
             </li>
             
@@ -176,10 +174,11 @@
                         <a  class="sidebar-button-link open-algolia-search"
                              href="#search"
                             
+                            title="Search"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-search"></i>
-                        <span class="sidebar-button-desc">搜索</span>
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
                     </a>
             </li>
             
@@ -188,10 +187,11 @@
                         <a  class="sidebar-button-link "
                              href="#about"
                             
+                            title="About"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
-                        <span class="sidebar-button-desc">关于</span>
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
                     </a>
             </li>
             
@@ -201,28 +201,67 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://github.com/PlyTools" target="_blank">
+                        <a  class="sidebar-button-link " href="https://github.com/" target="_blank" rel="noopener" title="GitHub">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">GitHub</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://www.linkedin.com/in/qian-ren-831486b3/" target="_blank">
+                        <a  class="sidebar-button-link " href="http://stackoverflow.com/users" target="_blank" rel="noopener" title="Stack Overflow">
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-linkedin"></i>
+                        <i class="sidebar-button-icon fab fa-stack-overflow" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://twitter.com/" target="_blank" rel="noopener" title="Twitter">
+                    
+                        <i class="sidebar-button-icon fab fa-twitter" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Twitter</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://facebook.com/" target="_blank" rel="noopener" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://plus.google.com/" target="_blank" rel="noopener" title="Google +">
+                    
+                        <i class="sidebar-button-icon fab fa-google-plus" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Google +</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://www.linkedin.com/profile/" target="_blank" rel="noopener" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">LinkedIn</span>
                     </a>
             </li>
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="mailto:qianren1024@gmail.com" target="_blank">
+                        <a  class="sidebar-button-link "
+                             href="/mailto"
+                            title="Mail"
+                        >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
-                        <span class="sidebar-button-desc">邮箱</span>
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
                     </a>
             </li>
             
@@ -235,9 +274,10 @@
                         <a  class="sidebar-button-link "
                              href="/atom.xml"
                             
+                            title="RSS"
                         >
                     
-                        <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
                         <span class="sidebar-button-desc">RSS</span>
                     </a>
             </li>
@@ -251,7 +291,7 @@
         <div class="post-header-cover
                     text-center
                     "
-             style="background-image:url('/2018/03/30/JVM字节码详解/java.jpg');"
+             style="background-image:url('/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/java.jpg');"
              data-behavior="4">
             
         </div>
@@ -261,25 +301,26 @@
                         hasCoverMetaOut
                         hasCoverCaption">
                 
-<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+<article class="post">
     
         <span class="post-header-cover-caption caption">Share Knowledge</span>
     
     
         <div class="post-header main-content-wrap text-center">
     
-        <h1 class="post-title" itemprop="headline">
+        <h1 class="post-title">
             JVM字节码详解
         </h1>
     
-    <div class="post-meta">
-    <time itemprop="datePublished" datetime="2018-03-30T19:49:17+08:00">
+    
+        <div class="post-meta">
+    <time datetime="2018-03-30T21:53:11+08:00">
 	
 		    3月 30, 2018
     	
     </time>
     
-        <span>发布在 </span>
+        <span>in </span>
         
     <a class="category-link" href="/categories/Java/">Java</a>
 
@@ -287,9 +328,11 @@
     
 </div>
 
-</div>
     
-    <div class="post-content markdown" itemprop="articleBody">
+</div>
+
+    
+    <div class="post-content markdown">
         <div class="main-content-wrap">
             <!-- excerpt -->
 <blockquote>
@@ -371,71 +414,108 @@
 </li>
 </ul>
             
+
+
         </div>
     </div>
     <div id="post-footer" class="post-footer main-content-wrap">
         
             <div class="post-footer-tags">
-                <span class="text-color-light text-small">标签</span><br/>
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/JVM/">JVM</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/">Java</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/JVM/" rel="tag">JVM</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/" rel="tag">Java</a>
 
             </div>
         
-        <div class="post-actions-wrap">
+        
+            <div class="post-actions-wrap">
     <nav>
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/05/15/MPI并行：Pthread入门教程/"  data-tooltip="MPI并行：Pthread入门教程">
-                
-                    <i class="fa fa-angle-left"></i>
-                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
-                </a>
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
-                
-                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                    data-tooltip="MPI并行：Pthread入门教程"
+                    aria-label="NEXT: MPI并行：Pthread入门教程"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
             </li>
         </ul>
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
-                <i class="fa fa-share-alt"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM字节码详解/">
-                <i class="fa fa-google-plus"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM字节码详解/">
-                <i class="fa fa-facebook-official"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM字节码详解/">
-                <i class="fa fa-twitter"></i>
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
         
-            <li class="post-action">
-                <a class="post-action-btn btn btn--default" href="#disqus_thread">
-                    <i class="fa fa-comment-o"></i>
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
         
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <i class="fa fa-list"></i>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
         </li>
     </ul>
@@ -443,10 +523,7 @@
 
 
         
-            
-                <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
+        
             
         
     </div>
@@ -456,7 +533,7 @@
 
                 <footer id="footer" class="main-content-wrap">
     <span class="copyrights">
-        Copyrights &copy; 2018 Qian Ren. All Rights Reserved.
+        Copyrights &copy; 2020 Qian Ren. All Rights Reserved.
     </span>
 </footer>
 
@@ -468,55 +545,89 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/05/15/MPI并行：Pthread入门教程/"  data-tooltip="MPI并行：Pthread入门教程">
-                
-                    <i class="fa fa-angle-left"></i>
-                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
-                </a>
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                    </a>
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--disabled">
-                
-                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                    data-tooltip="MPI并行：Pthread入门教程"
+                    aria-label="NEXT: MPI并行：Pthread入门教程"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
             </li>
         </ul>
     </nav>
     <ul class="post-actions post-action-share">
         <li class="post-action hide-lg hide-md hide-sm">
-            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
-                <i class="fa fa-share-alt"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM字节码详解/">
-                <i class="fa fa-google-plus"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM字节码详解/">
-                <i class="fa fa-facebook-official"></i>
-            </a>
-        </li>
-        <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM字节码详解/">
-                <i class="fa fa-twitter"></i>
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Share this post"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
         </li>
         
-            <li class="post-action">
-                <a class="post-action-btn btn btn--default" href="#disqus_thread">
-                    <i class="fa fa-comment-o"></i>
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                    title="Share on Facebook"
+                    aria-label="Share on Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
             </li>
         
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                    title="Share on Twitter"
+                    aria-label="Share on Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                    title="Share on Google+"
+                    aria-label="Share on Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+        
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
             
-                <i class="fa fa-list"></i>
+                <i class="fa fa-list" aria-hidden="true"></i>
             </a>
         </li>
     </ul>
@@ -524,43 +635,64 @@
 
 
                 </div>
-                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
-    <ul class="share-options">
-        <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM字节码详解/">
-                <i class="fa fa-google-plus"></i><span>分享到 Google+</span>
-            </a>
-        </li>
-        <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM字节码详解/">
-                <i class="fa fa-facebook-official"></i><span>分享到 Facebook</span>
-            </a>
-        </li>
-        <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM字节码详解/">
-                <i class="fa fa-twitter"></i><span>分享到 Twitter</span>
-            </a>
-        </li>
-    </ul>
-</div>
-<div id="share-options-mask" class="share-options-mask"></div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                        aria-label="Share on Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                        aria-label="Share on Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                        aria-label="Share on Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
 
             
         </div>
         
 
 
-    
-        
-    
-
 <div id="about">
     <div id="about-card">
         <div id="about-btn-close">
-            <i class="fa fa-remove"></i>
+            <i class="fa fa-times"></i>
         </div>
-        
-            <img id="about-card-picture" src="/assets/images/starry-sky.jpg" alt="作者的图片"/>
         
             <h4 id="about-card-name">Qian Ren</h4>
         
@@ -576,44 +708,47 @@
             </div>
         
         
-            <div id="about-card-location">
-                <i class="fa fa-map-marker"></i>
-                <br/>
-                Beijing, China
-            </div>
-        
     </div>
 </div>
 
-        <div id="algolia-search-modal" class="modal-container">
+        
+            <div id="algolia-search-modal" class="modal-container">
     <div class="modal">
         <div class="modal-header">
-            <span class="close-button"><i class="fa fa-close"></i></span>
-            <a href="https://algolia.com" target="_blank" class="searchby-algolia text-color-light link-unstyled">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
                 <span class="searchby-algolia-text text-color-light text-small">by</span>
-                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+                <img class="searchby-algolia-logo" src="/assets/images/logo-algolia-nebula-blue-full.svg">
             </a>
             <i class="search-icon fa fa-search"></i>
             <form id="algolia-search-form">
                 <input type="text" id="algolia-search-input" name="search"
                     class="form-control input--large search-input" placeholder="Search "
-                    autofocus="autofocus"/>
+                    />
             </form>
         </div>
         <div class="modal-body">
-            <div class="no-result text-color-light text-center">没有找到文章</div>
+            <div class="no-result text-color-light text-center">no post found</div>
             <div class="results">
                 
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                            aria-label=": 软件动态分析：Maple配置和使用详细教程"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/maple.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/28/Maple-setup-tutorial/"
+                            aria-label=": 软件动态分析：Maple配置和使用详细教程"
+                        >
                             <h3 class="media-heading">软件动态分析：Maple配置和使用详细教程</h3>
                         </a>
                         <span class="media-meta">
@@ -632,13 +767,21 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                            aria-label=": 使用VS Code调试Python代码"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
+                            aria-label=": 使用VS Code调试Python代码"
+                        >
                             <h3 class="media-heading">使用VS Code调试Python代码</h3>
                         </a>
                         <span class="media-meta">
@@ -657,13 +800,21 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                            aria-label=": 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/hexo-logo.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/04/29/使用hexo搭建github博客-一-20min搭完主体框架/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
+                            aria-label=": 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                        >
                             <h3 class="media-heading">使用Hexo搭建Github博客：(一)20min搭完主体框架</h3>
                         </a>
                         <span class="media-meta">
@@ -682,19 +833,27 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/05/15/MPI并行：Pthread入门教程/">
-                            <img class="media-image" src="http://plytools.github.io/2017/05/15/MPI并行：Pthread入门教程/mpi-logo.png" width="90" height="90"/>
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                            aria-label=": MPI并行：Pthread入门教程"
+                        >
+                            <img class="media-image" src="http://plytools.github.io/2018/03/30/MPI并行：Pthread入门教程/mpi-logo.png" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2017/05/15/MPI并行：Pthread入门教程/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
+                            aria-label=": MPI并行：Pthread入门教程"
+                        >
                             <h3 class="media-heading">MPI并行：Pthread入门教程</h3>
                         </a>
                         <span class="media-meta">
                             <span class="media-date text-small">
                                 
-                                    2017年5月15日
+                                    2018年3月30日
                                 
                             </span>
                         </span>
@@ -707,13 +866,21 @@
                 <div class="media">
                     
                     <div class="media-left">
-                        <a class="link-unstyled" href="http://plytools.github.io/2018/03/30/JVM字节码详解/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                            aria-label=": JVM字节码详解"
+                        >
                             <img class="media-image" src="http://plytools.github.io/2018/03/30/JVM字节码详解/java-logo.svg" width="90" height="90"/>
                         </a>
                     </div>
                     
                     <div class="media-body">
-                        <a class="link-unstyled" href="http://plytools.github.io/2018/03/30/JVM字节码详解/">
+                        <a
+                            class="link-unstyled"
+                            href="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
+                            aria-label=": JVM字节码详解"
+                        >
                             <h3 class="media-heading">JVM字节码详解</h3>
                         </a>
                         <span class="media-meta">
@@ -733,47 +900,40 @@
         </div>
         <div class="modal-footer">
             <p class="results-count text-medium"
-                data-message-zero="没有找到文章"
-                data-message-one="找到 1 篇文章"
-                data-message-other="找到 {n} 篇文章">
-                找到 5 篇文章
+                data-message-zero="no post found"
+                data-message-one="1 post found"
+                data-message-other="{n} posts found">
+                5 posts found
             </p>
         </div>
     </div>
 </div>
+
+        
         
 <div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
         <!--SCRIPTS-->
-<script src="/assets/js/script-rt08quwts7iav5x0cfd2ym0gb5qkd1lvrsmwrakxtkhefmaaes4ywkmnjnwf.min.js"></script>
+
+<script src="/assets/js/script-ek4ywkrdmen2f0f6pnmh0zlezvmmnk0zpkt8yipys4xe94u87gxxysen4bo2.min.js"></script>
+
 <!--SCRIPTS END-->
 
-    
-        <script>
-             var disqus_config = function () {
-                 this.page.url = 'http://plytools.github.io/2018/03/30/JVM字节码详解/';
-                 
-                    this.page.identifier = '2018/03/30/JVM字节码详解/';
-                 
-             };
-            (function() {
-                var d = document, s = d.createElement('script');
-                var disqus_shortname = 'plytools-github-io';
-                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
 
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-            })();
-        </script>
     
 
 
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
-    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    
+<script src="/assets/js/moment-with-locales.js"></script>
+
+    
+<script src="/assets/js/algoliasearch.js"></script>
+
     <script>
-        var algoliaClient = algoliasearch('IIGDAO65S7', 'a5e943fbe88ee973daee86eab6666e06');
-        var algoliaIndex = algoliaClient.initIndex('plytools-github-io');
+      var algoliaClient = algoliasearch('IIGDAO65S7', 'a5e943fbe88ee973daee86eab6666e06');
+      var algoliaIndex = algoliaClient.initIndex('plytools-github-io');
     </script>
+
 
     </body>
 </html>
