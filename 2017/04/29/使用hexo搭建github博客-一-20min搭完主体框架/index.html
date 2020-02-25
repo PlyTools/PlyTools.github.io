@@ -13,7 +13,7 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"articleBody":"\n\n因为本文是对学习过程的记录和总结，大量借鉴了20分钟教你使用hexo搭建github博客，且对遇到的坑做了修改和补充，介绍比较详细，所以适合新手阅读。\n由于使用的是苹果机，所以本教程以Mac OS为参考，其实mac与windows搭建github博客相差无几，如果有用windows的小伙伴感到不适，可以参考手把手教你建github技术博客教程。\n\n背景为什么开始博客？作为一个刚接触IT行业的新人，面对各种计算机的疑难杂症，一步三搜索，每天Baidu，Google是必不可少的。\nIT行业日新月异，幸运的是，有很多先辈通过博客、视频、MOOC等形式分享自己的经验，不幸的是，海量资料却有极其强的时效性。经常需要进行筛选、组合来完成自己当下的目标。（这个很机器学习）\n所以，作为后辈，\n\n学而时习，学而时思：有必要把学到的知识记录整理，促进记忆理解，\n受人恩惠：有责任把自己踩过的坑、整合的最新知识记录下来，供朋友们参考。\n\n所以打算用这个文章系列和大家分享使用hexo搭建github博客的过程。\n为什么是Hexo和Github？起初仅有一个写博客的想法，于是围绕这个想法做了简单的调研，除了查找中文IT资料经常见到的新浪、网易、天涯、CSDN、简书、博客园等博客平台以及各种个人网站，也陆续了解了wordpress，hexo等等创建个人网站或博客的工具。\n作为一名颜值控，我对博客的要求不高，只有5个：颜值高、排版好、简洁风、无广告、方便写，于是，迅速pass掉了新浪、CSDN等造成严重视觉污染的方案，现有中文博客平台也就简书还凑活。\n然而，这还不够，了解了几个hexo和wordpress的漂亮模板，最后将目标集中在了hexo和wordpress。这两个都可以自建平台，\n考虑到自己\n\n具有一定的编程功底（了解Github，熟悉命令行）\n\n没有服务器，暂时不打算申请域名\n\n对百度能不能搜到我的博客不着急（有方法，但麻烦）\n\nHexo又趋向简洁风\n\n\n所以最终选择了Hexo+GitHub搭建个人博客的方式，下面我们正式开始探索这个新奇的小世界。\n1. 20min搭完主体框架1.1 设置GitHub部分1.1.1 注册Github账号要使用GitHub，首先需要一个GitHub账号，如果没有，可点击这里，进入官网进行注册。\n注册过程简单类似，不再赘述。\n1.1.2 创建仓库登录账号后，在Github页面的右上方选择New repository进行仓库的创建。\n\n假设你要创建一个名字是&quot;Blogname&quot;的博客，那么在仓库名字输入框中输入：\n1Blogname.github.io\n\n然后点击Create repository即可，这里的输入的“Blogname.github.io”就是你将来的博客登录网址，直接输入地址栏就能登录\n\n注：图片上的PlyTools是我的GitHub昵称，不影响，不必在意。这里的仓库名称大小写只影响视觉显示（Github仓库名称等显示），但是地址栏登录等不做区分，你登录时用“blogNAME.github.io”也能顺利找到博客，所以不用在意。\n\n1.1.3 生成添加秘钥打开Mac OS的终端，在终端（Terminal）输入：\n1ssh-keygen -t rsa -C &quot;Github的注册邮箱地址&quot;\n一路Enter过来就好，待秘钥生成完毕，会得到两个文件id_rsa和id_rsa.pub，用带格式的记事本打开id_rsa.pub，Ctrl + a复制里面的所有内容，然后进入https://github.com/settings/ssh：\n将复制的内容粘贴到Key的输入框，随便写好Title里面的内容，点击Add SSH key按钮即可。\n\n\n注：秘钥生成文件的位置\n​    Windows: C:/Users/用户名/.ssh/\n​    Mac: ~/.ssh/\n​        即生成的id_rsa和id_rsa.pub是在~/.ssh文件夹里面，这里的.ssh是隐藏文件夹，需要先设置隐藏文件可见才可以看到。\n\n1.2 安装node.js点击进入node.js官网\n\n目前node.js有两个推荐版本，分为通用版和最新版，点击可直接进行下载。下载好后，按照既定的套路安装即可。\n1.3 安装gitMac自带git指令，可在Terminal中使用如下命令进行检验：\n1$ git --version\n如果显示了git的版本说明已经安装，可跳过本步骤。\n如果确实没有安装git，我们的git使用一般有两种方式，一种是图形化界面（GUI），另一种是通过命令行，我们这里要使用的是后者，点击这里进入git的下载网站下载git的安装包。\n\n1.4 安装配置hexo强调一下，这一步是搭建博客的核心，是重中之重。有能力的同学可以选择进入Hexo官网自行查看Hexo官方文档，愿意听我叨叨的同学可以继续往下看。\n\n接下来我们的操作都将在Terminal终端进行：\n1.4.1 定位博客本地放置的路径这里我打算把博客的源码文件都放在Mac OS桌面的Blogs文件夹下面，也就是~/Desktop/Blogs/路径下面，如果没有Blogs文件夹，可用mkdir命令自行创建。定位博客所在目录\n1$ cd ~/Desktop/Blogs/\n强调：强烈建议不要 选择需要管理员权限才能创建文件（夹）的文件夹。\n1.4.2 下载安装hexo1$ npm install -g hexo-cli\n安装好hexo以后，在终端输入：\n1$ hexo\n若出现下图，说明hexo安装成功：\n\n\n错误：npm error: RPC failed\nnpm install时，出现npm error: RPC failed错误。将npm镜像修改为淘宝镜像，详细修改方式详见：http://blog.csdn.net/zhy421202048/article/details/53490247\n\n1.4.3 初始化博客建立一个博客文件夹，并初始化博客，文件夹的名称可以随便起，这里为了方便，我们还是取之前的&quot;Blogname&quot;\n123456// 建立博客文件夹$ hexo init Blogname// 进入博客文件夹$ cd Blogname// node.js的命令，根据博客既定的dependencies配置安装所有的依赖包$ npm install\n初始化博客以后，我们可以看到博客文件夹里的文件是这样的：\n\n1.4.4 配置博客基于上一步，我们对博客修改相应的配置，我们用到_config.yml文件，下面是该文件的默认参数信息：\n1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071# Hexo Configuration## Docs: https://hexo.io/docs/configuration.html## Source: https://github.com/hexojs/hexo/# Sitetitle: Hexosubtitle:description:author: John Doelanguage:timezone:# URL## If your site is put in a subdirectory, set url as &apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;url: http://yoursite.comroot: /permalink: :year/:month/:day/:title/permalink_defaults:# Directorysource_dir: sourcepublic_dir: publictag_dir: tagsarchive_dir: archivescategory_dir: categoriescode_dir: downloads/codei18n_dir: :langskip_render:# Writingnew_post_name: :title.md # File name of new postsdefault_layout: posttitlecase: false # Transform title into titlecaseexternal_link: true # Open external links in new tabfilename_case: 0render_drafts: falsepost_asset_folder: falserelative_link: falsefuture: truehighlight:  enable: true  line_number: true  auto_detect: false  tab_replace:# Category &amp; Tagdefault_category: uncategorizedcategory_map:tag_map:# Date / Time format## Hexo uses Moment.js to parse and display date## You can customize the date format as defined in## http://momentjs.com/docs/#/displaying/format/date_format: YYYY-MM-DDtime_format: HH:mm:ss# Pagination## Set per_page to 0 to disable paginationper_page: 10pagination_dir: page# Extensions## Plugins: https://hexo.io/plugins/## Themes: https://hexo.io/themes/theme: landscape# Deployment## Docs: https://hexo.io/docs/deployment.htmldeploy:  type:\n看到这里，大家千万别被一长串英文给吓到了，我们实际上要修改的配置只有几项，拿我自己的配置，我们继续往下看：\n\n修改网站相关信息\n\n123456title: Blognamesubtitle: the stack of it nerdsdescription: start from zeroauthor: PlyToolslanguage: zh-CNtimezone: Asia/Shanghai\nlanguage和timezone都是有输入规范的，这里的zh-CN就是指简体中文，Asia/Shanghai其实就是北京时间，详细可参考语言规范和时区规范。\n注意：每一项的填写，其:后面都要保留一个空格，下同。\n\n配置统一资源定位符（个人域名）\n\n这里因为我没有域名，考虑到后面注册Google站长信息的方便，还是用“blogname.github.io”。\n1url: http://Blogname.github.io\n对于root（根目录）、permalink（永久链接）、permalink_defaults（默认永久链接）等其他信息保持默认。\n\n配置部署\n\n1234deploy:  type: git  repo: git@github.com:PlyTools/Blogname.github.io.git  branch: master\n其中repo项是之前Github上创建好的仓库的地址，可以通过如下图所示的方式得到：\n\nbranch是项目的分支，我们默认用主分支master。\n\n途中可以看出github的仓库有两个地址，HTTPS的和SSH的，以这里的Blogname仓库为例，他的两个地址分别是：\n​    HTTPS：https://github.com/PlyTools/Blogname.github.io.git\n​    SSH：git@github.com:PlyTools/Blogname.github.io.git\n这两个的区别在于用HTTPS链接每次需要验证邮箱和密码，而SSH只需要验证本地是否有匹配的id_rsa.pub公钥。因为我们在1.1.3中生成并配好了SSH，所以使用SSH的地址不需要邮箱密码验证，更方便。\n\n\n创建博客文章\n\n假设我要创建一片名字叫“我的第一篇博客”的文章，那么在终端输入：\n12// 新建一篇文章hexo new &quot;我的第一篇博客&quot;\n我们可以在本地博客文件夹Blogname/source/_post文件夹下看到我们新建的markdown文件。\n\n用Markdown编辑器打开文件，我们可以看到这样的内容：\n\n我们写下：\n1太棒了，我写下了第一篇博客！\n\n\n本地发布\n\n保存后，我们进行本地发布：\n1$ hexo server\n命令结果如下图：\n\n打开浏览器，输入：\n1http://localhost:4000/\n我们可以在浏览器端看到我们搭建好的博客和发布的文章：\n\n如果想要停止预览，可在命令行使用^+C结束预览。\n\n注：我们也可以手动添加Markdown文件在Blogname/source/_deploy文件夹下，其效果同样可以媲美hexo new &lt;article&gt;：\n\n\n公开发布\n\n但是毕竟我们目前发布的只有本机看得到，怎么让其他人看到我们写的博客呢？这时候我们来看看博客的部署。\n我们只要在终端执行这样的命令即可：\n12$ hexo generate$ hexo deploy\nhexo generate的作用是根据hexo源码，在Blogname文件夹中生成public文件夹，这个就是实际的网页代码，而hexo deploy的作用是将public文件夹与GitHub仓库同步，从而部署到github上。他们可分别使用简写指令hexo g和hexo d。这时候我们的博客已经部署到网上了，我们可以在浏览器地址输入栏输入我们的网址即可，如我们的博客是：Blogname.github.io。\n\n错误：Deployer not found: git​    方法1：可能是没安装hexo-deployer-git，可在终端执行命令：npm install hexo-deployer-git --save，然后继续执行hexo deploy指令进行部署。\n​    方法2：如果方法1没效果，可能是错误添加了plugin，需要把Blogname/_config.yml文件中你新添加的plugin内容删掉。\n\n\n本教程为博客搭建入门教程，还会有后续教程，敬请期待！大家也可以根据自己的需求做进一步改进，如更换主题、删除文章等，详情参考官方文档。","dateCreated":"2017-04-29T12:05:20+08:00","dateModified":"2020-02-01T13:15:11+08:00","datePublished":"2017-04-29T12:05:20+08:00","description":"技术的世界是纯粹而新奇的，想记录一些探索和思考与大家分享，于是萌生了写博客的想法。可是，颜值控该以什么样的姿势开博客呢？","headline":"使用Hexo搭建Github博客：(一)20min搭完主体框架","image":["hexo-logo.png","hexo.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"},"publisher":{"@type":"Organization","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"url":"http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/","keywords":"Blog","thumbnailUrl":"hexo-logo.png"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"],"image":"meself.jpeg"},"articleBody":"\n\n因为本文是对学习过程的记录和总结，大量借鉴了20分钟教你使用hexo搭建github博客，且对遇到的坑做了修改和补充，介绍比较详细，所以适合新手阅读。\n由于使用的是苹果机，所以本教程以Mac OS为参考，其实mac与windows搭建github博客相差无几，如果有用windows的小伙伴感到不适，可以参考手把手教你建github技术博客教程。\n\n背景为什么开始博客？作为一个刚接触IT行业的新人，面对各种计算机的疑难杂症，一步三搜索，每天Baidu，Google是必不可少的。\nIT行业日新月异，幸运的是，有很多先辈通过博客、视频、MOOC等形式分享自己的经验，不幸的是，海量资料却有极其强的时效性。经常需要进行筛选、组合来完成自己当下的目标。（这个很机器学习）\n所以，作为后辈，\n\n学而时习，学而时思：有必要把学到的知识记录整理，促进记忆理解，\n受人恩惠：有责任把自己踩过的坑、整合的最新知识记录下来，供朋友们参考。\n\n所以打算用这个文章系列和大家分享使用hexo搭建github博客的过程。\n为什么是Hexo和Github？起初仅有一个写博客的想法，于是围绕这个想法做了简单的调研，除了查找中文IT资料经常见到的新浪、网易、天涯、CSDN、简书、博客园等博客平台以及各种个人网站，也陆续了解了wordpress，hexo等等创建个人网站或博客的工具。\n作为一名颜值控，我对博客的要求不高，只有5个：颜值高、排版好、简洁风、无广告、方便写，于是，迅速pass掉了新浪、CSDN等造成严重视觉污染的方案，现有中文博客平台也就简书还凑活。\n然而，这还不够，了解了几个hexo和wordpress的漂亮模板，最后将目标集中在了hexo和wordpress。这两个都可以自建平台，\n考虑到自己\n\n具有一定的编程功底（了解Github，熟悉命令行）\n\n没有服务器，暂时不打算申请域名\n\n对百度能不能搜到我的博客不着急（有方法，但麻烦）\n\nHexo又趋向简洁风\n\n\n所以最终选择了Hexo+GitHub搭建个人博客的方式，下面我们正式开始探索这个新奇的小世界。\n1. 20min搭完主体框架1.1 设置GitHub部分1.1.1 注册Github账号要使用GitHub，首先需要一个GitHub账号，如果没有，可点击这里，进入官网进行注册。\n注册过程简单类似，不再赘述。\n1.1.2 创建仓库登录账号后，在Github页面的右上方选择New repository进行仓库的创建。\n\n假设你要创建一个名字是&quot;Blogname&quot;的博客，那么在仓库名字输入框中输入：\n1Blogname.github.io\n\n然后点击Create repository即可，这里的输入的“Blogname.github.io”就是你将来的博客登录网址，直接输入地址栏就能登录\n\n注：图片上的PlyTools是我的GitHub昵称，不影响，不必在意。这里的仓库名称大小写只影响视觉显示（Github仓库名称等显示），但是地址栏登录等不做区分，你登录时用“blogNAME.github.io”也能顺利找到博客，所以不用在意。\n\n1.1.3 生成添加秘钥打开Mac OS的终端，在终端（Terminal）输入：\n1ssh-keygen -t rsa -C &quot;Github的注册邮箱地址&quot;\n一路Enter过来就好，待秘钥生成完毕，会得到两个文件id_rsa和id_rsa.pub，用带格式的记事本打开id_rsa.pub，Ctrl + a复制里面的所有内容，然后进入https://github.com/settings/ssh：\n将复制的内容粘贴到Key的输入框，随便写好Title里面的内容，点击Add SSH key按钮即可。\n\n\n注：秘钥生成文件的位置\n​    Windows: C:/Users/用户名/.ssh/\n​    Mac: ~/.ssh/\n​        即生成的id_rsa和id_rsa.pub是在~/.ssh文件夹里面，这里的.ssh是隐藏文件夹，需要先设置隐藏文件可见才可以看到。\n\n1.2 安装node.js点击进入node.js官网\n\n目前node.js有两个推荐版本，分为通用版和最新版，点击可直接进行下载。下载好后，按照既定的套路安装即可。\n1.3 安装gitMac自带git指令，可在Terminal中使用如下命令进行检验：\n1$ git --version\n如果显示了git的版本说明已经安装，可跳过本步骤。\n如果确实没有安装git，我们的git使用一般有两种方式，一种是图形化界面（GUI），另一种是通过命令行，我们这里要使用的是后者，点击这里进入git的下载网站下载git的安装包。\n\n1.4 安装配置hexo强调一下，这一步是搭建博客的核心，是重中之重。有能力的同学可以选择进入Hexo官网自行查看Hexo官方文档，愿意听我叨叨的同学可以继续往下看。\n\n接下来我们的操作都将在Terminal终端进行：\n1.4.1 定位博客本地放置的路径这里我打算把博客的源码文件都放在Mac OS桌面的Blogs文件夹下面，也就是~/Desktop/Blogs/路径下面，如果没有Blogs文件夹，可用mkdir命令自行创建。定位博客所在目录\n1$ cd ~/Desktop/Blogs/\n强调：强烈建议不要 选择需要管理员权限才能创建文件（夹）的文件夹。\n1.4.2 下载安装hexo1$ npm install -g hexo-cli\n安装好hexo以后，在终端输入：\n1$ hexo\n若出现下图，说明hexo安装成功：\n\n\n错误：npm error: RPC failed\nnpm install时，出现npm error: RPC failed错误。将npm镜像修改为淘宝镜像，详细修改方式详见：http://blog.csdn.net/zhy421202048/article/details/53490247\n\n1.4.3 初始化博客建立一个博客文件夹，并初始化博客，文件夹的名称可以随便起，这里为了方便，我们还是取之前的&quot;Blogname&quot;\n123456// 建立博客文件夹$ hexo init Blogname// 进入博客文件夹$ cd Blogname// node.js的命令，根据博客既定的dependencies配置安装所有的依赖包$ npm install\n初始化博客以后，我们可以看到博客文件夹里的文件是这样的：\n\n1.4.4 配置博客基于上一步，我们对博客修改相应的配置，我们用到_config.yml文件，下面是该文件的默认参数信息：\n1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071# Hexo Configuration## Docs: https://hexo.io/docs/configuration.html## Source: https://github.com/hexojs/hexo/# Sitetitle: Hexosubtitle:description:author: John Doelanguage:timezone:# URL## If your site is put in a subdirectory, set url as &apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;url: http://yoursite.comroot: /permalink: :year/:month/:day/:title/permalink_defaults:# Directorysource_dir: sourcepublic_dir: publictag_dir: tagsarchive_dir: archivescategory_dir: categoriescode_dir: downloads/codei18n_dir: :langskip_render:# Writingnew_post_name: :title.md # File name of new postsdefault_layout: posttitlecase: false # Transform title into titlecaseexternal_link: true # Open external links in new tabfilename_case: 0render_drafts: falsepost_asset_folder: falserelative_link: falsefuture: truehighlight:  enable: true  line_number: true  auto_detect: false  tab_replace:# Category &amp; Tagdefault_category: uncategorizedcategory_map:tag_map:# Date / Time format## Hexo uses Moment.js to parse and display date## You can customize the date format as defined in## http://momentjs.com/docs/#/displaying/format/date_format: YYYY-MM-DDtime_format: HH:mm:ss# Pagination## Set per_page to 0 to disable paginationper_page: 10pagination_dir: page# Extensions## Plugins: https://hexo.io/plugins/## Themes: https://hexo.io/themes/theme: landscape# Deployment## Docs: https://hexo.io/docs/deployment.htmldeploy:  type:\n看到这里，大家千万别被一长串英文给吓到了，我们实际上要修改的配置只有几项，拿我自己的配置，我们继续往下看：\n\n修改网站相关信息\n\n123456title: Blognamesubtitle: the stack of it nerdsdescription: start from zeroauthor: PlyToolslanguage: zh-CNtimezone: Asia/Shanghai\nlanguage和timezone都是有输入规范的，这里的zh-CN就是指简体中文，Asia/Shanghai其实就是北京时间，详细可参考语言规范和时区规范。\n注意：每一项的填写，其:后面都要保留一个空格，下同。\n\n配置统一资源定位符（个人域名）\n\n这里因为我没有域名，考虑到后面注册Google站长信息的方便，还是用“blogname.github.io”。\n1url: http://Blogname.github.io\n对于root（根目录）、permalink（永久链接）、permalink_defaults（默认永久链接）等其他信息保持默认。\n\n配置部署\n\n1234deploy:  type: git  repo: git@github.com:PlyTools/Blogname.github.io.git  branch: master\n其中repo项是之前Github上创建好的仓库的地址，可以通过如下图所示的方式得到：\n\nbranch是项目的分支，我们默认用主分支master。\n\n途中可以看出github的仓库有两个地址，HTTPS的和SSH的，以这里的Blogname仓库为例，他的两个地址分别是：\n​    HTTPS：https://github.com/PlyTools/Blogname.github.io.git\n​    SSH：git@github.com:PlyTools/Blogname.github.io.git\n这两个的区别在于用HTTPS链接每次需要验证邮箱和密码，而SSH只需要验证本地是否有匹配的id_rsa.pub公钥。因为我们在1.1.3中生成并配好了SSH，所以使用SSH的地址不需要邮箱密码验证，更方便。\n\n\n创建博客文章\n\n假设我要创建一片名字叫“我的第一篇博客”的文章，那么在终端输入：\n12// 新建一篇文章hexo new &quot;我的第一篇博客&quot;\n我们可以在本地博客文件夹Blogname/source/_post文件夹下看到我们新建的markdown文件。\n\n用Markdown编辑器打开文件，我们可以看到这样的内容：\n\n我们写下：\n1太棒了，我写下了第一篇博客！\n\n\n本地发布\n\n保存后，我们进行本地发布：\n1$ hexo server\n命令结果如下图：\n\n打开浏览器，输入：\n1http://localhost:4000/\n我们可以在浏览器端看到我们搭建好的博客和发布的文章：\n\n如果想要停止预览，可在命令行使用^+C结束预览。\n\n注：我们也可以手动添加Markdown文件在Blogname/source/_deploy文件夹下，其效果同样可以媲美hexo new &lt;article&gt;：\n\n\n公开发布\n\n但是毕竟我们目前发布的只有本机看得到，怎么让其他人看到我们写的博客呢？这时候我们来看看博客的部署。\n我们只要在终端执行这样的命令即可：\n12$ hexo generate$ hexo deploy\nhexo generate的作用是根据hexo源码，在Blogname文件夹中生成public文件夹，这个就是实际的网页代码，而hexo deploy的作用是将public文件夹与GitHub仓库同步，从而部署到github上。他们可分别使用简写指令hexo g和hexo d。这时候我们的博客已经部署到网上了，我们可以在浏览器地址输入栏输入我们的网址即可，如我们的博客是：Blogname.github.io。\n\n错误：Deployer not found: git​    方法1：可能是没安装hexo-deployer-git，可在终端执行命令：npm install hexo-deployer-git --save，然后继续执行hexo deploy指令进行部署。\n​    方法2：如果方法1没效果，可能是错误添加了plugin，需要把Blogname/_config.yml文件中你新添加的plugin内容删掉。\n\n\n本教程为博客搭建入门教程，还会有后续教程，敬请期待！大家也可以根据自己的需求做进一步改进，如更换主题、删除文章等，详情参考官方文档。","dateCreated":"2017-04-29T12:05:20+08:00","dateModified":"2020-02-01T13:15:11+08:00","datePublished":"2017-04-29T12:05:20+08:00","description":"技术的世界是纯粹而新奇的，想记录一些探索和思考与大家分享，于是萌生了写博客的想法。可是，颜值控该以什么样的姿势开博客呢？","headline":"使用Hexo搭建Github博客：(一)20min搭完主体框架","image":["hexo-logo.png","hexo.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"},"publisher":{"@type":"Organization","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"],"image":"meself.jpeg","logo":{"@type":"ImageObject","url":"meself.jpeg"}},"url":"http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/","keywords":"Blog","thumbnailUrl":"hexo-logo.png"}</script>
     <meta name="description" content="技术的世界是纯粹而新奇的，想记录一些探索和思考与大家分享，于是萌生了写博客的想法。可是，颜值控该以什么样的姿势开博客呢？">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="使用Hexo搭建Github博客：(一)20min搭完主体框架">
@@ -50,6 +50,8 @@
         
     
     
+        <meta property="og:image" content="http://plytools.github.io/assets/images/meself.jpeg"/>
+    
     
         <meta property="og:image" content="http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/hexo-logo.png"/>
         <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/hexo-logo.png"/>
@@ -79,6 +81,10 @@
 
 
     
+        
+            
+        
+    
 
 <header id="header" data-behavior="4">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
@@ -96,9 +102,11 @@
             <a
                 class="header-right-picture "
                 href="#about"
-                aria-label="Open the link: /#about"
+                aria-label="Abre el enlace: /#about"
             >
         
+        
+            <img class="header-picture" src="/assets/images/meself.jpeg" alt="Foto de autor"/>
         
         </a>
     
@@ -107,8 +115,26 @@
             <!-- Define author's picture -->
 
 
+
+        
+    
+
 <nav id="sidebar" data-behavior="4">
     <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Leer más sobre el autor."
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/meself.jpeg" alt="Foto de autor"/>
+                </a>
+                <h4 class="sidebar-profile-name">Qian Ren</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>author.bio</p>
+</h5>
+                
+            </div>
         
         
             <ul class="sidebar-buttons">
@@ -118,11 +144,11 @@
                         <a  class="sidebar-button-link "
                              href="/%20"
                             
-                            title="Home"
+                            title="Inicio"
                         >
                     
                         <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Home</span>
+                        <span class="sidebar-button-desc">Inicio</span>
                     </a>
             </li>
             
@@ -131,11 +157,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-categories"
                             
-                            title="Categories"
+                            title="Categorías"
                         >
                     
                         <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Categories</span>
+                        <span class="sidebar-button-desc">Categorías</span>
                     </a>
             </li>
             
@@ -144,11 +170,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-tags"
                             
-                            title="Tags"
+                            title="Etiquetas"
                         >
                     
                         <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Tags</span>
+                        <span class="sidebar-button-desc">Etiquetas</span>
                     </a>
             </li>
             
@@ -157,11 +183,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-archives"
                             
-                            title="Archives"
+                            title="Archivos"
                         >
                     
                         <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Archives</span>
+                        <span class="sidebar-button-desc">Archivos</span>
                     </a>
             </li>
             
@@ -170,11 +196,11 @@
                         <a  class="sidebar-button-link open-algolia-search"
                              href="#search"
                             
-                            title="Search"
+                            title="Buscar"
                         >
                     
                         <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Search</span>
+                        <span class="sidebar-button-desc">Buscar</span>
                     </a>
             </li>
             
@@ -183,11 +209,11 @@
                         <a  class="sidebar-button-link "
                              href="#about"
                             
-                            title="About"
+                            title="Acerca de"
                         >
                     
                         <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">About</span>
+                        <span class="sidebar-button-desc">Acerca de</span>
                     </a>
             </li>
             
@@ -233,10 +259,10 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://plus.google.com/" target="_blank" rel="noopener" title="Google +">
+                        <a  class="sidebar-button-link " href="https://plus.google.com/" target="_blank" rel="noopener" title="Google Plus">
                     
                         <i class="sidebar-button-icon fab fa-google-plus" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Google +</span>
+                        <span class="sidebar-button-desc">Google Plus</span>
                     </a>
             </li>
             
@@ -253,11 +279,11 @@
                     
                         <a  class="sidebar-button-link "
                              href="/mailto"
-                            title="Mail"
+                            title="Correo"
                         >
                     
                         <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Mail</span>
+                        <span class="sidebar-button-desc">Correo</span>
                     </a>
             </li>
             
@@ -312,7 +338,7 @@
         <div class="post-meta">
     <time datetime="2017-04-29T12:05:20+08:00">
 	
-		    4月 29, 2017
+		    29 4月 2017
     	
     </time>
     
@@ -477,7 +503,7 @@
     <div id="post-footer" class="post-footer main-content-wrap">
         
             <div class="post-footer-tags">
-                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                <span class="text-color-light text-small">ETIQUETADO EN</span><br/>
                 
     <a class="tag tag--primary tag--small t-link" href="/tags/Blog/" rel="tag">Blog</a>
 
@@ -494,11 +520,11 @@
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
                     data-tooltip="MPI并行：Pthread入门教程"
-                    aria-label="PREVIOUS: MPI并行：Pthread入门教程"
+                    aria-label="ANTERIOR: MPI并行：Pthread入门教程"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
-                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
                     </a>
             </li>
             <li class="post-action">
@@ -508,10 +534,10 @@
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2017/04/29/VSCode-Debug-Python/"
                     data-tooltip="使用VS Code调试Python代码"
-                    aria-label="NEXT: 使用VS Code调试Python代码"
+                    aria-label="SIGUIENTE: 使用VS Code调试Python代码"
                 >
                     
-                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
             </li>
@@ -522,7 +548,7 @@
             <a
                 class="post-action-btn btn btn--default btn-open-shareoptions"
                 href="#btn-open-shareoptions"
-                aria-label="Share this post"
+                aria-label="Diesen Beitrag teilen"
             >
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
@@ -534,8 +560,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
-                    title="Share on Facebook"
-                    aria-label="Share on Facebook"
+                    title="Compartir en Facebook"
+                    aria-label="Compartir en Facebook"
                 >
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
@@ -547,8 +573,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
-                    title="Share on Twitter"
-                    aria-label="Share on Twitter"
+                    title="Compartir en Twitter"
+                    aria-label="Compartir en Twitter"
                 >
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
@@ -560,8 +586,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
-                    title="Share on Google+"
-                    aria-label="Share on Google+"
+                    title="Compartir en Google+"
+                    aria-label="Compartir en Google+"
                 >
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
@@ -572,7 +598,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -609,11 +635,11 @@
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
                     data-tooltip="MPI并行：Pthread入门教程"
-                    aria-label="PREVIOUS: MPI并行：Pthread入门教程"
+                    aria-label="ANTERIOR: MPI并行：Pthread入门教程"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
-                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
                     </a>
             </li>
             <li class="post-action">
@@ -623,10 +649,10 @@
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2017/04/29/VSCode-Debug-Python/"
                     data-tooltip="使用VS Code调试Python代码"
-                    aria-label="NEXT: 使用VS Code调试Python代码"
+                    aria-label="SIGUIENTE: 使用VS Code调试Python代码"
                 >
                     
-                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
             </li>
@@ -637,7 +663,7 @@
             <a
                 class="post-action-btn btn btn--default btn-open-shareoptions"
                 href="#btn-open-shareoptions"
-                aria-label="Share this post"
+                aria-label="Diesen Beitrag teilen"
             >
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
@@ -649,8 +675,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
-                    title="Share on Facebook"
-                    aria-label="Share on Facebook"
+                    title="Compartir en Facebook"
+                    aria-label="Compartir en Facebook"
                 >
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
@@ -662,8 +688,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
-                    title="Share on Twitter"
-                    aria-label="Share on Twitter"
+                    title="Compartir en Twitter"
+                    aria-label="Compartir en Twitter"
                 >
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
@@ -675,8 +701,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
-                    title="Share on Google+"
-                    aria-label="Share on Google+"
+                    title="Compartir en Google+"
+                    aria-label="Compartir en Google+"
                 >
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
@@ -687,7 +713,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -709,9 +735,9 @@
                         class="share-option-btn"
                         target="new"
                         href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
-                        aria-label="Share on Facebook"
+                        aria-label="Compartir en Facebook"
                     >
-                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Compartir en Facebook</span>
                     </a>
                 </li>
             
@@ -722,9 +748,9 @@
                         class="share-option-btn"
                         target="new"
                         href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
-                        aria-label="Share on Twitter"
+                        aria-label="Compartir en Twitter"
                     >
-                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Compartir en Twitter</span>
                     </a>
                 </li>
             
@@ -735,9 +761,9 @@
                         class="share-option-btn"
                         target="new"
                         href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
-                        aria-label="Share on Google+"
+                        aria-label="Compartir en Google+"
                     >
-                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Compartir en Google+</span>
                     </a>
                 </li>
             
@@ -750,11 +776,17 @@
         
 
 
+    
+        
+    
+
 <div id="about">
     <div id="about-card">
         <div id="about-btn-close">
             <i class="fa fa-times"></i>
         </div>
+        
+            <img id="about-card-picture" src="/assets/images/meself.jpeg" alt="Foto de autor"/>
         
             <h4 id="about-card-name">Qian Ren</h4>
         
@@ -769,6 +801,12 @@
 
             </div>
         
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                China
+            </div>
         
     </div>
 </div>
@@ -790,7 +828,7 @@
             </form>
         </div>
         <div class="modal-body">
-            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="no-result text-color-light text-center">no se encontraron artículos</div>
             <div class="results">
                 
                 <div class="media">
@@ -962,10 +1000,10 @@
         </div>
         <div class="modal-footer">
             <p class="results-count text-medium"
-                data-message-zero="no post found"
-                data-message-one="1 post found"
-                data-message-other="{n} posts found">
-                5 posts found
+                data-message-zero="no se encontraron artículos"
+                data-message-one="1 artículo encontrado"
+                data-message-other="{n} artículos encontrados">
+                5 artículos encontrados
             </p>
         </div>
     </div>

@@ -13,7 +13,7 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"articleBody":"\n\n本文大量借鉴了从字节码层面看“HelloWorld”\n\n1. JVM字节码简介官方资料见这里：Java Language and Virtual Machine Specifications下面以helloworld为例简单介绍1.7版本（51）的字节码规范\n2. 以helloworld为例介绍1.7版字节码规范2.1 源码\nHelloWorld源代码\n1234567package com.paddx.test.asm;public class HelloWorld &#123;    public static void main(String[] args) &#123;        System.out.println(&quot;Hello,World!&quot;);    &#125;&#125;\n\nMaven编译配置以1.7编译器，编译为1.7版字节码\n12345678&lt;plugin&gt;          &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;          &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;          &lt;configuration&gt;              &lt;source&gt;1.7&lt;/source&gt;              &lt;target&gt;1.7&lt;/target&gt;          &lt;/configuration&gt;&lt;/plugin&gt;\n\n\n2.2 详细规范2.2.1 编译结果编译后结果过如下：UltraEdit的16进制模式打开，红色框内为\u000bhelloworld.class内容。红框左边是行号，右边是解析出的字符串字节码中所有内容对应着固定的格式，以如下顺序以及内容依次排列\n2.2.2 详细内容\nmagic（u4）：CA FE BA BE代表这个文件是字节码文件\n\nminor_version（u2）：00 00小版本号因为是1.7，所以是0\n\nmajor_version（u2）：00 33大版本号0x0033转换为十进制是51，指1.7\n\nconstant_pool_count（u2）：00 22常量池数量转换为十进制后为34从1开始，所以指有33个常量\n\nconstant_pool[cosntant_pool_count – 1]常量池，如右图红色区域常量池中数据是cp_infocp_info由一个一个的表组成\n\n方法引用表如上图粗红框部分就是一个表，具体内容为\n\ntag（u1）：0A表类型，0x0A转换为十进制是10表示CONSTANT_Methodref\u000b所以是个表类型是方法引用\nindex（u2）：00 06指向声明方法的类描述符\u000bCONSTANT_Class_info的索引值\nindex（u2）：00 14CONSTANT_NameAndType_info\u000b的索引值\n\n\n常量池中表的类型常量池中表的类型有14种，如下所示，上面的例子就是其中的CONSTANT_Methodref_info\n\n\n\naccess_flags（u2）：00 21访问标识0021=0020 + 0001即public + invokespecial\n\naccess_flags（u2）访问标识符的规范\n\n\n\n\nthis_class（u2）：00 05当前类信息是指向constant pool的索引值这里0x00 05指向常量池中的第5项，第5项内部又指向常量池中的第26项，即com/paddx/test/asm/HelloWorld\n\n\n\nsuper_class（u2）：00 06当前字节码定义的类或接口的直接父类指向constant pool的索引值，所指表必须是CONSTANT_Class_info类型这里指向的是java/lang/object\n\ninterfaces_count（u2）：00 00实现接口的数量\n\ninterfaces[interfaces_count]因为没有实现接口，所以这里没有\n\nfield_count（u2）：00 00属性数量，这里是0个\n\nfield_info因为没有属性，所以这里没有\n\n\n\nmethod_count（u2）：00 02方法数量虽然HelloWorld中只实现了一个，但因有，所以是两个\n\nmethod_info方法表，格式如下表，对应数据如下\n\naccess_flag（u2）: 00 01\nname_index（u2）:00 07\ndescriptor_index（u2）:00 08这里 07、08就对应的常量池里面的常量索引，从下图可知，即07 对应的是 ，08 对应的是()\n\n\nattributes_count（u2）：00 01表示包含一个属性\n\nattribute_info（）：属性表，该表的结构如右表：\n\nattribute_name_index（u2）: 00 09指向常量池中的索引。\nattribute_length（u4）：00 00 00 2F属性的长度47。\n\n\n\n\n","dateCreated":"2018-03-30T21:53:11+08:00","dateModified":"2018-03-30T21:53:11+08:00","datePublished":"2018-03-30T21:53:11+08:00","description":"任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。今天，我就从大家最熟悉的程序“HelloWorld”程序入手，分析整个 Class 文件的结构。","headline":"JVM字节码详解","image":["java-logo.svg","java.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"},"publisher":{"@type":"Organization","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"url":"http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/","keywords":"Java, JVM","thumbnailUrl":"java-logo.svg"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"],"image":"meself.jpeg"},"articleBody":"\n\n本文大量借鉴了从字节码层面看“HelloWorld”\n\n1. JVM字节码简介官方资料见这里：Java Language and Virtual Machine Specifications下面以helloworld为例简单介绍1.7版本（51）的字节码规范\n2. 以helloworld为例介绍1.7版字节码规范2.1 源码\nHelloWorld源代码\n1234567package com.paddx.test.asm;public class HelloWorld &#123;    public static void main(String[] args) &#123;        System.out.println(&quot;Hello,World!&quot;);    &#125;&#125;\n\nMaven编译配置以1.7编译器，编译为1.7版字节码\n12345678&lt;plugin&gt;          &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;          &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;          &lt;configuration&gt;              &lt;source&gt;1.7&lt;/source&gt;              &lt;target&gt;1.7&lt;/target&gt;          &lt;/configuration&gt;&lt;/plugin&gt;\n\n\n2.2 详细规范2.2.1 编译结果编译后结果过如下：UltraEdit的16进制模式打开，红色框内为\u000bhelloworld.class内容。红框左边是行号，右边是解析出的字符串字节码中所有内容对应着固定的格式，以如下顺序以及内容依次排列\n2.2.2 详细内容\nmagic（u4）：CA FE BA BE代表这个文件是字节码文件\n\nminor_version（u2）：00 00小版本号因为是1.7，所以是0\n\nmajor_version（u2）：00 33大版本号0x0033转换为十进制是51，指1.7\n\nconstant_pool_count（u2）：00 22常量池数量转换为十进制后为34从1开始，所以指有33个常量\n\nconstant_pool[cosntant_pool_count – 1]常量池，如右图红色区域常量池中数据是cp_infocp_info由一个一个的表组成\n\n方法引用表如上图粗红框部分就是一个表，具体内容为\n\ntag（u1）：0A表类型，0x0A转换为十进制是10表示CONSTANT_Methodref\u000b所以是个表类型是方法引用\nindex（u2）：00 06指向声明方法的类描述符\u000bCONSTANT_Class_info的索引值\nindex（u2）：00 14CONSTANT_NameAndType_info\u000b的索引值\n\n\n常量池中表的类型常量池中表的类型有14种，如下所示，上面的例子就是其中的CONSTANT_Methodref_info\n\n\n\naccess_flags（u2）：00 21访问标识0021=0020 + 0001即public + invokespecial\n\naccess_flags（u2）访问标识符的规范\n\n\n\n\nthis_class（u2）：00 05当前类信息是指向constant pool的索引值这里0x00 05指向常量池中的第5项，第5项内部又指向常量池中的第26项，即com/paddx/test/asm/HelloWorld\n\n\n\nsuper_class（u2）：00 06当前字节码定义的类或接口的直接父类指向constant pool的索引值，所指表必须是CONSTANT_Class_info类型这里指向的是java/lang/object\n\ninterfaces_count（u2）：00 00实现接口的数量\n\ninterfaces[interfaces_count]因为没有实现接口，所以这里没有\n\nfield_count（u2）：00 00属性数量，这里是0个\n\nfield_info因为没有属性，所以这里没有\n\n\n\nmethod_count（u2）：00 02方法数量虽然HelloWorld中只实现了一个，但因有，所以是两个\n\nmethod_info方法表，格式如下表，对应数据如下\n\naccess_flag（u2）: 00 01\nname_index（u2）:00 07\ndescriptor_index（u2）:00 08这里 07、08就对应的常量池里面的常量索引，从下图可知，即07 对应的是 ，08 对应的是()\n\n\nattributes_count（u2）：00 01表示包含一个属性\n\nattribute_info（）：属性表，该表的结构如右表：\n\nattribute_name_index（u2）: 00 09指向常量池中的索引。\nattribute_length（u4）：00 00 00 2F属性的长度47。\n\n\n\n\n","dateCreated":"2018-03-30T21:53:11+08:00","dateModified":"2018-03-30T21:53:11+08:00","datePublished":"2018-03-30T21:53:11+08:00","description":"任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。今天，我就从大家最熟悉的程序“HelloWorld”程序入手，分析整个 Class 文件的结构。","headline":"JVM字节码详解","image":["java-logo.svg","java.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"},"publisher":{"@type":"Organization","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"],"image":"meself.jpeg","logo":{"@type":"ImageObject","url":"meself.jpeg"}},"url":"http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/","keywords":"Java, JVM","thumbnailUrl":"java-logo.svg"}</script>
     <meta name="description" content="任何能编译成为符合 JVM 字节码规范的语言都可以在 JVM 上运行，比较常见的 Scala、Groove、JRuby等。今天，我就从大家最熟悉的程序“HelloWorld”程序入手，分析整个 Class 文件的结构。">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="JVM字节码详解">
@@ -54,6 +54,8 @@
         
     
     
+        <meta property="og:image" content="http://plytools.github.io/assets/images/meself.jpeg"/>
+    
     
         <meta property="og:image" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/java-logo.svg"/>
         <meta class="swiftype" name="image" data-type="enum" content="http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/java-logo.svg"/>
@@ -83,6 +85,10 @@
 
 
     
+        
+            
+        
+    
 
 <header id="header" data-behavior="4">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
@@ -100,9 +106,11 @@
             <a
                 class="header-right-picture "
                 href="#about"
-                aria-label="Open the link: /#about"
+                aria-label="Abre el enlace: /#about"
             >
         
+        
+            <img class="header-picture" src="/assets/images/meself.jpeg" alt="Foto de autor"/>
         
         </a>
     
@@ -111,8 +119,26 @@
             <!-- Define author's picture -->
 
 
+
+        
+    
+
 <nav id="sidebar" data-behavior="4">
     <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Leer más sobre el autor."
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/meself.jpeg" alt="Foto de autor"/>
+                </a>
+                <h4 class="sidebar-profile-name">Qian Ren</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>author.bio</p>
+</h5>
+                
+            </div>
         
         
             <ul class="sidebar-buttons">
@@ -122,11 +148,11 @@
                         <a  class="sidebar-button-link "
                              href="/%20"
                             
-                            title="Home"
+                            title="Inicio"
                         >
                     
                         <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Home</span>
+                        <span class="sidebar-button-desc">Inicio</span>
                     </a>
             </li>
             
@@ -135,11 +161,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-categories"
                             
-                            title="Categories"
+                            title="Categorías"
                         >
                     
                         <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Categories</span>
+                        <span class="sidebar-button-desc">Categorías</span>
                     </a>
             </li>
             
@@ -148,11 +174,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-tags"
                             
-                            title="Tags"
+                            title="Etiquetas"
                         >
                     
                         <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Tags</span>
+                        <span class="sidebar-button-desc">Etiquetas</span>
                     </a>
             </li>
             
@@ -161,11 +187,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-archives"
                             
-                            title="Archives"
+                            title="Archivos"
                         >
                     
                         <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Archives</span>
+                        <span class="sidebar-button-desc">Archivos</span>
                     </a>
             </li>
             
@@ -174,11 +200,11 @@
                         <a  class="sidebar-button-link open-algolia-search"
                              href="#search"
                             
-                            title="Search"
+                            title="Buscar"
                         >
                     
                         <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Search</span>
+                        <span class="sidebar-button-desc">Buscar</span>
                     </a>
             </li>
             
@@ -187,11 +213,11 @@
                         <a  class="sidebar-button-link "
                              href="#about"
                             
-                            title="About"
+                            title="Acerca de"
                         >
                     
                         <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">About</span>
+                        <span class="sidebar-button-desc">Acerca de</span>
                     </a>
             </li>
             
@@ -237,10 +263,10 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://plus.google.com/" target="_blank" rel="noopener" title="Google +">
+                        <a  class="sidebar-button-link " href="https://plus.google.com/" target="_blank" rel="noopener" title="Google Plus">
                     
                         <i class="sidebar-button-icon fab fa-google-plus" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Google +</span>
+                        <span class="sidebar-button-desc">Google Plus</span>
                     </a>
             </li>
             
@@ -257,11 +283,11 @@
                     
                         <a  class="sidebar-button-link "
                              href="/mailto"
-                            title="Mail"
+                            title="Correo"
                         >
                     
                         <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Mail</span>
+                        <span class="sidebar-button-desc">Correo</span>
                     </a>
             </li>
             
@@ -316,11 +342,11 @@
         <div class="post-meta">
     <time datetime="2018-03-30T21:53:11+08:00">
 	
-		    3月 30, 2018
+		    30 3月 2018
     	
     </time>
     
-        <span>in </span>
+        <span>en </span>
         
     <a class="category-link" href="/categories/Java/">Java</a>
 
@@ -421,7 +447,7 @@
     <div id="post-footer" class="post-footer main-content-wrap">
         
             <div class="post-footer-tags">
-                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                <span class="text-color-light text-small">ETIQUETADO EN</span><br/>
                 
     <a class="tag tag--primary tag--small t-link" href="/tags/JVM/" rel="tag">JVM</a> <a class="tag tag--primary tag--small t-link" href="/tags/Java/" rel="tag">Java</a>
 
@@ -439,7 +465,7 @@
                     >
                         
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
-                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
                     </a>
             </li>
             <li class="post-action">
@@ -449,10 +475,10 @@
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
                     data-tooltip="MPI并行：Pthread入门教程"
-                    aria-label="NEXT: MPI并行：Pthread入门教程"
+                    aria-label="SIGUIENTE: MPI并行：Pthread入门教程"
                 >
                     
-                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
             </li>
@@ -463,7 +489,7 @@
             <a
                 class="post-action-btn btn btn--default btn-open-shareoptions"
                 href="#btn-open-shareoptions"
-                aria-label="Share this post"
+                aria-label="Diesen Beitrag teilen"
             >
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
@@ -475,8 +501,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
-                    title="Share on Facebook"
-                    aria-label="Share on Facebook"
+                    title="Compartir en Facebook"
+                    aria-label="Compartir en Facebook"
                 >
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
@@ -488,8 +514,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
-                    title="Share on Twitter"
-                    aria-label="Share on Twitter"
+                    title="Compartir en Twitter"
+                    aria-label="Compartir en Twitter"
                 >
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
@@ -501,8 +527,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
-                    title="Share on Google+"
-                    aria-label="Share on Google+"
+                    title="Compartir en Google+"
+                    aria-label="Compartir en Google+"
                 >
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
@@ -513,7 +539,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -551,7 +577,7 @@
                     >
                         
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
-                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
                     </a>
             </li>
             <li class="post-action">
@@ -561,10 +587,10 @@
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2018/03/30/MPI%E5%B9%B6%E8%A1%8C%EF%BC%9APthread%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/"
                     data-tooltip="MPI并行：Pthread入门教程"
-                    aria-label="NEXT: MPI并行：Pthread入门教程"
+                    aria-label="SIGUIENTE: MPI并行：Pthread入门教程"
                 >
                     
-                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
             </li>
@@ -575,7 +601,7 @@
             <a
                 class="post-action-btn btn btn--default btn-open-shareoptions"
                 href="#btn-open-shareoptions"
-                aria-label="Share this post"
+                aria-label="Diesen Beitrag teilen"
             >
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
@@ -587,8 +613,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
-                    title="Share on Facebook"
-                    aria-label="Share on Facebook"
+                    title="Compartir en Facebook"
+                    aria-label="Compartir en Facebook"
                 >
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
@@ -600,8 +626,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
-                    title="Share on Twitter"
-                    aria-label="Share on Twitter"
+                    title="Compartir en Twitter"
+                    aria-label="Compartir en Twitter"
                 >
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
@@ -613,8 +639,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
-                    title="Share on Google+"
-                    aria-label="Share on Google+"
+                    title="Compartir en Google+"
+                    aria-label="Compartir en Google+"
                 >
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
@@ -625,7 +651,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -647,9 +673,9 @@
                         class="share-option-btn"
                         target="new"
                         href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
-                        aria-label="Share on Facebook"
+                        aria-label="Compartir en Facebook"
                     >
-                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Compartir en Facebook</span>
                     </a>
                 </li>
             
@@ -660,9 +686,9 @@
                         class="share-option-btn"
                         target="new"
                         href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
-                        aria-label="Share on Twitter"
+                        aria-label="Compartir en Twitter"
                     >
-                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Compartir en Twitter</span>
                     </a>
                 </li>
             
@@ -673,9 +699,9 @@
                         class="share-option-btn"
                         target="new"
                         href="https://plus.google.com/share?url=http://plytools.github.io/2018/03/30/JVM%E5%AD%97%E8%8A%82%E7%A0%81%E8%AF%A6%E8%A7%A3/"
-                        aria-label="Share on Google+"
+                        aria-label="Compartir en Google+"
                     >
-                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Compartir en Google+</span>
                     </a>
                 </li>
             
@@ -688,11 +714,17 @@
         
 
 
+    
+        
+    
+
 <div id="about">
     <div id="about-card">
         <div id="about-btn-close">
             <i class="fa fa-times"></i>
         </div>
+        
+            <img id="about-card-picture" src="/assets/images/meself.jpeg" alt="Foto de autor"/>
         
             <h4 id="about-card-name">Qian Ren</h4>
         
@@ -707,6 +739,12 @@
 
             </div>
         
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                China
+            </div>
         
     </div>
 </div>
@@ -728,7 +766,7 @@
             </form>
         </div>
         <div class="modal-body">
-            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="no-result text-color-light text-center">no se encontraron artículos</div>
             <div class="results">
                 
                 <div class="media">
@@ -900,10 +938,10 @@
         </div>
         <div class="modal-footer">
             <p class="results-count text-medium"
-                data-message-zero="no post found"
-                data-message-one="1 post found"
-                data-message-other="{n} posts found">
-                5 posts found
+                data-message-zero="no se encontraron artículos"
+                data-message-one="1 artículo encontrado"
+                data-message-other="{n} artículos encontrados">
+                5 artículos encontrados
             </p>
         </div>
     </div>

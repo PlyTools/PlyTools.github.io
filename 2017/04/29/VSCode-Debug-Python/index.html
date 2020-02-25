@@ -13,7 +13,7 @@
     
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"articleBody":"\n问题: \n\n拿到项目中的.py文件，怎么用VS Code进行调试？\nVS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。（笔者试用过Google的Atom，Sublime Text等其他轻量级编辑器，认为VS Code虽然体量稍大，但在易用性和功能方面依然具有优势）\n那么，这篇文章以在VS Code名称为maple-master的项目文件中，调试maple-master/script/idiom/main.py文件为例，介绍调试python文件的方法（默认已装好python环境）。\n\n要求：\n\n目标是，调试时让main.py文件在maple-master/example/shared_counter/路径下，以两个输入参数display 和test_history运行。\n\n1.  设置.py文件调试所需的运行环境？\n导入项目\n\n将整个工程文件夹maple-master加入到VS Code的project列表中。\n打开要调试的main.py文件，如下图：\n\n框1显示了所有打开的文件及其路径，框2显示了导入的整个project文件夹，框3显示了打开的.py文件所在具体位置，这里打开的是maple-master/script/maple/idiom中的main.py文件。\n如果调试project的单个.py文件，而且这个文件需要特定的运行路径、环境变量、参数才能运行，可使用如下方式：\n\n生成launch.json文件\n\n点击框4，进入如下界面\n\n然后，点击红框中的齿轮标志，随后会生成并打开项目的launch.json文件，可以在其中任意配置运行参数。因为此处调试.py文件，因此需要增加一个python的配置。\n\n生成python默认配置\n\n在launch.json文件中，点击右下角Add Configuration按钮如下图\n\n会生成如下默认配置的选择框，选择其中的python项\n\n于是launch.json中添加了如下关于Python的默认运行参数配置\n\n\n修改特定的.py运行参数\n\n这里，因为我们的目标是让main.py文件在特定的路径下接受两个参数调试运行，默认的参数不符合，所以要进行修改，修改后代码如下\n1234567891011121314151617181920&#123;            \"name\": \"idiom_main\",            \"type\": \"python\",            \"request\": \"launch\",            \"stopOnEntry\": true,            \"pythonPath\": \"$&#123;config:python.pythonPath&#125;\",            \"program\": \"$&#123;file&#125;\",            \"cwd\": \"$&#123;workspaceRoot&#125;/example/shared_counter/\",            \"args\":[                \"display\",                \"test_history\"            ],            \"env\": null,            \"envFile\": \"$&#123;workspaceRoot&#125;/.env\",            \"debugOptions\": [                \"WaitOnAbnormalExit\",                \"WaitOnNormalExit\",                \"RedirectOutput\"            ]        &#125;,\n于是launch.json变为下图\n\n红框部分为修改部分，下面做简要解释\n&quot;args&quot; 表示以这个配置运行文件时，传给文件的参数，这里我们传了两个参数display和test_history\n&quot;cwd&quot; 表示在什么位置运行的这个文件\n&quot;name&quot; 参数表示为我们生成的这个配置的名称，原本因为添加的python默认运行参数，名称也是默认的python，但是因为这里设置的”args”和”cwd”只适用于main.py这个文件，所以改写名称为idiom_main作为和其他.py文件调试配置的区分。\n保存！\n\n注意：如果想修改其他参数，比如环境变量&quot;env&quot;等等，可以鼠标移动到参数上面看浮动解释框内容。如果有需要main.py运行前需要做的事情，可以在&quot;task&quot;选项和对应的task.json文件中配置，调试python用的少，调试C++用的多，这里不再赘述。\n\n2.  开始debug进入需要调试的main.py文件，点击下图的框1，然后点击框2选择idiom_main作为运行配置，最后点击框3开始debug\n\n下图中框1代表到达的默认断点位置（再也不用担心闪退了），后续操作可以通过框2浮动窗口的命令和提示进行。\n\n​ ​:happy:​ Good Luck!! \n\n 转载请注明出处，欢迎大家指正交流，我会持续更新\n","dateCreated":"2017-04-29T02:02:17+08:00","dateModified":"2017-04-29T02:02:17+08:00","datePublished":"2017-04-29T02:02:17+08:00","description":"VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。拿到项目的.py文件，怎么用VS Code进行调试","headline":"使用VS Code调试Python代码","image":["vscode.png","learning.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"},"publisher":{"@type":"Organization","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"]},"url":"http://plytools.github.io/2017/04/29/VSCode-Debug-Python/","keywords":"VS Code, Python, Debug","thumbnailUrl":"vscode.png"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"],"image":"meself.jpeg"},"articleBody":"\n问题: \n\n拿到项目中的.py文件，怎么用VS Code进行调试？\nVS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。（笔者试用过Google的Atom，Sublime Text等其他轻量级编辑器，认为VS Code虽然体量稍大，但在易用性和功能方面依然具有优势）\n那么，这篇文章以在VS Code名称为maple-master的项目文件中，调试maple-master/script/idiom/main.py文件为例，介绍调试python文件的方法（默认已装好python环境）。\n\n要求：\n\n目标是，调试时让main.py文件在maple-master/example/shared_counter/路径下，以两个输入参数display 和test_history运行。\n\n1.  设置.py文件调试所需的运行环境？\n导入项目\n\n将整个工程文件夹maple-master加入到VS Code的project列表中。\n打开要调试的main.py文件，如下图：\n\n框1显示了所有打开的文件及其路径，框2显示了导入的整个project文件夹，框3显示了打开的.py文件所在具体位置，这里打开的是maple-master/script/maple/idiom中的main.py文件。\n如果调试project的单个.py文件，而且这个文件需要特定的运行路径、环境变量、参数才能运行，可使用如下方式：\n\n生成launch.json文件\n\n点击框4，进入如下界面\n\n然后，点击红框中的齿轮标志，随后会生成并打开项目的launch.json文件，可以在其中任意配置运行参数。因为此处调试.py文件，因此需要增加一个python的配置。\n\n生成python默认配置\n\n在launch.json文件中，点击右下角Add Configuration按钮如下图\n\n会生成如下默认配置的选择框，选择其中的python项\n\n于是launch.json中添加了如下关于Python的默认运行参数配置\n\n\n修改特定的.py运行参数\n\n这里，因为我们的目标是让main.py文件在特定的路径下接受两个参数调试运行，默认的参数不符合，所以要进行修改，修改后代码如下\n1234567891011121314151617181920&#123;            \"name\": \"idiom_main\",            \"type\": \"python\",            \"request\": \"launch\",            \"stopOnEntry\": true,            \"pythonPath\": \"$&#123;config:python.pythonPath&#125;\",            \"program\": \"$&#123;file&#125;\",            \"cwd\": \"$&#123;workspaceRoot&#125;/example/shared_counter/\",            \"args\":[                \"display\",                \"test_history\"            ],            \"env\": null,            \"envFile\": \"$&#123;workspaceRoot&#125;/.env\",            \"debugOptions\": [                \"WaitOnAbnormalExit\",                \"WaitOnNormalExit\",                \"RedirectOutput\"            ]        &#125;,\n于是launch.json变为下图\n\n红框部分为修改部分，下面做简要解释\n&quot;args&quot; 表示以这个配置运行文件时，传给文件的参数，这里我们传了两个参数display和test_history\n&quot;cwd&quot; 表示在什么位置运行的这个文件\n&quot;name&quot; 参数表示为我们生成的这个配置的名称，原本因为添加的python默认运行参数，名称也是默认的python，但是因为这里设置的”args”和”cwd”只适用于main.py这个文件，所以改写名称为idiom_main作为和其他.py文件调试配置的区分。\n保存！\n\n注意：如果想修改其他参数，比如环境变量&quot;env&quot;等等，可以鼠标移动到参数上面看浮动解释框内容。如果有需要main.py运行前需要做的事情，可以在&quot;task&quot;选项和对应的task.json文件中配置，调试python用的少，调试C++用的多，这里不再赘述。\n\n2.  开始debug进入需要调试的main.py文件，点击下图的框1，然后点击框2选择idiom_main作为运行配置，最后点击框3开始debug\n\n下图中框1代表到达的默认断点位置（再也不用担心闪退了），后续操作可以通过框2浮动窗口的命令和提示进行。\n\n​ ​:happy:​ Good Luck!! \n\n 转载请注明出处，欢迎大家指正交流，我会持续更新\n","dateCreated":"2017-04-29T02:02:17+08:00","dateModified":"2017-04-29T02:02:17+08:00","datePublished":"2017-04-29T02:02:17+08:00","description":"VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。拿到项目的.py文件，怎么用VS Code进行调试","headline":"使用VS Code调试Python代码","image":["vscode.png","learning.jpg"],"mainEntityOfPage":{"@type":"WebPage","@id":"http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"},"publisher":{"@type":"Organization","name":"Qian Ren","sameAs":["https://github.com/","http://stackoverflow.com/users","https://twitter.com/","https://facebook.com/","https://plus.google.com/","https://www.linkedin.com/profile/","mailto"],"image":"meself.jpeg","logo":{"@type":"ImageObject","url":"meself.jpeg"}},"url":"http://plytools.github.io/2017/04/29/VSCode-Debug-Python/","keywords":"VS Code, Python, Debug","thumbnailUrl":"vscode.png"}</script>
     <meta name="description" content="VS Code是微软推出的轻量级代码编辑器，功能强大，更重要的是环境配置方便，界面设计合理。拿到项目的.py文件，怎么用VS Code进行调试">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="使用VS Code调试Python代码">
@@ -41,6 +41,8 @@
     
         
     
+    
+        <meta property="og:image" content="http://plytools.github.io/assets/images/meself.jpeg"/>
     
     
         <meta property="og:image" content="http://plytools.github.io/2017/04/29/VSCode-Debug-Python/vscode.png"/>
@@ -71,6 +73,10 @@
 
 
     
+        
+            
+        
+    
 
 <header id="header" data-behavior="4">
     <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
@@ -88,9 +94,11 @@
             <a
                 class="header-right-picture "
                 href="#about"
-                aria-label="Open the link: /#about"
+                aria-label="Abre el enlace: /#about"
             >
         
+        
+            <img class="header-picture" src="/assets/images/meself.jpeg" alt="Foto de autor"/>
         
         </a>
     
@@ -99,8 +107,26 @@
             <!-- Define author's picture -->
 
 
+
+        
+    
+
 <nav id="sidebar" data-behavior="4">
     <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="Leer más sobre el autor."
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/meself.jpeg" alt="Foto de autor"/>
+                </a>
+                <h4 class="sidebar-profile-name">Qian Ren</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>author.bio</p>
+</h5>
+                
+            </div>
         
         
             <ul class="sidebar-buttons">
@@ -110,11 +136,11 @@
                         <a  class="sidebar-button-link "
                              href="/%20"
                             
-                            title="Home"
+                            title="Inicio"
                         >
                     
                         <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Home</span>
+                        <span class="sidebar-button-desc">Inicio</span>
                     </a>
             </li>
             
@@ -123,11 +149,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-categories"
                             
-                            title="Categories"
+                            title="Categorías"
                         >
                     
                         <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Categories</span>
+                        <span class="sidebar-button-desc">Categorías</span>
                     </a>
             </li>
             
@@ -136,11 +162,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-tags"
                             
-                            title="Tags"
+                            title="Etiquetas"
                         >
                     
                         <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Tags</span>
+                        <span class="sidebar-button-desc">Etiquetas</span>
                     </a>
             </li>
             
@@ -149,11 +175,11 @@
                         <a  class="sidebar-button-link "
                              href="/all-archives"
                             
-                            title="Archives"
+                            title="Archivos"
                         >
                     
                         <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Archives</span>
+                        <span class="sidebar-button-desc">Archivos</span>
                     </a>
             </li>
             
@@ -162,11 +188,11 @@
                         <a  class="sidebar-button-link open-algolia-search"
                              href="#search"
                             
-                            title="Search"
+                            title="Buscar"
                         >
                     
                         <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Search</span>
+                        <span class="sidebar-button-desc">Buscar</span>
                     </a>
             </li>
             
@@ -175,11 +201,11 @@
                         <a  class="sidebar-button-link "
                              href="#about"
                             
-                            title="About"
+                            title="Acerca de"
                         >
                     
                         <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">About</span>
+                        <span class="sidebar-button-desc">Acerca de</span>
                     </a>
             </li>
             
@@ -225,10 +251,10 @@
             
                 <li class="sidebar-button">
                     
-                        <a  class="sidebar-button-link " href="https://plus.google.com/" target="_blank" rel="noopener" title="Google +">
+                        <a  class="sidebar-button-link " href="https://plus.google.com/" target="_blank" rel="noopener" title="Google Plus">
                     
                         <i class="sidebar-button-icon fab fa-google-plus" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Google +</span>
+                        <span class="sidebar-button-desc">Google Plus</span>
                     </a>
             </li>
             
@@ -245,11 +271,11 @@
                     
                         <a  class="sidebar-button-link "
                              href="/mailto"
-                            title="Mail"
+                            title="Correo"
                         >
                     
                         <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
-                        <span class="sidebar-button-desc">Mail</span>
+                        <span class="sidebar-button-desc">Correo</span>
                     </a>
             </li>
             
@@ -304,11 +330,11 @@
         <div class="post-meta">
     <time datetime="2017-04-29T02:02:17+08:00">
 	
-		    4月 29, 2017
+		    29 4月 2017
     	
     </time>
     
-        <span>in </span>
+        <span>en </span>
         
     <a class="category-link" href="/categories/Debug/">Debug</a>
 
@@ -387,7 +413,7 @@
     <div id="post-footer" class="post-footer main-content-wrap">
         
             <div class="post-footer-tags">
-                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                <span class="text-color-light text-small">ETIQUETADO EN</span><br/>
                 
     <a class="tag tag--primary tag--small t-link" href="/tags/Debug/" rel="tag">Debug</a> <a class="tag tag--primary tag--small t-link" href="/tags/Python/" rel="tag">Python</a> <a class="tag tag--primary tag--small t-link" href="/tags/VS-Code/" rel="tag">VS Code</a>
 
@@ -404,11 +430,11 @@
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
                     data-tooltip="使用Hexo搭建Github博客：(一)20min搭完主体框架"
-                    aria-label="PREVIOUS: 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                    aria-label="ANTERIOR: 使用Hexo搭建Github博客：(一)20min搭完主体框架"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
-                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
                     </a>
             </li>
             <li class="post-action">
@@ -418,10 +444,10 @@
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2017/04/28/Maple-setup-tutorial/"
                     data-tooltip="软件动态分析：Maple配置和使用详细教程"
-                    aria-label="NEXT: 软件动态分析：Maple配置和使用详细教程"
+                    aria-label="SIGUIENTE: 软件动态分析：Maple配置和使用详细教程"
                 >
                     
-                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
             </li>
@@ -432,7 +458,7 @@
             <a
                 class="post-action-btn btn btn--default btn-open-shareoptions"
                 href="#btn-open-shareoptions"
-                aria-label="Share this post"
+                aria-label="Diesen Beitrag teilen"
             >
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
@@ -444,8 +470,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
-                    title="Share on Facebook"
-                    aria-label="Share on Facebook"
+                    title="Compartir en Facebook"
+                    aria-label="Compartir en Facebook"
                 >
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
@@ -457,8 +483,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
-                    title="Share on Twitter"
-                    aria-label="Share on Twitter"
+                    title="Compartir en Twitter"
+                    aria-label="Compartir en Twitter"
                 >
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
@@ -470,8 +496,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
-                    title="Share on Google+"
-                    aria-label="Share on Google+"
+                    title="Compartir en Google+"
+                    aria-label="Compartir en Google+"
                 >
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
@@ -482,7 +508,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -519,11 +545,11 @@
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2017/04/29/%E4%BD%BF%E7%94%A8hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2-%E4%B8%80-20min%E6%90%AD%E5%AE%8C%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6/"
                     data-tooltip="使用Hexo搭建Github博客：(一)20min搭完主体框架"
-                    aria-label="PREVIOUS: 使用Hexo搭建Github博客：(一)20min搭完主体框架"
+                    aria-label="ANTERIOR: 使用Hexo搭建Github博客：(一)20min搭完主体框架"
                 >
                     
                         <i class="fa fa-angle-left" aria-hidden="true"></i>
-                        <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                        <span class="hide-xs hide-sm text-small icon-ml">ANTERIOR</span>
                     </a>
             </li>
             <li class="post-action">
@@ -533,10 +559,10 @@
                     class="post-action-btn btn btn--default tooltip--top"
                     href="/2017/04/28/Maple-setup-tutorial/"
                     data-tooltip="软件动态分析：Maple配置和使用详细教程"
-                    aria-label="NEXT: 软件动态分析：Maple配置和使用详细教程"
+                    aria-label="SIGUIENTE: 软件动态分析：Maple配置和使用详细教程"
                 >
                     
-                        <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                        <span class="hide-xs hide-sm text-small icon-mr">SIGUIENTE</span>
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                     </a>
             </li>
@@ -547,7 +573,7 @@
             <a
                 class="post-action-btn btn btn--default btn-open-shareoptions"
                 href="#btn-open-shareoptions"
-                aria-label="Share this post"
+                aria-label="Diesen Beitrag teilen"
             >
                 <i class="fa fa-share-alt" aria-hidden="true"></i>
             </a>
@@ -559,8 +585,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
-                    title="Share on Facebook"
-                    aria-label="Share on Facebook"
+                    title="Compartir en Facebook"
+                    aria-label="Compartir en Facebook"
                 >
                     <i class="fab fa-facebook" aria-hidden="true"></i>
                 </a>
@@ -572,8 +598,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
-                    title="Share on Twitter"
-                    aria-label="Share on Twitter"
+                    title="Compartir en Twitter"
+                    aria-label="Compartir en Twitter"
                 >
                     <i class="fab fa-twitter" aria-hidden="true"></i>
                 </a>
@@ -585,8 +611,8 @@
                 <a
                     class="post-action-btn btn btn--default"
                     target="new" href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
-                    title="Share on Google+"
-                    aria-label="Share on Google+"
+                    title="Compartir en Google+"
+                    aria-label="Compartir en Google+"
                 >
                     <i class="fab fa-google-plus" aria-hidden="true"></i>
                 </a>
@@ -597,7 +623,7 @@
         
         <li class="post-action">
             
-                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
             
                 <i class="fa fa-list" aria-hidden="true"></i>
             </a>
@@ -619,9 +645,9 @@
                         class="share-option-btn"
                         target="new"
                         href="https://www.facebook.com/sharer/sharer.php?u=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
-                        aria-label="Share on Facebook"
+                        aria-label="Compartir en Facebook"
                     >
-                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Compartir en Facebook</span>
                     </a>
                 </li>
             
@@ -632,9 +658,9 @@
                         class="share-option-btn"
                         target="new"
                         href="https://twitter.com/intent/tweet?text=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
-                        aria-label="Share on Twitter"
+                        aria-label="Compartir en Twitter"
                     >
-                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Compartir en Twitter</span>
                     </a>
                 </li>
             
@@ -645,9 +671,9 @@
                         class="share-option-btn"
                         target="new"
                         href="https://plus.google.com/share?url=http://plytools.github.io/2017/04/29/VSCode-Debug-Python/"
-                        aria-label="Share on Google+"
+                        aria-label="Compartir en Google+"
                     >
-                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Share on Google+</span>
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>Compartir en Google+</span>
                     </a>
                 </li>
             
@@ -660,11 +686,17 @@
         
 
 
+    
+        
+    
+
 <div id="about">
     <div id="about-card">
         <div id="about-btn-close">
             <i class="fa fa-times"></i>
         </div>
+        
+            <img id="about-card-picture" src="/assets/images/meself.jpeg" alt="Foto de autor"/>
         
             <h4 id="about-card-name">Qian Ren</h4>
         
@@ -679,6 +711,12 @@
 
             </div>
         
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                China
+            </div>
         
     </div>
 </div>
@@ -700,7 +738,7 @@
             </form>
         </div>
         <div class="modal-body">
-            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="no-result text-color-light text-center">no se encontraron artículos</div>
             <div class="results">
                 
                 <div class="media">
@@ -872,10 +910,10 @@
         </div>
         <div class="modal-footer">
             <p class="results-count text-medium"
-                data-message-zero="no post found"
-                data-message-one="1 post found"
-                data-message-other="{n} posts found">
-                5 posts found
+                data-message-zero="no se encontraron artículos"
+                data-message-one="1 artículo encontrado"
+                data-message-other="{n} artículos encontrados">
+                5 artículos encontrados
             </p>
         </div>
     </div>
